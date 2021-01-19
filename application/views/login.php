@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Ingreso</title>
+      <title>Defensoria del deudor | Login</title>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
    </head>
    <body>
@@ -31,19 +31,16 @@
                      <input type="text" name="user_personalID" class="form-control" value="<?php echo set_value('user_personalID'); ?>" />
                      <span class="text-danger"><?php echo form_error('user_personalID'); ?></span>
                   </div>
-               <!--<div class="form-group">
-                     <label>Ingrese el correo electrónico</label>
-                     <input type="email" name="user_email" class="form-control" value="<?php echo set_value('user_email'); ?>" />
-                     <span class="text-danger"><?php echo form_error('user_email'); ?></span>
-                  </div>-->
+
                   <div class="form-group">
                      <label>Ingrese Contraseña</label>
                      <input type="password" name="user_password" class="form-control" value="<?php echo set_value('user_password'); ?>" />
                      <span class="text-danger"><?php echo form_error('user_password'); ?></span>
                   </div>
+                  
                   <div class="form-group">
                      <input type="submit" name="login" value="Login" class="btn btn-info" />
-                     <a href="<?php echo base_url(); ?>register">Registrarse</a>
+                     <!--<a href="<?php echo base_url(); ?>register">Registrarse</a>-->
                   </div>
                </form>
             </div>
