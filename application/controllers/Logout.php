@@ -10,10 +10,7 @@ class Logout extends CI_Controller
     }
     
     function index(){
-        $data = $this->session->all_userdata();
-        foreach ($data as $row => $rows_value) {
-            $this->session->unset_userdata($row);
-        }
+        $this->session->sess_destroy();
         redirect('login');
     }
 }

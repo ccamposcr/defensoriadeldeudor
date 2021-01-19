@@ -14,7 +14,10 @@ class Login extends CI_Controller
     }
     
     function index(){
+        $data['title'] = 'Login';
+        $this->load->view('global/header', $data);
         $this->load->view('login');
+        $this->load->view('global/footer');
     }
 
     function verify_hash($plain_password, $hashed_password){
