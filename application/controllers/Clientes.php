@@ -22,25 +22,22 @@ class Clientes extends CI_Controller
     }
 
     function addClient(){
-        $personalID = '12123123123';
-        $name = 'PacCerda';
-        $lastName1 = 'Leg';
-        $lastName2 = 'Leg2';
-        $status = 'active';
-        $phone = '434234234';
-        $email = 'lapaccerda@paclover.com';
-        $address = 'lachancha 50 al oeste';
-        
         $data = array(
-        'personalID' => $personalID, 
-        'name' => $name, 
-        'lastName1' => $lastName1, 
-        'lastName2' => $lastName2, 
-        'status' => $status, 
-        'phone' => $phone, 
-        'email' => $email, 
-        'address' => $address);
+        'personalID' => $this->input->post('personalID'), 
+        'name' => $this->input->post('name'), 
+        'lastName1' => $this->input->post('lastName1'), 
+        'lastName2' => $this->input->post('lastName2'), 
+        'status' => $this->input->post('status'), 
+        'phone' => $this->input->post('phone'), 
+        'email' => $this->input->post('email'), 
+        'address' => $this->input->post('address'),
+        'role' => $this->input->post('role'));
+
         $this->clientes_model->addClient($data);
+    }
+
+    function getAllClients(){
+        echo json_encode($this->clientes_model->getAllClients());
     }
     
 }

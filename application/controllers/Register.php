@@ -43,6 +43,7 @@ class Register extends CI_Controller
                 'verificationKey' => $verificationKey
             );
             $id = $this->register_model->createUser($data);
+            redirect('register');
         } else {
             $this->index();
         }
