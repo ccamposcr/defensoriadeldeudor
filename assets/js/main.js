@@ -1,21 +1,19 @@
 Vue.component('app-client-list', {
-    props: {
-        item: String
-    },
-    template: '<li>{{ item.name }}</li>',
+    props: [],
+    template: '<ul><li v-bind:key="item.id" v-for="item in users">{{ item.name }}</li></ul>',
     data: function(){
         return{
             users: []
         }
     },
-    created(){
+    created: function(){ // Perfect step to retrieve async data
         this.getUsers();
     },
     methods: {
-        async getUsers(){
-          const res = await fetch('clientes/getAllClients');
-          const data = await res.json();
-          this.users = data;
+        getUsers: async function(){
+            const res = await fetch('clientes/getAllClients');
+            const data = await res.json();
+            this.users = data;
         }
     }
 })
