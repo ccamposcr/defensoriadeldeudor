@@ -5,11 +5,10 @@
 </template>
 
 <script>
-import Clientlist from "./components/Clientlist.vue";
 
 export default {
   name: 'app',
-  components: { Clientlist },
+  components: { },
   data () {
     return {
     }

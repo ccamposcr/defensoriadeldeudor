@@ -12,6 +12,6 @@ export default new Router({
             component: Clientlist
         }
     ],
-    linkActiveClass: "active",
-    mode: "history"
+    mode: "history",
+    base: '/defensoriadeldeudor'
 })
