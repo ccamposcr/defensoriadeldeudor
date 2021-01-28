@@ -5,7 +5,7 @@
     const csrf_hash = '<?php echo $CI->security->get_csrf_hash(); ?>';
 </script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>assets/dist/build.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>public/dist/build.js"></script>
         </div>
     </body>
 </html>

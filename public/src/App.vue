@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Clientlist/>
+    <router-view></router-view>
   </div>
 </template>
 
