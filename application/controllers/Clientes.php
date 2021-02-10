@@ -35,6 +35,12 @@ class Clientes extends CI_Controller
         'role' => $this->input->post('role'));
 
         $this->clientes_model->addClient($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+        echo json_encode($response);
     }
 
     function getAllClients(){

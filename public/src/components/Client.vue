@@ -31,6 +31,11 @@
         <label for="address">Direccion</label>
         <input v-model="form.address" type="text" class="form-control" id="address" placeholder="Direccion">
       </div>
+      <div class="form-group">
+        <label for="address">Direccion</label>
+        <input v-model="form.address" type="text" class="form-control" id="address" placeholder="Direccion">
+      </div>
+
       <button @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
     </form>
   </div>
@@ -49,7 +54,9 @@ export default {
         lastName2: '',
         phone: '',
         email: '',
-        address: ''
+        address: '',
+        role:'9',
+        status: 1
       }
     }
   },
@@ -59,17 +66,16 @@ export default {
   methods: {
       getUsers: async function(){
           const url = 'clientes/getAllClients';
-          const res = await fetch(url);
-          const data = await res.json();
+          const response = await fetch(url);
+          const data = await response.json();
           this.users = data;
       },
-      addNewClient: function(){
-        this.form[csrf_name] = csrf_hash;
-        this.form['role'] = 9;
-        this.form['status'] = true;
+      addNewClient: async function(){
+        
         const url = 'clientes/addClient';
-        console.log(this.form);
-        fetch(url, {
+        this.form[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
           body: new URLSearchParams(this.form),
@@ -77,9 +83,12 @@ export default {
             'Content-Type': 'application/x-www-form-urlencoded',
             "X-Requested-With": "XMLHttpRequest"
           }
-        }).then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => console.log('Success:', response));
+        });
+        
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        this.getUsers();
       }
   }
 }
