@@ -6,4 +6,3 @@
    </head>
    <body>
       <div class="container-fluid">
-         <div id="app"></div>

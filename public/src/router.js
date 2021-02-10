@@ -1,7 +1,7 @@
 import Vue    from 'vue'
 import Router from 'vue-router'
 
-import Clientlist    from './components/Clientlist.vue'
+import Client    from './components/Client.vue'
 
 Vue.use(Router)
 
@@ -9,7 +9,7 @@ export default new Router({
     routes: [
         {
             path: '/clientes',
-            component: Clientlist
+            component: Client
         }
     ],
     mode: "history",
