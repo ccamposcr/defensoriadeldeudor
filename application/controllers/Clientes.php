@@ -40,7 +40,7 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash()
         );
-        
+
         echo json_encode($response);
     }
 
@@ -61,6 +61,18 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getClientByID($data)
+        );
+
+        echo json_encode($response);
+    }
+
+    function getLegalCasesByID(){
+        $data = $this->input->post('userID');
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getLegalCasesByID($data)
         );
 
         echo json_encode($response);
