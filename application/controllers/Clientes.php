@@ -40,11 +40,30 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash()
         );
+        
         echo json_encode($response);
     }
 
     function getAllClients(){
-        echo json_encode($this->clientes_model->getAllClients());
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getAllClients()
+        );
+
+        echo json_encode($response);
+    }
+
+    function getClientByID(){
+        $data = $this->input->post('personalID');
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getClientByID($data)
+        );
+
+        echo json_encode($response);
     }
     
 }

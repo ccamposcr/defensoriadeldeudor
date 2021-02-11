@@ -2,11 +2,19 @@
 class Clientes_model extends CI_Model
 {
     function addClient($data){       
-        $str = $this->db->insert('user', $data);
-        return $str;
+        $results = $this->db->insert('user', $data);
+        return $results;
     }
 
     function getAllClients(){
+        $query = $this->db->get('user');
+        $results = $query->result();
+       
+        return $results;
+    }
+
+    function getClientByID($data){
+        $this->db->where('personalID', $data);
         $query = $this->db->get('user');
         $results = $query->result();
        

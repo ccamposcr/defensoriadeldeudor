@@ -1,43 +1,63 @@
 <template>
   <div>
-    <ul><li v-bind:key="item.id" v-for="item in users">{{ item.name }}</li></ul>
+    <button class="btn btn-primary" @click="showSearchClientPanel">Buscar Cliente</button>
+    <button class="btn btn-primary" @click="showAddNewClientPanel">Agregar Cliente Nuevo</button>
 
-    <form>
-      <div class="form-group">
-        <label for="personalID">Cedula</label>
-        <input v-model="form.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula">
-      </div>
-      <div class="form-group">
-        <label for="name">Nombre</label>
-        <input v-model="form.name" type="text" class="form-control" id="name" placeholder="Nombre">
-      </div>
-      <div class="form-group">
-        <label for="lastName1">Primer Apellido</label>
-        <input v-model="form.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido">
-      </div>
-      <div class="form-group">
-        <label for="lastName2">Segundo Apellido</label>
-        <input v-model="form.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
-      </div>
-      <div class="form-group">
-        <label for="phone">Telefono</label>
-        <input v-model="form.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input v-model="form.email" type="email" class="form-control" id="email" placeholder="Email">
-      </div>
-      <div class="form-group">
-        <label for="address">Direccion</label>
-        <input v-model="form.address" type="text" class="form-control" id="address" placeholder="Direccion">
-      </div>
-      <div class="form-group">
-        <label for="address">Direccion</label>
-        <input v-model="form.address" type="text" class="form-control" id="address" placeholder="Direccion">
-      </div>
+    <div v-show="panels.showAddNewClientPanel">
+      <form>
+        <div class="form-group">
+          <label for="personalID">Cedula</label>
+          <input v-model="newClientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula">
+        </div>
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input v-model="newClientForm.name" type="text" class="form-control" id="name" placeholder="Nombre">
+        </div>
+        <div class="form-group">
+          <label for="lastName1">Primer Apellido</label>
+          <input v-model="newClientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido">
+        </div>
+        <div class="form-group">
+          <label for="lastName2">Segundo Apellido</label>
+          <input v-model="newClientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefono</label>
+          <input v-model="newClientForm.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input v-model="newClientForm.email" type="email" class="form-control" id="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label for="address">Direccion</label>
+          <input v-model="newClientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
+        </div>
+        <button @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
+      </form>
+    </div>
 
-      <button @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
-    </form>
+    <div v-show="panels.showSearchClientPanel">
+      <form>
+        <div class="form-group">
+          <label for="personalID2">Cedula</label>
+          <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
+        </div>
+        <button @click.prevent="getClientByID" type="submit" class="btn btn-primary">Buscar</button>
+      </form>
+    </div>
+
+    <div class="clientList">
+      <ul>
+        <li v-bind:key="item.id" v-for="item in users">
+          <div>{{ item.name }} {{ item.lastName1 }} {{ item.lastName2 }}</div>
+          <div>
+            <button @click="showClient(item.id)" class="btn btn-primary">Ver</button>
+            <button @click="editClient(item.id)" class="btn btn-primary">Editar</button>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -47,7 +67,7 @@ export default {
   data () {
     return {
       users: [],
-      form:{
+      newClientForm:{
         personalID:'',
         name: '',
         lastName1: '',
@@ -57,38 +77,85 @@ export default {
         address: '',
         role:'9',
         status: 1
+      },
+      searchClientForm:{
+        personalID: ''
+      },
+      panels:{
+        showSearchClientPanel: false,
+        showAddNewClientPanel: false
       }
     }
   },
   created: function(){ // Perfect step to retrieve async data
-      this.getUsers();
+      this.getAllUsers();
   },
   methods: {
-      getUsers: async function(){
-          const url = 'clientes/getAllClients';
-          const response = await fetch(url);
-          const data = await response.json();
-          this.users = data;
+      getAllUsers: async function(){
+        const url = 'clientes/getAllClients';
+        const response = await fetch(url);
+        const data = await response.json();
+        this.users = data.response;
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
       },
-      addNewClient: async function(){
-        
-        const url = 'clientes/addClient';
-        this.form[csrf_name] = csrf_hash;
+      getClientByID: async function(){
+        const url = 'clientes/getClientByID';
+        this.searchClientForm[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(this.form),
+          body: new URLSearchParams(this.searchClientForm),
           headers:{
             'Content-Type': 'application/x-www-form-urlencoded',
             "X-Requested-With": "XMLHttpRequest"
           }
         });
+
+        const data = await response.json();
+        this.users = data.response;
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+      },
+      addNewClient: async function(){
         
+        const url = 'clientes/addClient';
+        this.newClientForm[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(this.newClientForm),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
         const data = await response.json();
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
-        this.getUsers();
+        this.getAllUsers();
+      },
+      showSearchClientPanel: function(){
+        this.hideAllPanels();
+        this.panels.showSearchClientPanel = true;
+      },
+      showAddNewClientPanel: function(){
+        this.hideAllPanels();
+        this.panels.showAddNewClientPanel = true;
+      },
+      hideAllPanels: function(){
+        for(const panel in this.panels){
+          this.panels[panel] = false;
+        }
+      },
+      showClient: function(id){
+        console.log(id);
+      },
+      editClient: function(id){
+        console.log(id);
       }
   }
 }
