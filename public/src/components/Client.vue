@@ -1,12 +1,12 @@
 <template>
   <div>
-    <button class="btn btn-primary" @click="showSearchClientPanel">Buscar Cliente</button>
-    <button class="btn btn-primary" @click="showAddNewClientPanel">Agregar Cliente Nuevo</button>
+    <button class="btn btn-info" @click="showSearchClientPanel">Buscar Cliente</button>
+    <button class="btn btn-info" @click="showAddNewClientPanel">Agregar Cliente Nuevo</button>
 
     <div v-show="panels.showAddNewClientPanel">
       <form>
         <div class="form-group">
-          <label for="personalID">Cedula</label>
+          <label for="personalID">C&eacute;dula</label>
           <input v-model="newClientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula">
         </div>
         <div class="form-group">
@@ -22,7 +22,7 @@
           <input v-model="newClientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
         </div>
         <div class="form-group">
-          <label for="phone">Telefono</label>
+          <label for="phone">Tel&eacute;fono</label>
           <input v-model="newClientForm.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
         </div>
         <div class="form-group">
@@ -30,7 +30,7 @@
           <input v-model="newClientForm.email" type="email" class="form-control" id="email" placeholder="Email">
         </div>
         <div class="form-group">
-          <label for="address">Direccion</label>
+          <label for="address">Direcci&oacute;n</label>
           <input v-model="newClientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
         </div>
         <button @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
@@ -40,7 +40,7 @@
     <div v-show="panels.showSearchClientPanel">
       <form>
         <div class="form-group">
-          <label for="personalID2">Cedula</label>
+          <label for="personalID2">C&eacute;dula</label>
           <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
         </div>
         <button @click.prevent="getClientByID" type="submit" class="btn btn-primary">Buscar</button>
@@ -50,10 +50,12 @@
     <div class="clientList">
       <ul>
         <li v-bind:key="item.id" v-for="item in users">
-          <div>{{ item.name }} {{ item.lastName1 }} {{ item.lastName2 }}</div>
+          <div>C&eacute;dula: {{ item.personalID }}</div>
+          <div>Nombre: {{ item.name }} {{ item.lastName1 }} {{ item.lastName2 }}</div>
+          <div>Tel&eacute;fono: {{ item.phone }}</div>
+          <div>Email: {{ item.email }}</div>
           <div>
-            <button @click="showClient(item.id)" class="btn btn-primary">Ver</button>
-            <button @click="editClient(item.id)" class="btn btn-primary">Editar</button>
+            <button @click="editClient(item.id)" class="btn btn-info">Editar Cliente</button>
           </div>
         </li>
       </ul>
@@ -115,6 +117,7 @@ export default {
 
         const data = await response.json();
         this.users = data.response;
+        console.log(data.response);
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
       },
