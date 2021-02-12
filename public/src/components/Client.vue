@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="client">
     <button class="btn btn-info" @click="showSearchClientPanel">Buscar Cliente</button>
     <button class="btn btn-info" @click="showAddNewClientPanel">Agregar Cliente Nuevo</button>
 
     <div v-show="panels.showAddNewClientPanel">
-      <form>
+      <form class="client__new-form">
         <div class="form-group">
           <label for="personalID">C&eacute;dula</label>
           <input v-model="newClientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula">
@@ -38,7 +38,7 @@
     </div>
 
     <div v-show="panels.showSearchClientPanel">
-      <form>
+      <form class="client__search-form">
         <div class="form-group">
           <label for="personalID2">C&eacute;dula</label>
           <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
@@ -47,21 +47,34 @@
       </form>
     </div>
 
-    <div class="clientList">
-      <ul>
-        <li v-bind:key="user.id" v-for="user in users">
+    <div>
+      <ul class="client__list">
+        <li class="list__user"  v-bind:key="user.id" v-for="user in users">
           <div>C&eacute;dula: {{ user.personalID }}</div>
           <div>Nombre: {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
           <div>Tel&eacute;fono: {{ user.phone }}</div>
           <div>Email: {{ user.email }}</div>
           <div>
             <button @click="editClient(user.id)" class="btn btn-info">Editar Cliente</button>
+            <button @click="addLegalCase(user.id)" class="btn btn-info">Agregar Caso</button>
             <button @click="showLegalCases(user.id)" class="btn btn-info">Ver Casos</button>
+
+            <div v-show="panels.showAddLegalCasePanel">
+              <form class="user__case-form">
+                <div class="form-group">
+                  <label for="personalID2">C&eacute;dula</label>
+                  <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
+                </div>
+                <button @click.prevent="getClientByID" type="submit" class="btn btn-primary">Agregar</button>
+              </form>
+            </div>
+
           </div>
-          <ul v-if="legalCases[user.id]">
-             <li v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
+          <ul class="user__legal-cases" v-if="legalCases[user.id]">
+             <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
               <div>Caso: {{ legalCase.subject }}</div>
               <div>Estado: {{ legalCase.status }}</div>
+              <button @click="editCase(legalCase.id)" class="btn btn-info">Editar Caso</button>
              </li>
           </ul>
         </li>
@@ -92,7 +105,8 @@ export default {
       },
       panels:{
         showSearchClientPanel: false,
-        showAddNewClientPanel: false
+        showAddNewClientPanel: false,
+        showAddLegalCasePanel: false
       },
       legalCases: []
     }
@@ -182,8 +196,7 @@ export default {
         });
 
         const data = await response.json();
-        this.legalCases[id] = data.response;
-        console.log(this.legalCases);
+        this.$set(this.legalCases, id, data.response);
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
       },
@@ -198,5 +211,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+  .client{
+    &__list{
+      list-style-type: none;
+      padding: 0;
+    }
+    .list{
+      &__user{
+        background-color: lightgray;
+        margin-bottom: 15px;
+        padding: 15px;
+      }
+    }
+    .user{
+      &__legal-cases{
+        list-style-type: none;
+        padding: 0;
+      }
+    }
+    .legal-cases{
+      &__case{
+        padding: 15px;
+      }
+    }
+  }
 </style>
