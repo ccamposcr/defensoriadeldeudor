@@ -54,13 +54,13 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
-    function getClientByID(){
+    function getClientByPersonalID(){
         $data = $this->input->post('personalID');
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getClientByID($data)
+            'response' => $this->clientes_model->getClientByPersonalID($data)
         );
 
         echo json_encode($response);

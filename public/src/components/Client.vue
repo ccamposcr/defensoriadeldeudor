@@ -43,7 +43,7 @@
           <label for="personalID2">C&eacute;dula</label>
           <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
         </div>
-        <button @click.prevent="getClientByID" type="submit" class="btn btn-primary">Buscar</button>
+        <button @click.prevent="showSearchResults(searchClientForm.personalID)" type="submit" class="btn btn-primary">Buscar</button>
       </form>
     </div>
 
@@ -65,18 +65,21 @@
                   <label for="personalID2">C&eacute;dula</label>
                   <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
                 </div>
-                <button @click.prevent="getClientByID" type="submit" class="btn btn-primary">Agregar</button>
+                <button @click.prevent="" type="submit" class="btn btn-primary">Agregar</button>
               </form>
             </div>
-
           </div>
-          <ul class="user__legal-cases" v-if="legalCases[user.id]">
-             <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-              <div>Caso: {{ legalCase.subject }}</div>
-              <div>Estado: {{ legalCase.status }}</div>
-              <button @click="editCase(legalCase.id)" class="btn btn-info">Editar Caso</button>
-             </li>
-          </ul>
+
+          <div v-if="legalCases[user.id] && panels.showLegalCasesPanel">
+            <ul class="user__legal-cases">
+              <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
+                <div>Caso: {{ legalCase.subject }}</div>
+                <div>Estado: {{ legalCase.status }}</div>
+                <button @click="editCase(legalCase.id)" class="btn btn-info">Editar Caso</button>
+              </li>
+            </ul>
+          </div>
+
         </li>
       </ul>
     </div>
@@ -97,7 +100,7 @@ export default {
         phone: '',
         email: '',
         address: '',
-        role:'9',
+        role:'99',
         status: 1
       },
       searchClientForm:{
@@ -106,12 +109,13 @@ export default {
       panels:{
         showSearchClientPanel: false,
         showAddNewClientPanel: false,
-        showAddLegalCasePanel: false
+        showAddLegalCasePanel: false,
+        showLegalCasesPanel: false
       },
       legalCases: []
     }
   },
-  created: function(){ // Perfect step to retrieve async data
+  created: function(){
       this.getAllUsers();
   },
   methods: {
@@ -124,15 +128,17 @@ export default {
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
       },
-      getClientByID: async function(){
-        this.resetClientVars();
-        const url = 'clientes/getClientByID';
-        this.searchClientForm[csrf_name] = csrf_hash;
-
+      getClientByPersonalID: async function(id){
+        const url = 'clientes/getClientByPersonalID';
+        
+        const params = {
+          personalID:id
+        };
+        params[csrf_name] = csrf_hash;
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(this.searchClientForm),
+          body: new URLSearchParams(params),
           headers:{
             'Content-Type': 'application/x-www-form-urlencoded',
             "X-Requested-With": "XMLHttpRequest"
@@ -140,9 +146,16 @@ export default {
         });
 
         const data = await response.json();
-        this.users = data.response;
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
+        return data;
+      },
+      showSearchResults: async function(id){
+        this.resetClientVars();
+        
+        const data = await this.getClientByPersonalID(id);
+
+        this.users = data.response;
       },
       addNewClient: async function(){
         
@@ -177,7 +190,7 @@ export default {
           this.panels[panel] = false;
         }
       },
-      showLegalCases: async function(id){
+      getLegalCasesByID: async function(id){
         const url = 'clientes/getLegalCasesByID';
 
         const params = {
@@ -196,12 +209,22 @@ export default {
         });
 
         const data = await response.json();
-        this.$set(this.legalCases, id, data.response);
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
+        return data;
+      },
+      showLegalCases: async function(id){
+        this.hideAllPanels();
+        this.panels.showLegalCasesPanel = true;
+        
+        const data = await this.getLegalCasesByID(id);
+
+        this.$set(this.legalCases, id, data.response);
       },
       editClient: function(id){
+        this.getClientByPersonalID(id);
         console.log(id);
+        this.panels.showAddNewClientPanel;
       },
       resetClientVars: function(){
         this.legalCases = [];
