@@ -44,6 +44,29 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
+    function editClient(){
+        $data = array(
+        'personalID' => $this->input->post('personalID'), 
+        'name' => $this->input->post('name'), 
+        'lastName1' => $this->input->post('lastName1'), 
+        'lastName2' => $this->input->post('lastName2'), 
+        'status' => $this->input->post('status'), 
+        'phone' => $this->input->post('phone'), 
+        'email' => $this->input->post('email'), 
+        'address' => $this->input->post('address'),
+        'role' => $this->input->post('role'));
+        
+        $id = $this->input->post('id');
+        $this->clientes_model->editClient($id, $data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
     function getAllClients(){
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
@@ -61,6 +84,18 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getClientByPersonalID($data)
+        );
+
+        echo json_encode($response);
+    }
+
+    function getClientByID(){
+        $data = $this->input->post('id');
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getClientByID($data)
         );
 
         echo json_encode($response);

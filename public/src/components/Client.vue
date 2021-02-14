@@ -1,39 +1,41 @@
 <template>
   <div class="client">
     <button class="btn btn-info" @click="showSearchClientPanel">Buscar Cliente</button>
-    <button class="btn btn-info" @click="showAddNewClientPanel">Agregar Cliente Nuevo</button>
+    <button class="btn btn-info" @click="showClientPanel">Agregar Cliente Nuevo</button>
 
-    <div v-show="panels.showAddNewClientPanel">
+    <div v-show="panels.showClientPanel">
       <form class="client__new-form">
+        <input v-model="clientForm.id" type="hidden">
         <div class="form-group">
           <label for="personalID">C&eacute;dula</label>
-          <input v-model="newClientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula">
+          <input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula" :disabled="editingUser">
         </div>
         <div class="form-group">
           <label for="name">Nombre</label>
-          <input v-model="newClientForm.name" type="text" class="form-control" id="name" placeholder="Nombre">
+          <input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre">
         </div>
         <div class="form-group">
           <label for="lastName1">Primer Apellido</label>
-          <input v-model="newClientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido">
+          <input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido">
         </div>
         <div class="form-group">
           <label for="lastName2">Segundo Apellido</label>
-          <input v-model="newClientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
+          <input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
         </div>
         <div class="form-group">
           <label for="phone">Tel&eacute;fono</label>
-          <input v-model="newClientForm.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
+          <input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input v-model="newClientForm.email" type="email" class="form-control" id="email" placeholder="Email">
+          <input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email">
         </div>
         <div class="form-group">
           <label for="address">Direcci&oacute;n</label>
-          <input v-model="newClientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
+          <input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
         </div>
-        <button @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
+        <button v-if="!editingUser" @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
+        <button v-if="editingUser" @click.prevent="saveEditedClient" type="submit" class="btn btn-primary">Guardar</button>
       </form>
     </div>
 
@@ -49,7 +51,7 @@
 
     <div>
       <ul class="client__list">
-        <li class="list__user"  v-bind:key="user.id" v-for="user in users">
+        <li class="list__user" v-bind:key="user.id" v-for="user in users">
           <div>C&eacute;dula: {{ user.personalID }}</div>
           <div>Nombre: {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
           <div>Tel&eacute;fono: {{ user.phone }}</div>
@@ -92,7 +94,8 @@ export default {
   data () {
     return {
       users: [],
-      newClientForm:{
+      clientForm:{
+        id:'',
         personalID:'',
         name: '',
         lastName1: '',
@@ -108,11 +111,12 @@ export default {
       },
       panels:{
         showSearchClientPanel: false,
-        showAddNewClientPanel: false,
+        showClientPanel: false,
         showAddLegalCasePanel: false,
         showLegalCasesPanel: false
       },
-      legalCases: []
+      legalCases: [],
+      editingUser: false
     }
   },
   created: function(){
@@ -150,22 +154,21 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      showSearchResults: async function(id){
+      showSearchResults: async function(personalID){
         this.resetClientVars();
         
-        const data = await this.getClientByPersonalID(id);
+        const data = await this.getClientByPersonalID(personalID);
 
         this.users = data.response;
       },
       addNewClient: async function(){
-        
         const url = 'clientes/addClient';
-        this.newClientForm[csrf_name] = csrf_hash;
+        this.clientForm[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(this.newClientForm),
+          body: new URLSearchParams(this.clientForm),
           headers:{
             'Content-Type': 'application/x-www-form-urlencoded',
             "X-Requested-With": "XMLHttpRequest"
@@ -181,9 +184,10 @@ export default {
         this.hideAllPanels();
         this.panels.showSearchClientPanel = true;
       },
-      showAddNewClientPanel: function(){
+      showClientPanel: function(){
         this.hideAllPanels();
-        this.panels.showAddNewClientPanel = true;
+        this.editingUser = false;
+        this.panels.showClientPanel = true;
       },
       hideAllPanels: function(){
         for(const panel in this.panels){
@@ -221,13 +225,59 @@ export default {
 
         this.$set(this.legalCases, id, data.response);
       },
-      editClient: function(id){
-        this.getClientByPersonalID(id);
-        console.log(id);
-        this.panels.showAddNewClientPanel;
+      getClientByID: async function(id){
+        const url = 'clientes/getClientByID';
+        
+        const params = {
+          id:id
+        };
+        params[csrf_name] = csrf_hash;
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(params),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      editClient: async function(id){
+        const data = await this.getClientByID(id);
+        const response = data.response;
+        if( response.length ){
+          this.clientForm = data.response[0];
+          this.editingUser = true;
+          this.panels.showClientPanel = true;
+        }
       },
       resetClientVars: function(){
         this.legalCases = [];
+      },
+      saveEditedClient: async function(){
+        const url = 'clientes/editClient';
+        this.clientForm[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(this.clientForm),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        this.panels.showClientPanel = false;
+        this.getAllUsers();
       }
   }
 }

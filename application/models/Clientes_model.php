@@ -6,18 +6,32 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function editClient($id, $data){    
+        $this->db->where('id', $id);
+        $results = $this->db->update('user', $data);
+        return $results;
+    }
+
     function getAllClients(){
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
         $query = $this->db->get('user');
         $results = $query->result();
-       
         return $results;
     }
 
     function getClientByPersonalID($personalID){
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
         $this->db->where('personalID', $personalID);
         $query = $this->db->get('user');
         $results = $query->result();
-       
+        return $results;
+    }
+
+    function getClientByID($id){
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
+        $this->db->where('id', $id);
+        $query = $this->db->get('user');
+        $results = $query->result();
         return $results;
     }
 
@@ -25,7 +39,6 @@ class Clientes_model extends CI_Model
         $this->db->where('userID', $userID);
         $query = $this->db->get('legalcase');
         $results = $query->result();
-       
         return $results;
     }
 }
