@@ -19,6 +19,24 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function getRoleList(){
+        $query = $this->db->get('rolelist');
+        $results = $query->result();
+        return $results;
+    }
+
+    function getStatusList(){
+        $query = $this->db->get('statuslist');
+        $results = $query->result();
+        return $results;
+    }
+
+    function getSubjectList(){
+        $query = $this->db->get('subjectlist');
+        $results = $query->result();
+        return $results;
+    }
+
     function getClientByPersonalID($personalID){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
         $this->db->where('personalID', $personalID);

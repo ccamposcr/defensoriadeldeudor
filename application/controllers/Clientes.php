@@ -77,6 +77,36 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
+    function getRoleList(){
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getRoleList()
+        );
+
+        echo json_encode($response);
+    }
+
+    function getStatusList(){
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getStatusList()
+        );
+
+        echo json_encode($response);
+    }
+
+    function getSubjectList(){
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getSubjectList()
+        );
+
+        echo json_encode($response);
+    }
+
     function getClientByPersonalID(){
         $data = $this->input->post('personalID');
 

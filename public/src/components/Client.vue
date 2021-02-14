@@ -96,6 +96,11 @@ export default {
   name: 'Client',
   data () {
     return {
+      staticData:{
+        roleList: [],
+        statusList: [],
+        subjectList: []
+      },
       users: [],
       clientForm:{
         id:'',
@@ -130,11 +135,46 @@ export default {
     }
   },
   created: function(){
-      this.getRoleList();
-      this.getStatusList();
-      this.getSubjectList();
+      this.getStaticDataFromDB();
   },
   methods: {
+      getStaticDataFromDB: async function(){
+
+        const roleListData = await this.getRoleList();
+        this.staticData.roleList = roleListData.response;
+
+        const statusListData = await this.getStatusList();
+        this.staticData.statusList = statusListData.response;
+
+        const subjectListData = await this.getSubjectList();
+        this.staticData.subjectList = subjectListData.response;
+
+        console.log(this.staticData);
+      },
+      getRoleList: async function(){
+        const url = 'clientes/getRoleList';
+        const response = await fetch(url);
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      getStatusList: async function(){
+        const url = 'clientes/getStatusList';
+        const response = await fetch(url);
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      getSubjectList: async function(){
+        const url = 'clientes/getSubjectList';
+        const response = await fetch(url);
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
       getAllUsers: async function(){
         const url = 'clientes/getAllClients';
         const response = await fetch(url);
