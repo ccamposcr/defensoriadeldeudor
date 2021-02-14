@@ -1,9 +1,10 @@
 <template>
   <div class="client">
     <button class="btn btn-info" @click="showSearchClientPanel">Buscar Cliente</button>
-    <button class="btn btn-info" @click="showClientPanel">Agregar Cliente Nuevo</button>
+    <button class="btn btn-info" @click="showClientFormPanel">Agregar Cliente Nuevo</button>
+    <button class="btn btn-info" @click="showAllClients">Ver todos los Clientes</button>
 
-    <div v-show="panels.showClientPanel">
+    <div v-show="panels.showClientFormPanel">
       <form class="client__new-form">
         <input v-model="clientForm.id" type="hidden">
         <div class="form-group">
@@ -34,8 +35,9 @@
           <label for="address">Direcci&oacute;n</label>
           <input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
         </div>
-        <button v-if="!editingUser" @click.prevent="addNewClient" type="submit" class="btn btn-primary">Agregar</button>
-        <button v-if="editingUser" @click.prevent="saveEditedClient" type="submit" class="btn btn-primary">Guardar</button>
+        <button v-if="!editingUser" @click.prevent="setNewClient" type="submit" class="btn btn-primary">Agregar</button>
+        <button v-if="editingUser" @click.prevent="setEditedClient" type="submit" class="btn btn-primary">Guardar</button>
+        <button @click.prevent="cancelClientForm" class="btn btn-danger">Cancelar</button>
       </form>
     </div>
 
@@ -49,15 +51,16 @@
       </form>
     </div>
 
-    <div>
+    <div v-show="users && panels.showClientListPanel">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
           <div>C&eacute;dula: {{ user.personalID }}</div>
           <div>Nombre: {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
           <div>Tel&eacute;fono: {{ user.phone }}</div>
           <div>Email: {{ user.email }}</div>
+          <div>Direcci&oacute;n: {{ user.address }}</div>
           <div>
-            <button @click="editClient(user.id)" class="btn btn-info">Editar Cliente</button>
+            <button @click="fillEditClientForm(user.id)" class="btn btn-info">Editar Cliente</button>
             <button @click="addLegalCase(user.id)" class="btn btn-info">Agregar Caso</button>
             <button @click="showLegalCases(user.id)" class="btn btn-info">Ver Casos</button>
 
@@ -111,26 +114,35 @@ export default {
       },
       panels:{
         showSearchClientPanel: false,
-        showClientPanel: false,
+        showClientFormPanel: false,
         showAddLegalCasePanel: false,
-        showLegalCasesPanel: false
+        showLegalCasesPanel: false,
+        showClientListPanel: false
       },
       legalCases: [],
       editingUser: false
     }
   },
   created: function(){
-      this.getAllUsers();
+      //this.getAllUsers();
   },
   methods: {
       getAllUsers: async function(){
-        this.resetClientVars();
         const url = 'clientes/getAllClients';
         const response = await fetch(url);
         const data = await response.json();
-        this.users = data.response;
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
+        return data;
+      },
+      showAllClients: async function(){
+        this.resetClientVars();
+
+        const data = await this.getAllUsers();
+        this.users = data.response;
+
+        this.hideAllPanels();
+        this.panels.showClientListPanel = true;
       },
       getClientByPersonalID: async function(id){
         const url = 'clientes/getClientByPersonalID';
@@ -160,8 +172,12 @@ export default {
         const data = await this.getClientByPersonalID(personalID);
 
         this.users = data.response;
+
+        this.hideAllPanels();
+        this.panels.showClientListPanel = true;
+        this.panels.showSearchClientPanel = true;
       },
-      addNewClient: async function(){
+      setNewClient: async function(){
         const url = 'clientes/addClient';
         this.clientForm[csrf_name] = csrf_hash;
 
@@ -178,20 +194,27 @@ export default {
         const data = await response.json();
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
-        this.getAllUsers();
+        //this.getAllUsers();
+        this.showClientByPersonalID(this.clientForm.personalID);
+        this.clearClientForm();
       },
       showSearchClientPanel: function(){
         this.hideAllPanels();
         this.panels.showSearchClientPanel = true;
       },
-      showClientPanel: function(){
+      showClientFormPanel: function(){
         this.hideAllPanels();
         this.editingUser = false;
-        this.panels.showClientPanel = true;
+        this.panels.showClientFormPanel = true;
       },
       hideAllPanels: function(){
         for(const panel in this.panels){
           this.panels[panel] = false;
+        }
+      },
+      clearClientForm: function(){
+        for(const item in this.clientForm){
+          this.clientForm[item] = '';
         }
       },
       getLegalCasesByID: async function(id){
@@ -219,6 +242,7 @@ export default {
       },
       showLegalCases: async function(id){
         this.hideAllPanels();
+        this.panels.showClientListPanel = true;
         this.panels.showLegalCasesPanel = true;
         
         const data = await this.getLegalCasesByID(id);
@@ -247,19 +271,20 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      editClient: async function(id){
+      fillEditClientForm: async function(id){
         const data = await this.getClientByID(id);
         const response = data.response;
         if( response.length ){
           this.clientForm = data.response[0];
           this.editingUser = true;
-          this.panels.showClientPanel = true;
+          this.hideAllPanels();
+          this.panels.showClientFormPanel = true;
         }
       },
       resetClientVars: function(){
         this.legalCases = [];
       },
-      saveEditedClient: async function(){
+      setEditedClient: async function(){
         const url = 'clientes/editClient';
         this.clientForm[csrf_name] = csrf_hash;
 
@@ -276,8 +301,21 @@ export default {
         const data = await response.json();
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
-        this.panels.showClientPanel = false;
-        this.getAllUsers();
+        this.panels.showClientFormPanel = false;
+        //this.getAllUsers();
+        this.showClientByPersonalID(this.clientForm.personalID);
+        this.clearClientForm();
+      },
+      cancelClientForm: function(){
+        this.panels.showClientFormPanel = false;
+      },
+      showClientByPersonalID: async function(personalID){
+        const data = await this.getClientByPersonalID(personalID);
+
+        this.users = data.response;
+
+        this.hideAllPanels();
+        this.panels.showClientListPanel = true;
       }
   }
 }
@@ -305,6 +343,10 @@ export default {
     .legal-cases{
       &__case{
         padding: 15px;
+        border-bottom: 1px solid gray;
+        &:last-child{
+          border-bottom: none;
+        }
       }
     }
   }
