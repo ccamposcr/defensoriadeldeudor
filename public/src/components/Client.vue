@@ -80,7 +80,7 @@
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
                 <div>Caso: {{ legalCase.subject }}</div>
                 <div>Estado: {{ legalCase.status }}</div>
-                <button @click="editCase(legalCase.id)" class="btn btn-info">Editar Caso</button>
+                <button @click="fillLegalCaseForm(legalCase.id)" class="btn btn-info">Editar Caso</button>
               </li>
             </ul>
           </div>
@@ -109,6 +109,12 @@ export default {
         role:'99',
         status: 1
       },
+      legalCaseForm:{
+        id: '',
+        subject: '',
+        userID: '',
+        status: ''
+      },
       searchClientForm:{
         personalID: ''
       },
@@ -124,7 +130,9 @@ export default {
     }
   },
   created: function(){
-      //this.getAllUsers();
+      this.getRoleList();
+      this.getStatusList();
+      this.getSubjectList();
   },
   methods: {
       getAllUsers: async function(){
@@ -194,7 +202,7 @@ export default {
         const data = await response.json();
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
-        //this.getAllUsers();
+
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
       },
@@ -217,8 +225,8 @@ export default {
           this.clientForm[item] = '';
         }
       },
-      getLegalCasesByID: async function(id){
-        const url = 'clientes/getLegalCasesByID';
+      getLegalCasesByUserID: async function(id){
+        const url = 'clientes/getLegalCasesByUserID';
 
         const params = {
           userID:id
@@ -245,7 +253,7 @@ export default {
         this.panels.showClientListPanel = true;
         this.panels.showLegalCasesPanel = true;
         
-        const data = await this.getLegalCasesByID(id);
+        const data = await this.getLegalCasesByUserID(id);
 
         this.$set(this.legalCases, id, data.response);
       },
@@ -281,6 +289,36 @@ export default {
           this.panels.showClientFormPanel = true;
         }
       },
+      getLegalCaseByID: async function(id){
+        const url = 'clientes/getLegalCaseByID';
+
+        const params = {
+          id:id
+        };
+        params[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(params),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      fillLegalCaseForm: async function(id){
+        const data = await this.getLegalCaseByID(id);
+        const response = data.response;
+        if( response.length ){
+          this.legalCaseForm = data.response[0];
+        }
+      },
       resetClientVars: function(){
         this.legalCases = [];
       },
@@ -302,7 +340,7 @@ export default {
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
         this.panels.showClientFormPanel = false;
-        //this.getAllUsers();
+
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
       },

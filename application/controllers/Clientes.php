@@ -101,13 +101,13 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
-    function getLegalCasesByID(){
+    function getLegalCasesByUserID(){
         $data = $this->input->post('userID');
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getLegalCasesByID($data)
+            'response' => $this->clientes_model->getLegalCasesByUserID($data)
         );
 
         echo json_encode($response);
