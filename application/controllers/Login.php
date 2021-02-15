@@ -16,7 +16,6 @@ class Login extends CI_Controller
     function index(){
         $data['title'] = 'Login';
         $this->load->view('global/header', $data);
-        $this->load->view('global/navigation');
         $this->load->view('login');
         $this->load->view('global/footer');
     }

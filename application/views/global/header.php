@@ -2,7 +2,7 @@
 <html>
    <head>
       <title>Defensoria del deudor | <?php echo $title;?></title>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
    </head>
    <body>
       <div class="container-fluid">

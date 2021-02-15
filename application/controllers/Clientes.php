@@ -24,15 +24,16 @@ class Clientes extends CI_Controller
 
     function addClient(){
         $data = array(
-        'personalID' => $this->input->post('personalID'), 
-        'name' => $this->input->post('name'), 
-        'lastName1' => $this->input->post('lastName1'), 
-        'lastName2' => $this->input->post('lastName2'), 
-        'status' => $this->input->post('status'), 
-        'phone' => $this->input->post('phone'), 
-        'email' => $this->input->post('email'), 
-        'address' => $this->input->post('address'),
-        'role' => $this->input->post('role'));
+            'personalID' => $this->input->post('personalID'), 
+            'name' => $this->input->post('name'), 
+            'lastName1' => $this->input->post('lastName1'), 
+            'lastName2' => $this->input->post('lastName2'), 
+            'status' => $this->input->post('status') != null ? $this->input->post('status') : '1' , 
+            'phone' => $this->input->post('phone'), 
+            'email' => $this->input->post('email'), 
+            'address' => $this->input->post('address'),
+            'role' => $this->input->post('role') != null ? $this->input->post('role') : '99'
+        );
 
         $this->clientes_model->addClient($data);
 
@@ -46,15 +47,16 @@ class Clientes extends CI_Controller
 
     function editClient(){
         $data = array(
-        'personalID' => $this->input->post('personalID'), 
-        'name' => $this->input->post('name'), 
-        'lastName1' => $this->input->post('lastName1'), 
-        'lastName2' => $this->input->post('lastName2'), 
-        'status' => $this->input->post('status'), 
-        'phone' => $this->input->post('phone'), 
-        'email' => $this->input->post('email'), 
-        'address' => $this->input->post('address'),
-        'role' => $this->input->post('role'));
+            'personalID' => $this->input->post('personalID'), 
+            'name' => $this->input->post('name'), 
+            'lastName1' => $this->input->post('lastName1'), 
+            'lastName2' => $this->input->post('lastName2'), 
+            'status' => $this->input->post('status'), 
+            'phone' => $this->input->post('phone'), 
+            'email' => $this->input->post('email'), 
+            'address' => $this->input->post('address'),
+            'role' => $this->input->post('role')
+        );
         
         $id = $this->input->post('id');
         $this->clientes_model->editClient($id, $data);

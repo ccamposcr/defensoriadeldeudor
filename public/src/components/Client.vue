@@ -1,54 +1,47 @@
 <template>
   <div class="client">
-    <button class="btn btn-info" @click="showSearchClientPanel">Buscar Cliente</button>
-    <button class="btn btn-info" @click="showClientFormPanel">Agregar Cliente Nuevo</button>
-    <button class="btn btn-info" @click="showAllClients">Ver todos los Clientes</button>
+    <b-button variant="info" @click="showSearchClientPanel">Buscar Cliente</b-button>
+    <b-button variant="info" @click="showClientFormPanel">Agregar Cliente Nuevo</b-button>
+    <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
 
     <div v-show="panels.showClientFormPanel">
-      <form class="client__new-form">
-        <input v-model="clientForm.id" type="hidden">
-        <div class="form-group">
-          <label for="personalID">C&eacute;dula</label>
-          <input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cedula" :disabled="editingUser">
-        </div>
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre">
-        </div>
-        <div class="form-group">
-          <label for="lastName1">Primer Apellido</label>
-          <input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido">
-        </div>
-        <div class="form-group">
-          <label for="lastName2">Segundo Apellido</label>
-          <input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido">
-        </div>
-        <div class="form-group">
-          <label for="phone">Tel&eacute;fono</label>
-          <input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Telefono">
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email">
-        </div>
-        <div class="form-group">
-          <label for="address">Direcci&oacute;n</label>
-          <input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Direccion">
-        </div>
-        <button v-if="!editingUser" @click.prevent="setNewClient" type="submit" class="btn btn-primary">Agregar</button>
-        <button v-if="editingUser" @click.prevent="setEditedClient" type="submit" class="btn btn-primary">Guardar</button>
-        <button @click.prevent="cancelClientForm" class="btn btn-danger">Cancelar</button>
-      </form>
+      <b-form class="client__new-form">
+        <b-form-input v-model="clientForm.id" type="hidden">
+        <b-form-group label-for="personalID" label="Cédula">
+          <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="name" label="Nombre">
+          <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="lastName1" label="Primer Apellido">
+          <b-form-input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="lastName2" label="Segundo Apellido">
+          <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="phone" label="Teléfono">
+          <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="email" label="Email">
+          <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
+        </b-form-group>
+        <b-form-group label-for="address" label="Dirección">
+          <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
+        </b-form-group>
+
+        <b-button v-if="!editingUser" @click.prevent="setNewClient" type="submit" variant="primary">Agregar</b-button>
+        <b-button v-if="editingUser" @click.prevent="setEditedClient" type="submit" variant="primary">Guardar</b-button>
+        <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
+      </b-form>
     </div>
 
     <div v-show="panels.showSearchClientPanel">
-      <form class="client__search-form">
-        <div class="form-group">
-          <label for="personalID2">C&eacute;dula</label>
-          <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
-        </div>
-        <button @click.prevent="showSearchResults(searchClientForm.personalID)" type="submit" class="btn btn-primary">Buscar</button>
-      </form>
+      <b-form class="client__search-form">
+        <b-form-group label-for="personalID2" label="Cédula">
+          <b-form-input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cédula"></b-form-input>
+        </b-form-group>
+        <b-button @click.prevent="showSearchResults(searchClientForm.personalID)" type="submit" variant="primary">Buscar</b-button>
+      </b-form>
     </div>
 
     <div v-show="users && panels.showClientListPanel">
@@ -60,18 +53,20 @@
           <div>Email: {{ user.email }}</div>
           <div>Direcci&oacute;n: {{ user.address }}</div>
           <div>
-            <button @click="fillEditClientForm(user.id)" class="btn btn-info">Editar Cliente</button>
-            <button @click="addLegalCase(user.id)" class="btn btn-info">Agregar Caso</button>
-            <button @click="showLegalCases(user.id)" class="btn btn-info">Ver Casos</button>
+            <b-button @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
+            <b-button @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
+            <b-button @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
 
             <div v-show="panels.showAddLegalCasePanel">
-              <form class="user__case-form">
-                <div class="form-group">
-                  <label for="personalID2">C&eacute;dula</label>
-                  <input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cedula">
-                </div>
-                <button @click.prevent="" type="submit" class="btn btn-primary">Agregar</button>
-              </form>
+              <b-form class="user__case-form">
+                <b-form-group label-for="subject" label="Caso Legal">
+                  <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList"></b-form-select>
+                </b-form-group>
+                <b-form-group label-for="status" label="Estado">
+                  <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList"></b-form-select>
+                </b-form-group>
+                <b-button @click.prevent="setNewLegaCase" type="submit" variant="primary">Agregar</b-button>
+              </b-form>
             </div>
           </div>
 
@@ -80,7 +75,7 @@
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
                 <div>Caso: {{ legalCase.subject }}</div>
                 <div>Estado: {{ legalCase.status }}</div>
-                <button @click="fillLegalCaseForm(legalCase.id)" class="btn btn-info">Editar Caso</button>
+                <b-button @click="fillLegalCaseForm(legalCase.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
           </div>
@@ -112,7 +107,7 @@ export default {
         email: '',
         address: '',
         role:'99',
-        status: 1
+        status: '1'
       },
       legalCaseForm:{
         id: '',
@@ -264,6 +259,8 @@ export default {
         for(const item in this.clientForm){
           this.clientForm[item] = '';
         }
+        this.clientForm.role = '99';
+        this.clientForm.status = '1'
       },
       getLegalCasesByUserID: async function(id){
         const url = 'clientes/getLegalCasesByUserID';
@@ -385,6 +382,7 @@ export default {
         this.clearClientForm();
       },
       cancelClientForm: function(){
+        this.clearClientForm();
         this.panels.showClientFormPanel = false;
       },
       showClientByPersonalID: async function(personalID){
@@ -394,6 +392,9 @@ export default {
 
         this.hideAllPanels();
         this.panels.showClientListPanel = true;
+      },
+      showLegalCaseForm: async function(){
+        this.panels.showAddLegalCasePanel = true;
       }
   }
 }
