@@ -11,6 +11,11 @@ class Clientes_model extends CI_Model
         $results = $this->db->update('user', $data);
         return $results;
     }
+    
+    function addLegalCase($data){       
+        $results = $this->db->insert('legalcase', $data);
+        return $results;
+    }
 
     function getAllClients(){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');

@@ -60,12 +60,15 @@
             <div v-show="panels.showAddLegalCasePanel">
               <b-form class="user__case-form">
                 <b-form-group label-for="subject" label="Caso Legal">
-                  <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList"></b-form-select>
+                  <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
                 </b-form-group>
                 <b-form-group label-for="status" label="Estado">
-                  <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList"></b-form-select>
+                  <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList" value-field="status" text-field="status"></b-form-select>
                 </b-form-group>
-                <b-button @click.prevent="setNewLegaCase" type="submit" variant="primary">Agregar</b-button>
+                <b-form-group label-for="detail" label="Detalle">
+                  <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
+                </b-form-group>
+                <b-button @click.prevent="setNewLegalCase(user.id)" type="submit" variant="primary">Agregar</b-button>
               </b-form>
             </div>
           </div>
@@ -75,6 +78,7 @@
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
                 <div>Caso: {{ legalCase.subject }}</div>
                 <div>Estado: {{ legalCase.status }}</div>
+                <div>Detalle: {{ legalCase.detail }}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
@@ -113,7 +117,8 @@ export default {
         id: '',
         subject: '',
         userID: '',
-        status: ''
+        status: '',
+        detail: ''
       },
       searchClientForm:{
         personalID: ''
@@ -262,6 +267,11 @@ export default {
         this.clientForm.role = '99';
         this.clientForm.status = '1'
       },
+      clearLegalCaseForm: function(){
+        for(const item in this.legalCaseForm){
+          this.legalCaseForm[item] = '';
+        }
+      },
       getLegalCasesByUserID: async function(id){
         const url = 'clientes/getLegalCasesByUserID';
 
@@ -395,6 +405,29 @@ export default {
       },
       showLegalCaseForm: async function(){
         this.panels.showAddLegalCasePanel = true;
+      },
+      setNewLegalCase: async function(userID){
+        const url = 'clientes/addLegalCase';
+        this.legalCaseForm[csrf_name] = csrf_hash;
+        this.legalCaseForm['userID'] = userID;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(this.legalCaseForm),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        //this.showClientByPersonalID(this.clientForm.personalID);
+        this.showLegalCases(userID);
+        this.clearLegalCaseForm();
       }
   }
 }
