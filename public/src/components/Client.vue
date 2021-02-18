@@ -6,7 +6,7 @@
 
     <div v-show="panels.showClientFormPanel">
       <b-form class="client__new-form">
-        <b-form-input v-model="clientForm.id" type="hidden">
+        <input type="hidden" v-model="clientForm.id">
         <b-form-group label-for="personalID" label="Cédula">
           <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
         </b-form-group>
@@ -57,7 +57,7 @@
             <b-button @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
             <b-button @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
 
-            <div v-show="panels.showAddLegalCasePanel">
+            <div v-show="panels.showLegalCaseFormPanel">
               <b-form class="user__case-form">
                 <b-form-group label-for="subject" label="Caso Legal">
                   <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
@@ -68,7 +68,8 @@
                 <b-form-group label-for="detail" label="Detalle">
                   <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
                 </b-form-group>
-                <b-button @click.prevent="setNewLegalCase(user.id)" type="submit" variant="primary">Agregar</b-button>
+                <b-button v-if="!editingLegalCase" @click.prevent="setNewLegalCase(user.id)" type="submit" variant="primary">Agregar</b-button>
+                <b-button v-if="editingLegalCase" @click.prevent="setEditedLegalCase(user.id)" type="submit" variant="primary">Guardar</b-button>
               </b-form>
             </div>
           </div>
@@ -79,7 +80,7 @@
                 <div>Caso: {{ legalCase.subject }}</div>
                 <div>Estado: {{ legalCase.status }}</div>
                 <div>Detalle: {{ legalCase.detail }}</div>
-                <b-button @click="fillLegalCaseForm(legalCase.id)" variant="info">Editar Caso</b-button>
+                <b-button @click="fillLegalCaseForm(legalCase.id, user.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
           </div>
@@ -126,12 +127,13 @@ export default {
       panels:{
         showSearchClientPanel: false,
         showClientFormPanel: false,
-        showAddLegalCasePanel: false,
+        showLegalCaseFormPanel: false,
         showLegalCasesPanel: false,
         showClientListPanel: false
       },
       legalCases: [],
-      editingUser: false
+      editingUser: false,
+      editingLegalCase: false
     }
   },
   created: function(){
@@ -359,11 +361,15 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      fillLegalCaseForm: async function(id){
+      fillLegalCaseForm: async function(id, userID){
         const data = await this.getLegalCaseByID(id);
         const response = data.response;
         if( response.length ){
           this.legalCaseForm = data.response[0];
+          console.log(this.legalCaseForm);
+          this.editingLegalCase = true;
+          //this.hideAllPanels();
+          this.panels.showLegalCaseFormPanel = true;
         }
       },
       resetClientVars: function(){
@@ -404,7 +410,7 @@ export default {
         this.panels.showClientListPanel = true;
       },
       showLegalCaseForm: async function(){
-        this.panels.showAddLegalCasePanel = true;
+        this.panels.showLegalCaseFormPanel = true;
       },
       setNewLegalCase: async function(userID){
         const url = 'clientes/addLegalCase';
@@ -425,7 +431,6 @@ export default {
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
 
-        //this.showClientByPersonalID(this.clientForm.personalID);
         this.showLegalCases(userID);
         this.clearLegalCaseForm();
       }

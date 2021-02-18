@@ -59,6 +59,13 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function getLegalCaseByID($id){
+        $this->db->where('id', $id);
+        $query = $this->db->get('legalcase');
+        $results = $query->result();
+        return $results;
+    }
+
     function getLegalCasesByUserID($userID){
         $this->db->where('userID', $userID);
         $query = $this->db->get('legalcase');
