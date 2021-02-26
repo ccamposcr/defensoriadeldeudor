@@ -1,9 +1,8 @@
 <template>
   <div class="client">
-    <b-button variant="info" @click="showSearchClientPanel">Buscar Cliente</b-button>
-    <b-button variant="info" @click="showClientFormPanel">Agregar Cliente Nuevo</b-button>
+    <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
+    <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
-
 
     <div v-show="users">
       <ul class="client__list">
@@ -32,6 +31,9 @@
 
         </li>
       </ul>
+    </div>
+    <div v-show="!users">
+      <p>No hay resultados</p>
     </div>
 
     <div>
@@ -67,7 +69,7 @@
 
             <b-button v-if="!editingUser" @click.prevent="setNewClient" type="submit" variant="primary">Agregar</b-button>
             <b-button v-if="editingUser" @click.prevent="setEditedClient" type="submit" variant="primary">Guardar</b-button>
-            <b-button @click.prevent="cancelClientForm && $bvModal.hide('bv-modal-client-form')" variant="danger">Cancelar</b-button>
+            <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
           </b-form>
           
         </div>
@@ -84,7 +86,7 @@
               <b-form-input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cédula"></b-form-input>
             </b-form-group>
             <b-button @click.prevent="showSearchResults(searchClientForm.personalID)" type="submit" variant="primary">Buscar</b-button>
-            <b-button @click.prevent="$bvModal.hide('bv-modal-search-form')" variant="danger">Cancelar</b-button>
+            <b-button @click.prevent="cancelSearchForm" variant="danger">Cancelar</b-button>
           </b-form>
 
         </div>
@@ -98,6 +100,7 @@
 
           <b-form class="user__case-form">
             <b-form-group label-for="subject" label="Caso Legal">
+              <input type="hidden" v-model="legalCaseForm.id">
               <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
             </b-form-group>
             <b-form-group label-for="status" label="Estado">
@@ -106,9 +109,9 @@
             <b-form-group label-for="detail" label="Detalle">
               <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
             </b-form-group>
-            <b-button v-if="!editingLegalCase" @click.prevent="setNewLegalCase(user.id)" type="submit" variant="primary">Agregar</b-button>
-            <b-button v-if="editingLegalCase" @click.prevent="setEditedLegalCase(user.id)" type="submit" variant="primary">Guardar</b-button>
-            <b-button @click.prevent="$bvModal.hide('bv-modal-legal-case-form')" variant="danger">Cancelar</b-button>
+            <b-button v-if="!editingLegalCase" @click.prevent="setNewLegalCase" type="submit" variant="primary">Agregar</b-button>
+            <b-button v-if="editingLegalCase" @click.prevent="setEditedLegalCase" type="submit" variant="primary">Guardar</b-button>
+            <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
           </b-form>
 
         </div>
@@ -151,16 +154,10 @@ export default {
       searchClientForm:{
         personalID: ''
       },
-      /*panels:{
-        showSearchClientPanel: false,
-        showClientFormPanel: false,
-        showLegalCaseFormPanel: false,
-        showLegalCasesPanel: false,
-        showClientListPanel: false
-      },*/
       legalCases: [],
       editingUser: false,
-      editingLegalCase: false
+      editingLegalCase: false,
+      legalCaseUserID: ''
     }
   },
   created: function(){
@@ -217,9 +214,6 @@ export default {
 
         const data = await this.getAllUsers();
         this.users = data.response;
-
-        //this.hideAllPanels();
-        //this.panels.showClientListPanel = true;
       },
       getClientByPersonalID: async function(id){
         const url = 'clientes/getClientByPersonalID';
@@ -250,9 +244,8 @@ export default {
 
         this.users = data.response;
 
-        //this.hideAllPanels();
-        //this.panels.showClientListPanel = true;
-        //this.panels.showSearchClientPanel = true;
+        this.$bvModal.hide('bv-modal-search-form');
+        this.clearSearchForm();
       },
       setNewClient: async function(){
         const url = 'clientes/addClient';
@@ -274,22 +267,14 @@ export default {
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
+        this.$bvModal.hide('bv-modal-client-form');
       },
-      showSearchClientPanel: function(){
-        //this.hideAllPanels();
-        //this.panels.showSearchClientPanel = true;
+      showSearchClientModal: function(){
+        this.$bvModal.show('bv-modal-search-form');
       },
-      showClientFormPanel: function(){
-        //this.hideAllPanels();
+      showClientFormModal: function(){
         this.editingUser = false;
-        //this.panels.showClientFormPanel = true;
         this.$bvModal.show('bv-modal-client-form');
-
-      },
-      hideAllPanels: function(){
-        for(const panel in this.panels){
-          this.panels[panel] = false;
-        }
       },
       clearClientForm: function(){
         for(const item in this.clientForm){
@@ -301,6 +286,11 @@ export default {
       clearLegalCaseForm: function(){
         for(const item in this.legalCaseForm){
           this.legalCaseForm[item] = '';
+        }
+      },
+      clearSearchForm: function(){
+        for(const item in this.searchClientForm){
+          this.searchClientForm[item] = '';
         }
       },
       getLegalCasesByUserID: async function(id){
@@ -326,11 +316,7 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      showLegalCases: async function(id){
-        //this.hideAllPanels();
-        //this.panels.showClientListPanel = true;
-        //this.panels.showLegalCasesPanel = true;
-        
+      showLegalCases: async function(id){        
         const data = await this.getLegalCasesByUserID(id);
 
         this.$set(this.legalCases, id, data.response);
@@ -363,8 +349,7 @@ export default {
         if( response.length ){
           this.clientForm = data.response[0];
           this.editingUser = true;
-          //this.hideAllPanels();
-          //this.panels.showClientFormPanel = true;
+          this.$bvModal.show('bv-modal-client-form');
         }
       },
       getLegalCaseByID: async function(id){
@@ -391,14 +376,13 @@ export default {
         return data;
       },
       fillLegalCaseForm: async function(id, userID){
+        this.legalCaseUserID = userID;
         const data = await this.getLegalCaseByID(id);
         const response = data.response;
         if( response.length ){
           this.legalCaseForm = data.response[0];
-          console.log(this.legalCaseForm);
           this.editingLegalCase = true;
-          //this.hideAllPanels();
-          //this.panels.showLegalCaseFormPanel = true;
+          this.$bvModal.show('bv-modal-legal-case-form');
         }
       },
       resetClientVars: function(){
@@ -421,27 +405,58 @@ export default {
         const data = await response.json();
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
-        //this.panels.showClientFormPanel = false;
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
+        this.$bvModal.hide('bv-modal-client-form');
+      },
+      setEditedLegalCase: async function(){
+        const userID = this.legalCaseUserID;
+        const url = 'clientes/editLegalCase';
+        this.legalCaseForm[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(this.legalCaseForm),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        this.showLegalCases(userID);
+        this.clearLegalCaseForm();
+        this.$bvModal.hide('bv-modal-legal-case-form');
       },
       cancelClientForm: function(){
         this.clearClientForm();
-        //this.panels.showClientFormPanel = false;
+        this.$bvModal.hide('bv-modal-client-form');
+      },
+      cancelSearchForm: function(){
+        this.clearSearchForm();
+        this.$bvModal.hide('bv-modal-search-form');
+      },
+      cancelLegalForm: function(){
+        this.clearLegalCaseForm();
+        this.$bvModal.hide('bv-modal-legal-case-form');
       },
       showClientByPersonalID: async function(personalID){
         const data = await this.getClientByPersonalID(personalID);
 
         this.users = data.response;
 
-        //this.hideAllPanels();
-        //this.panels.showClientListPanel = true;
       },
-      showLegalCaseForm: async function(){
-        //this.panels.showLegalCaseFormPanel = true;
+      showLegalCaseForm: async function(userID){
+        this.legalCaseUserID = userID;
+        this.$bvModal.show('bv-modal-legal-case-form');
       },
-      setNewLegalCase: async function(userID){
+      setNewLegalCase: async function(){
+        const userID = this.legalCaseUserID;
         const url = 'clientes/addLegalCase';
         this.legalCaseForm[csrf_name] = csrf_hash;
         this.legalCaseForm['userID'] = userID;
@@ -462,6 +477,7 @@ export default {
 
         this.showLegalCases(userID);
         this.clearLegalCaseForm();
+        this.$bvModal.hide('bv-modal-legal-case-form');
       }
   }
 }
