@@ -109,6 +109,9 @@
             <b-form-group label-for="detail" label="Detalle">
               <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
             </b-form-group>
+            <b-form-group label-for="nextNotification" label="Fecha de Notificación">
+              <b-form-datepicker :min="getTodayDate" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
+            </b-form-group>
             <b-button v-if="!editingLegalCase" @click.prevent="setNewLegalCase" type="submit" variant="primary">Agregar</b-button>
             <b-button v-if="editingLegalCase" @click.prevent="setEditedLegalCase" type="submit" variant="primary">Guardar</b-button>
             <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
@@ -149,7 +152,8 @@ export default {
         subject: '',
         userID: '',
         status: '',
-        detail: ''
+        detail: '',
+        nextNotification: ''
       },
       searchClientForm:{
         personalID: ''
@@ -164,6 +168,11 @@ export default {
       this.getStaticDataFromDB();
   },
   methods: {
+      getTodayDate: function(){
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return new Date(today);
+      },
       getStaticDataFromDB: async function(){
 
         const roleListData = await this.getRoleList();
