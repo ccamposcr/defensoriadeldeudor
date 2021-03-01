@@ -50,30 +50,8 @@ export default {
     }
   },
   methods: {
-    getClientByPersonalID: async function(id){
-        const url = 'clientes/getClientByPersonalID';
-        
-        const params = {
-            personalID:id
-        };
-        params[csrf_name] = csrf_hash;
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params),
-            headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-            }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-    },
     showClientByPersonalID: async function(personalID){
-        const data = await this.getClientByPersonalID(personalID);
+        const data = await this.$parent.getClientByPersonalID(personalID);
         this.$emit('update:users', data.response);
     },
     setNewClient: async function(){

@@ -38,62 +38,8 @@
     </div>
 
     <div>
-      <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync ="users"></modal-client-form>
-      <!--
-      <b-modal id="bv-modal-client-form" hide-footer>
-        <template #modal-title>
-          Cliente
-        </template>
-        <div class="d-block">
-          
-          <b-form class="client__new-form">
-            <input type="hidden" v-model="clientForm.id">
-            <b-form-group label-for="personalID" label="Cédula">
-              <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="name" label="Nombre">
-              <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="lastName1" label="Primer Apellido">
-              <b-form-input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="lastName2" label="Segundo Apellido">
-              <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="phone" label="Teléfono">
-              <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="email" label="Email">
-              <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="address" label="Dirección">
-              <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
-            </b-form-group>
-
-            <b-button v-if="!editingUser" @click.prevent="setNewClient" type="submit" variant="primary">Agregar</b-button>
-            <b-button v-if="editingUser" @click.prevent="setEditedClient" type="submit" variant="primary">Guardar</b-button>
-            <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
-          </b-form>
-          
-        </div>
-      </b-modal>
--->
-      <b-modal id="bv-modal-search-form" hide-footer>
-        <template #modal-title>
-          Buscar
-        </template>
-        <div class="d-block">
-
-          <b-form class="client__search-form">
-            <b-form-group label-for="personalID2" label="Cédula">
-              <b-form-input v-model="searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cédula"></b-form-input>
-            </b-form-group>
-            <b-button @click.prevent="showSearchResults(searchClientForm.personalID)" type="submit" variant="primary">Buscar</b-button>
-            <b-button @click.prevent="cancelSearchForm" variant="danger">Cancelar</b-button>
-          </b-form>
-
-        </div>
-      </b-modal>
+      <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
+      <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
 
       <b-modal id="bv-modal-legal-case-form" hide-footer>
         <template #modal-title>
@@ -129,9 +75,10 @@
 
 <script>
 import ModalClientForm from './ModalClientForm.vue';
+import ModalSearchForm from './ModalSearchForm.vue';
 export default {
   name: 'Client',
-  components: {ModalClientForm},
+  components: {ModalClientForm, ModalSearchForm},
   data () {
     return {
       staticData:{
@@ -175,6 +122,28 @@ export default {
       this.dateToday = this.getTodayDate();
   },
   methods: {
+      getClientByPersonalID: async function(id){
+          const url = 'clientes/getClientByPersonalID';
+          
+          const params = {
+              personalID:id
+          };
+          params[csrf_name] = csrf_hash;
+          const response = await fetch(url, {
+              credentials: 'include',
+              method: 'POST',
+              body: new URLSearchParams(params),
+              headers:{
+              'Content-Type': 'application/x-www-form-urlencoded',
+              "X-Requested-With": "XMLHttpRequest"
+              }
+          });
+
+          const data = await response.json();
+          csrf_name = data.csrf_name;
+          csrf_hash = data.csrf_hash;
+          return data;
+      },
       getTodayDate: function(){
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -233,16 +202,6 @@ export default {
         const data = await this.getAllUsers();
         this.users = data.response;
       },
-      showSearchResults: async function(personalID){
-        this.resetClientVars();
-        
-        const data = await this.getClientByPersonalID(personalID);
-
-        this.users = data.response;
-
-        this.$bvModal.hide('bv-modal-search-form');
-        this.clearSearchForm();
-      },
       showSearchClientModal: function(){
         this.$bvModal.show('bv-modal-search-form');
       },
@@ -253,11 +212,6 @@ export default {
       clearLegalCaseForm: function(){
         for(const item in this.legalCaseForm){
           this.legalCaseForm[item] = '';
-        }
-      },
-      clearSearchForm: function(){
-        for(const item in this.searchClientForm){
-          this.searchClientForm[item] = '';
         }
       },
       getLegalCasesByUserID: async function(id){
@@ -377,10 +331,6 @@ export default {
         this.showLegalCases(userID);
         this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
-      },
-      cancelSearchForm: function(){
-        this.clearSearchForm();
-        this.$bvModal.hide('bv-modal-search-form');
       },
       cancelLegalForm: function(){
         this.clearLegalCaseForm();
