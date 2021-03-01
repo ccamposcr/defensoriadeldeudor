@@ -38,6 +38,8 @@
     </div>
 
     <div>
+      <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync ="users"></modal-client-form>
+      <!--
       <b-modal id="bv-modal-client-form" hide-footer>
         <template #modal-title>
           Cliente
@@ -75,7 +77,7 @@
           
         </div>
       </b-modal>
-
+-->
       <b-modal id="bv-modal-search-form" hide-footer>
         <template #modal-title>
           Buscar
@@ -126,8 +128,10 @@
 </template>
 
 <script>
+import ModalClientForm from './ModalClientForm.vue';
 export default {
   name: 'Client',
+  components: {ModalClientForm},
   data () {
     return {
       staticData:{
@@ -160,10 +164,10 @@ export default {
         personalID: ''
       },
       legalCases: [],
-      editingUser: false,
       editingLegalCase: false,
       legalCaseUserID: '',
-      dateToday: null
+      dateToday: null,
+      editingUser: false
     }
   },
   created: function(){
@@ -229,28 +233,6 @@ export default {
         const data = await this.getAllUsers();
         this.users = data.response;
       },
-      getClientByPersonalID: async function(id){
-        const url = 'clientes/getClientByPersonalID';
-        
-        const params = {
-          personalID:id
-        };
-        params[csrf_name] = csrf_hash;
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       showSearchResults: async function(personalID){
         this.resetClientVars();
         
@@ -261,41 +243,12 @@ export default {
         this.$bvModal.hide('bv-modal-search-form');
         this.clearSearchForm();
       },
-      setNewClient: async function(){
-        const url = 'clientes/addClient';
-        this.clientForm[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(this.clientForm),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-
-        this.showClientByPersonalID(this.clientForm.personalID);
-        this.clearClientForm();
-        this.$bvModal.hide('bv-modal-client-form');
-      },
       showSearchClientModal: function(){
         this.$bvModal.show('bv-modal-search-form');
       },
       showClientFormModal: function(){
         this.editingUser = false;
         this.$bvModal.show('bv-modal-client-form');
-      },
-      clearClientForm: function(){
-        for(const item in this.clientForm){
-          this.clientForm[item] = '';
-        }
-        this.clientForm.role = '99';
-        this.clientForm.status = '1'
       },
       clearLegalCaseForm: function(){
         for(const item in this.legalCaseForm){
@@ -402,28 +355,6 @@ export default {
       resetClientVars: function(){
         this.legalCases = [];
       },
-      setEditedClient: async function(){
-        const url = 'clientes/editClient';
-        this.clientForm[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(this.clientForm),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-
-        this.showClientByPersonalID(this.clientForm.personalID);
-        this.clearClientForm();
-        this.$bvModal.hide('bv-modal-client-form');
-      },
       setEditedLegalCase: async function(){
         const userID = this.legalCaseUserID;
         const url = 'clientes/editLegalCase';
@@ -447,10 +378,6 @@ export default {
         this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
       },
-      cancelClientForm: function(){
-        this.clearClientForm();
-        this.$bvModal.hide('bv-modal-client-form');
-      },
       cancelSearchForm: function(){
         this.clearSearchForm();
         this.$bvModal.hide('bv-modal-search-form');
@@ -458,12 +385,6 @@ export default {
       cancelLegalForm: function(){
         this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
-      },
-      showClientByPersonalID: async function(personalID){
-        const data = await this.getClientByPersonalID(personalID);
-
-        this.users = data.response;
-
       },
       showLegalCaseForm: async function(userID){
         this.legalCaseUserID = userID;
