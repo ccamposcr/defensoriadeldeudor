@@ -24,6 +24,7 @@
                 <div>Caso: {{ legalCase.subject }}</div>
                 <div>Estado: {{ legalCase.status }}</div>
                 <div>Detalle: {{ legalCase.detail }}</div>
+                <div>Fecha a notificar: {{legalCase.nextNotification}}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.id, user.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
@@ -110,7 +111,7 @@
               <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
             </b-form-group>
             <b-form-group label-for="nextNotification" label="Fecha de Notificación">
-              <b-form-datepicker :min="getTodayDate" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
+              <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
             </b-form-group>
             <b-button v-if="!editingLegalCase" @click.prevent="setNewLegalCase" type="submit" variant="primary">Agregar</b-button>
             <b-button v-if="editingLegalCase" @click.prevent="setEditedLegalCase" type="submit" variant="primary">Guardar</b-button>
@@ -161,16 +162,20 @@ export default {
       legalCases: [],
       editingUser: false,
       editingLegalCase: false,
-      legalCaseUserID: ''
+      legalCaseUserID: '',
+      dateToday: null
     }
   },
   created: function(){
       this.getStaticDataFromDB();
+      this.dateToday = this.getTodayDate();
   },
   methods: {
       getTodayDate: function(){
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        today.setMonth(today.getMonth() - 2)
+        today.setDate(15)
         return new Date(today);
       },
       getStaticDataFromDB: async function(){
