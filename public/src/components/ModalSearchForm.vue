@@ -16,7 +16,6 @@
 
             </div>
         </b-modal>
-       
     </div>
 </template>
  
