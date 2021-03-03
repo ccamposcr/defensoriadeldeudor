@@ -35,8 +35,8 @@
                 <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
-              <b-button v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient})" type="submit" variant="primary">Agregar</b-button>
-              <b-button v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient})" type="submit" variant="primary">Guardar</b-button>
+              <b-button v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">Agregar</b-button>
+              <b-button v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">Guardar</b-button>
               <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
           </b-form>
           

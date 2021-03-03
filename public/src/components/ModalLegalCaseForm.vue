@@ -25,8 +25,8 @@
                   <b-form-group label-for="nextNotification" label="Fecha de Alerta">
                   <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
-                  <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase})" type="submit" variant="primary">Agregar</b-button>
-                  <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase})" type="submit" variant="primary">Guardar</b-button>
+                  <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
+                  <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">Guardar</b-button>
                   <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
               </b-form>
 
