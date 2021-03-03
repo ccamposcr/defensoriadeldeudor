@@ -88,7 +88,7 @@ export default {
       return re.test(email);
     },
     showClientByPersonalID: async function(personalID){
-        const data = await this.$parent.getClientByPersonalID(personalID);
+        const data = await this.$parent.getClientBy('PersonalID', personalID);
         this.$emit('update:users', data.response);
     },
     setNewClient: async function(){

@@ -62,31 +62,35 @@ export default {
       },
       users: [],
       clientForm:{
-        id:'',
-        personalID:'',
-        name: '',
-        lastName1: '',
-        lastName2: '',
-        phone: '',
-        email: '',
-        address: '',
+        id:null,
+        personalID:null,
+        name: null,
+        lastName1: null,
+        lastName2: null,
+        phone: null,
+        email: null,
+        address: null,
         role:'99',
         status: '1'
       },
       legalCaseForm:{
-        id: '',
-        subject: '',
-        userID: '',
-        status: '',
-        detail: '',
-        nextNotification: ''
+        id: null,
+        subject: null,
+        userID: null,
+        status: null,
+        detail: null,
+        nextNotification: null
       },
       searchClientForm:{
-        personalID: ''
+        personalID: null,
+        name: null,
+        lastName1: null,
+        lastName2: null,
+        searchBy: null
       },
       legalCases: [],
       editingLegalCase: false,
-      legalCaseUserId: '',
+      legalCaseUserId: null,
       dateToday: null,
       editingUser: false
     }
@@ -108,11 +112,12 @@ export default {
     })*/
   },
   methods: {
-      getClientByPersonalID: async function(id){
-          const url = 'clientes/getClientByPersonalID';
+      getClientBy: async function(searchBy, value){
+          const url = 'clientes/getClientBy';
           
           const params = {
-              personalID:id
+              'searchBy':searchBy,
+              'value' :value
           };
           params[csrf_name] = csrf_hash;
           const response = await fetch(url, {
@@ -192,14 +197,16 @@ export default {
         this.$bvModal.show('bv-modal-search-form');
       },
       showClientFormModal: function(){
+        this.clearForm('clientForm');
         this.editingUser = false;
         this.$bvModal.show('bv-modal-client-form');
       },
-      getLegalCasesByUserID: async function(id){
-        const url = 'clientes/getLegalCasesByUserID';
+      getLegalCasesBy: async function(searchBy, value){
+        const url = 'clientes/getLegalCasesBy';
 
         const params = {
-          userID:id
+          'searchBy':searchBy,
+          'value': value
         };
         params[csrf_name] = csrf_hash;
 
@@ -219,34 +226,12 @@ export default {
         return data;
       },
       showLegalCases: async function(id){        
-        const data = await this.getLegalCasesByUserID(id);
+        const data = await this.getLegalCasesBy('userID', id);
 
         this.$set(this.legalCases, id, data.response);
       },
-      getClientByID: async function(id){
-        const url = 'clientes/getClientByID';
-        
-        const params = {
-          id:id
-        };
-        params[csrf_name] = csrf_hash;
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       fillEditClientForm: async function(id){
-        const data = await this.getClientByID(id);
+        const data = await this.getClientBy('id', id);
         const response = data.response;
         if( response.length ){
           this.clientForm = data.response[0];
@@ -254,32 +239,9 @@ export default {
           this.$bvModal.show('bv-modal-client-form');
         }
       },
-      getLegalCaseByID: async function(id){
-        const url = 'clientes/getLegalCaseByID';
-
-        const params = {
-          id:id
-        };
-        params[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       fillLegalCaseForm: async function(id, userID){
         this.legalCaseUserId = userID;
-        const data = await this.getLegalCaseByID(id);
+        const data = await this.getLegalCasesBy('id', id);
         const response = data.response;
         if( response.length ){
           this.legalCaseForm = data.response[0];
@@ -291,9 +253,16 @@ export default {
         this.legalCases = [];
       },
       showLegalCaseForm: async function(userID){
+        this.clearForm('legalCaseForm');
+        this.editingLegalCase = false;
         this.legalCaseUserId = userID;
         this.$bvModal.show('bv-modal-legal-case-form');
-      }
+      },
+      clearForm: function(form){
+        for(const item in this[form]){
+            this[form][item] = '';
+        }
+    }
   }
 }
 </script>

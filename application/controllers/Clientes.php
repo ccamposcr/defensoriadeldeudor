@@ -148,49 +148,31 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
-    function getClientByPersonalID(){
-        $data = $this->input->post('personalID');
+    function getClientBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getClientByPersonalID($data)
+            'response' => $this->clientes_model->getClientBy($data)
         );
 
         echo json_encode($response);
     }
 
-    function getClientByID(){
-        $data = $this->input->post('id');
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getClientByID($data)
+    function getLegalCasesBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
         );
 
-        echo json_encode($response);
-    }
-
-    function getLegalCaseByID(){
-        $data = $this->input->post('id');
-
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getLegalCaseByID($data)
-        );
-
-        echo json_encode($response);
-    }
-
-    function getLegalCasesByUserID(){
-        $data = $this->input->post('userID');
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getLegalCasesByUserID($data)
+            'response' => $this->clientes_model->getLegalCasesBy($data)
         );
 
         echo json_encode($response);

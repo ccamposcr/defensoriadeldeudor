@@ -49,31 +49,16 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
-    function getClientByPersonalID($personalID){
+    function getClientBy($data){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
-        $this->db->where('personalID', $personalID);
+        $this->db->where($data['searchBy'], $data['value']);
         $query = $this->db->get('user');
         $results = $query->result();
         return $results;
     }
 
-    function getClientByID($id){
-        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, role');
-        $this->db->where('id', $id);
-        $query = $this->db->get('user');
-        $results = $query->result();
-        return $results;
-    }
-
-    function getLegalCaseByID($id){
-        $this->db->where('id', $id);
-        $query = $this->db->get('legalcase');
-        $results = $query->result();
-        return $results;
-    }
-
-    function getLegalCasesByUserID($userID){
-        $this->db->where('userID', $userID);
+    function getLegalCasesBy($data){
+        $this->db->where($data['searchBy'], $data['value']);
         $query = $this->db->get('legalcase');
         $results = $query->result();
         return $results;

@@ -13,17 +13,17 @@
               </div>
               <b-form class="user__case-form">
                   <b-form-group label-for="subject" label="Caso Legal">
-                  <input type="hidden" v-model="legalCaseForm.id">
+                    <input type="hidden" v-model="legalCaseForm.id">
                   <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="status" label="Estado">
-                  <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList" value-field="status" text-field="status"></b-form-select>
+                    <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList" value-field="status" text-field="status"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="detail" label="Detalle">
-                  <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
+                    <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
                   <b-form-group label-for="nextNotification" label="Fecha de Alerta">
-                  <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
+                    <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
                   <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
                   <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">Guardar</b-button>
@@ -51,7 +51,7 @@ export default {
         if(!this.legalCaseForm.subject){
             this.errors.push("Seleccione un caso");
         }
-        if(!this.legalCaseForm.statusList){
+        if(!this.legalCaseForm.status){
             this.errors.push("Seleccione el estado del caso");
         }
         if(!this.legalCaseForm.detail){
