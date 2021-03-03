@@ -4,7 +4,7 @@
     <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
 
-    <div v-show="users">
+    <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
           <div>C&eacute;dula: {{ user.personalID }}</div>
@@ -33,7 +33,7 @@
         </li>
       </ul>
     </div>
-    <div v-show="!users">
+    <div v-show="!users.length">
       <p>No hay resultados</p>
     </div>
 
@@ -94,6 +94,18 @@ export default {
   created: function(){
       this.getStaticDataFromDB();
       this.dateToday = this.getTodayDate();
+  },
+  mounted() {
+    /*this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+      switch(modalId){
+        case 'bv-modal-legal-case-form':
+        break;
+        case 'bv-modal-search-form':
+        break;
+        case 'bv-modal-client-form':
+        break;
+      }
+    })*/
   },
   methods: {
       getClientByPersonalID: async function(id){

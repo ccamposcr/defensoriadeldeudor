@@ -1,38 +1,43 @@
 <template>
     <div>
-        <b-modal id="bv-modal-client-form" hide-footer>
+        <b-modal id="bv-modal-client-form" hide-footer novalidate="true">
         <template #modal-title>
           Cliente
         </template>
         <div class="d-block">
-          
+          <div v-if="errors.length">
+              <p>Por favor, corrija el(los) siguiente(s) error(es):</p>
+              <ul>
+                  <li :key="error" v-for="error in errors">{{ error }}</li>
+              </ul>
+          </div>
           <b-form class="client__new-form">
-            <input type="hidden" v-model="clientForm.id">
-            <b-form-group label-for="personalID" label="Cédula">
-              <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="name" label="Nombre">
-              <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="lastName1" label="Primer Apellido">
-              <b-form-input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="lastName2" label="Segundo Apellido">
-              <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="phone" label="Teléfono">
-              <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="email" label="Email">
-              <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
-            </b-form-group>
-            <b-form-group label-for="address" label="Dirección">
-              <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
-            </b-form-group>
+              <input type="hidden" v-model="clientForm.id">
+              <b-form-group label-for="personalID" label="Cédula">
+                <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="name" label="Nombre">
+                <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="lastName1" label="Primer Apellido">
+                <b-form-input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="lastName2" label="Segundo Apellido">
+                <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="phone" label="Teléfono">
+                <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="email" label="Email">
+                <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="address" label="Dirección">
+                <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
+              </b-form-group>
 
-            <b-button v-if="!editingUser" @click.prevent="setNewClient" type="submit" variant="primary">Agregar</b-button>
-            <b-button v-if="editingUser" @click.prevent="setEditedClient" type="submit" variant="primary">Guardar</b-button>
-            <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
+              <b-button v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient})" type="submit" variant="primary">Agregar</b-button>
+              <b-button v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient})" type="submit" variant="primary">Guardar</b-button>
+              <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
           </b-form>
           
         </div>
@@ -47,9 +52,41 @@ export default {
   props: ["clientForm", "editingUser"],
   data () {
     return {
+      errors:[]
     }
   },
   methods: {
+    checkForm: function(callback){
+        this.errors = [];
+        if(!this.clientForm.personalID){
+            this.errors.push("Ingrese una identificación válida");
+        }
+        if(!this.clientForm.name){
+            this.errors.push("Ingrese un nombre válido");
+        }
+        if(!this.clientForm.lastName1){
+            this.errors.push("Ingrese un primer apellido válido");
+        }
+        if(!this.clientForm.lastName2){
+            this.errors.push("Ingrese un segundo apellido válido");
+        }
+        if(!this.clientForm.phone){
+            this.errors.push("Ingrese un teléfono válido");
+        }
+        if(!this.clientForm.email && !this.validEmail(this.clientForm.email)){
+            this.errors.push("Ingrese un email válido");
+        }
+        if(!this.clientForm.address){
+            this.errors.push("Ingrese una dirección válida");
+        }
+        if(!this.errors.length){
+            callback();
+        }
+    },
+    validEmail: function (email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
     showClientByPersonalID: async function(personalID){
         const data = await this.$parent.getClientByPersonalID(personalID);
         this.$emit('update:users', data.response);
@@ -103,7 +140,8 @@ export default {
             this.clientForm[item] = '';
         }
         this.clientForm.role = '99';
-        this.clientForm.status = '1'
+        this.clientForm.status = '1';
+        this.errors = [];
     },
     cancelClientForm: function(){
         this.clearClientForm();
