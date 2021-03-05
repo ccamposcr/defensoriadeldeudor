@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 require("babel-polyfill");
+const { VuetifyLoaderPlugin } = require('vuetify-loader')
 
 module.exports = {
   entry: ["babel-polyfill", './src/main.js'],
@@ -86,6 +87,10 @@ module.exports = {
   },
   devtool: '#eval-source-map'
 }
+
+module.exports.plugins.push(
+  new VuetifyLoaderPlugin()
+)
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map'
