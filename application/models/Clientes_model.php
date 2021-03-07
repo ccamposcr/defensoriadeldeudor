@@ -37,8 +37,8 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
-    function getStatusList(){
-        $query = $this->db->get('statuslist');
+    function getJudicialStatusList(){
+        $query = $this->db->get('judicialstatuslist');
         $results = $query->result();
         return $results;
     }

@@ -12,17 +12,17 @@
                   </ul>
               </div>
               <b-form class="user__case-form">
-                  <b-form-group label-for="subject" label="Caso Legal">
+                  <b-form-group label-for="subject" label="Naturaleza de expediente">
                     <input type="hidden" v-model="legalCaseForm.id">
                   <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
                   </b-form-group>
-                  <b-form-group label-for="status" label="Estado">
-                    <b-form-select id="status" v-model="legalCaseForm.status" :options="staticData.statusList" value-field="status" text-field="status"></b-form-select>
+                  <b-form-group label-for="judicialStatus" label="Estado Judicial">
+                    <b-form-select id="judicialStatus" v-model="legalCaseForm.judicialStatus" :options="staticData.judicialStatusList" value-field="judicialStatus" text-field="judicialStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="detail" label="Detalle">
                     <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
-                  <b-form-group label-for="nextNotification" label="Fecha de Alerta">
+                  <b-form-group label-for="nextNotification" label="Fecha de siguiete pago">
                     <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
                   <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
@@ -51,11 +51,11 @@ export default {
         if(!this.legalCaseForm.subject){
             this.errors.push("Seleccione un caso");
         }
-        if(!this.legalCaseForm.status){
-            this.errors.push("Seleccione el estado del caso");
+        if(!this.legalCaseForm.judicialStatus){
+            this.errors.push("Seleccione el estado judicial del caso");
         }
         if(!this.legalCaseForm.detail){
-            this.errors.push("Ingrese el detalle del caso");
+            this.errors.push("Ingrese una nota del caso");
         }
         if(!this.legalCaseForm.nextNotification){
             this.errors.push("Ingrese una fecha de alerta válida");
@@ -127,3 +127,53 @@ export default {
 
 <style lang="scss" scoped>
 </style>
+
+
+<!--
+2 EStados
+
+Estado Judicial
+-> Revision de expediente
+-> Auduencia
+-> Señalamiento de remate
+-> Prevenci0n
+-> Revocatoria
+-> Apelacipon
+-> Apelacion por inadmision
+-> Expresion de agravios
+-> Aclaracion y Adicion
+-> Oposicion a intereses
+-> Actividad procesal defectuosa
+-> Incidente de anulidad de remate
+-> Recurso de revision (Sala de casacion)
+-> Incidente de cobro de honorarios
+-> Varios
+-> Informacion al cliente
+-> Archivo
+-> Archivo definitivo
+
+
+Estado Administrativo
+-> Moroso
+-> Cancelado
+-> Al Dia
+-> Al Dia pendiente
+
+Ubicacion del expediente
+-> Archivo
+-> Lista de funcionarios ->  Asignado X Usuario -> el que tiene el expediente
+
+
+Notas o detalle por usuario con fecha -> historial
+
+
+Codigo interno de expediente
+
+
+Fecha de cobro
+_______________________________________________-
+Citas por cliente
+Fecha de la cita
+
+
+-->

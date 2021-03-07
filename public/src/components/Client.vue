@@ -22,8 +22,8 @@
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
                 <div>Caso: {{ legalCase.subject }}</div>
-                <div>Estado: {{ legalCase.status }}</div>
-                <div>Detalle: {{ legalCase.detail }}</div>
+                <div>Estado Judicial: {{ legalCase.judicialStatus }}</div>
+                <div>Notas: {{ legalCase.detail }}</div>
                 <div>Fecha a notificar: {{legalCase.nextNotification}}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.id, user.id)" variant="info">Editar Caso</b-button>
               </li>
@@ -57,7 +57,7 @@ export default {
     return {
       staticData:{
         roleList: [],
-        statusList: [],
+        judicialStatusList: [],
         subjectList: []
       },
       users: [],
@@ -77,7 +77,7 @@ export default {
         id: null,
         subject: null,
         userID: null,
-        status: null,
+        judicialStatus: null,
         detail: null,
         nextNotification: null
       },
@@ -147,8 +147,8 @@ export default {
         const roleListData = await this.getRoleList();
         this.staticData.roleList = roleListData.response;
 
-        const statusListData = await this.getStatusList();
-        this.staticData.statusList = statusListData.response;
+        const judicialStatusListData = await this.getjudicialStatusList();
+        this.staticData.judicialStatusList = judicialStatusListData.response;
 
         const subjectListData = await this.getSubjectList();
         this.staticData.subjectList = subjectListData.response;
@@ -163,8 +163,8 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      getStatusList: async function(){
-        const url = 'clientes/getStatusList';
+      getjudicialStatusList: async function(){
+        const url = 'clientes/getjudicialStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;

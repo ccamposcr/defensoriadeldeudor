@@ -49,7 +49,7 @@ class Clientes extends CI_Controller
         $data = array(
             'subject' => $this->input->post('subject'), 
             'userID' => $this->input->post('userID'), 
-            'status' => $this->input->post('status'), 
+            'judicialStatus' => $this->input->post('judicialStatus'), 
             'detail' => $this->input->post('detail'),
             'nextNotification' => $this->input->post('nextNotification')
         );
@@ -92,7 +92,7 @@ class Clientes extends CI_Controller
         $data = array(
             'subject' => $this->input->post('subject'), 
             'userID' => $this->input->post('userID'), 
-            'status' => $this->input->post('status'), 
+            'judicialStatus' => $this->input->post('judicialStatus'), 
             'detail' => $this->input->post('detail'),
             'nextNotification' => $this->input->post('nextNotification')
         );
@@ -128,11 +128,11 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
-    function getStatusList(){
+    function getJudicialStatusList(){
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->clientes_model->getStatusList()
+            'response' => $this->clientes_model->getJudicialStatusList()
         );
 
         echo json_encode($response);
