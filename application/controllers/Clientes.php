@@ -47,10 +47,11 @@ class Clientes extends CI_Controller
 
     function addLegalCase(){
         $data = array(
+            'internalCode' => $this->input->post('internalCode'),
             'subjectID' => $this->input->post('subjectID'), 
             'userID' => $this->input->post('userID'), 
-            'judicialStatusID' => $this->input->post('judicialStatusID'), 
-            'detail' => $this->input->post('detail'),
+            'judicialStatusID' => $this->input->post('judicialStatusID'),
+            'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
             'nextNotification' => $this->input->post('nextNotification')
         );
 
@@ -90,10 +91,11 @@ class Clientes extends CI_Controller
 
     function editLegalCase(){
         $data = array(
+            'internalCode' => $this->input->post('internalCode'),
             'subjectID' => $this->input->post('subjectID'), 
             'userID' => $this->input->post('userID'), 
-            'judicialStatusID' => $this->input->post('judicialStatusID'), 
-            'detail' => $this->input->post('detail'),
+            'judicialStatusID' => $this->input->post('judicialStatusID'),
+            'administrativeStatusID' => $this->input->post('administrativeStatusID'),
             'nextNotification' => $this->input->post('nextNotification')
         );
         
@@ -133,6 +135,16 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getJudicialStatusList()
+        );
+
+        echo json_encode($response);
+    }
+
+    function getAdministrativeStatusList(){
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getAdministrativeStatusList()
         );
 
         echo json_encode($response);

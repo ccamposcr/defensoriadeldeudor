@@ -12,16 +12,22 @@
                   </ul>
               </div>
               <b-form class="user__case-form">
+                  <input type="hidden" v-model="legalCaseForm.id">
+                  <b-form-group label-for="internalCode" label="Número de expediente">
+                    <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente" :disabled="editingLegalCase"></b-form-input>
+                  </b-form-group>
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
-                    <input type="hidden" v-model="legalCaseForm.id">
-                  <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
+                    <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="judicialStatus" label="Estado Judicial">
                     <b-form-select id="judicialStatus" v-model="legalCaseForm.judicialStatusID" :options="staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
                   </b-form-group>
-                  <b-form-group label-for="detail" label="Detalle">
-                    <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
+                  <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
+                    <b-form-select id="administrativeStatus" v-model="legalCaseForm.administrativeStatusID" :options="staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
                   </b-form-group>
+                  <!--<b-form-group label-for="detail" label="Detalle">
+                    <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
+                  </b-form-group>-->
                   <b-form-group label-for="nextNotification" label="Fecha de siguiete pago">
                     <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
@@ -48,14 +54,17 @@ export default {
   methods: {
     checkForm: function(callback){
         this.errors = [];
+        if(!this.legalCaseForm.internalCode){
+            this.errors.push("Ingrese el número del expediente");
+        }
         if(!this.legalCaseForm.subjectID){
-            this.errors.push("Seleccione un caso");
+            this.errors.push("Seleccione la naturaleza del expediente");
         }
         if(!this.legalCaseForm.judicialStatusID){
-            this.errors.push("Seleccione el estado judicial del caso");
+            this.errors.push("Seleccione el estado judicial");
         }
-        if(!this.legalCaseForm.detail){
-            this.errors.push("Ingrese una nota del caso");
+        if(!this.legalCaseForm.administrativeStatusID){
+            this.errors.push("Seleccione el estado administrativo");
         }
         if(!this.legalCaseForm.nextNotification){
             this.errors.push("Ingrese una fecha de alerta válida");
@@ -127,53 +136,3 @@ export default {
 
 <style lang="scss" scoped>
 </style>
-
-
-<!--
-2 EStados
-
-Estado Judicial
--> Revision de expediente
--> Auduencia
--> Señalamiento de remate
--> Prevenci0n
--> Revocatoria
--> Apelacipon
--> Apelacion por inadmision
--> Expresion de agravios
--> Aclaracion y Adicion
--> Oposicion a intereses
--> Actividad procesal defectuosa
--> Incidente de anulidad de remate
--> Recurso de revision (Sala de casacion)
--> Incidente de cobro de honorarios
--> Varios
--> Informacion al cliente
--> Archivo
--> Archivo definitivo
-
-
-Estado Administrativo
--> Moroso
--> Cancelado
--> Al Dia
--> Al Dia pendiente
-
-Ubicacion del expediente
--> Archivo
--> Lista de funcionarios ->  Asignado X Usuario -> el que tiene el expediente
-
-
-Notas o detalle por usuario con fecha -> historial
-
-
-Codigo interno de expediente
-
-
-Fecha de cobro
-_______________________________________________-
-Citas por cliente
-Fecha de la cita
-
-
--->

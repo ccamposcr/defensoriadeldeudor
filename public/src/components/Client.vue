@@ -7,11 +7,11 @@
     <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
-          <div>C&eacute;dula: {{ user.personalID }}</div>
-          <div>Nombre: {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
-          <div>Tel&eacute;fono: {{ user.phone }}</div>
-          <div>Email: {{ user.email }}</div>
-          <div>Direcci&oacute;n: {{ user.address }}</div>
+          <div><strong>C&eacute;dula:</strong> {{ user.personalID }}</div>
+          <div><strong>Nombre:</strong> {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
+          <div><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
+          <div><strong>Email:</strong> {{ user.email }}</div>
+          <div><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
           <div>
             <b-button @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
@@ -21,10 +21,12 @@
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-                <div>Caso: {{ legalCase.subject }}</div>
-                <div>Estado Judicial: {{ legalCase.judicialStatus }}</div>
-                <div>Notas: {{ legalCase.detail }}</div>
-                <div>Fecha a notificar: {{legalCase.nextNotification}}</div>
+                <div><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</div>
+                <div><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
+                <div><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
+                <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
+                <!--<div><strong>Detalle:</strong> {{ legalCase.detail }}</div>-->
+                <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
@@ -58,7 +60,8 @@ export default {
       staticData:{
         roleList: [],
         judicialStatusList: [],
-        subjectList: []
+        subjectList: [],
+        administrativeStatusList: []
       },
       users: [],
       clientForm:{
@@ -75,10 +78,11 @@ export default {
       },
       legalCaseForm:{
         id: null,
+        internalCode: null,
         subjectID: null,
         userID: null,
         judicialStatusID: null,
-        detail: null,
+        administrativeStatusID: null,
         nextNotification: null,
         legalCaseID: null
       },
@@ -148,11 +152,14 @@ export default {
         const roleListData = await this.getRoleList();
         this.staticData.roleList = roleListData.response;
 
-        const judicialStatusListData = await this.getjudicialStatusList();
+        const judicialStatusListData = await this.getJudicialStatusList();
         this.staticData.judicialStatusList = judicialStatusListData.response;
 
         const subjectListData = await this.getSubjectList();
         this.staticData.subjectList = subjectListData.response;
+        
+        const administrativeStatusListData = await this.getAdministrativeStatusList();
+        this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
         console.log(this.staticData);
       },
@@ -164,8 +171,8 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      getjudicialStatusList: async function(){
-        const url = 'clientes/getjudicialStatusList';
+      getJudicialStatusList: async function(){
+        const url = 'clientes/getJudicialStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -182,6 +189,14 @@ export default {
       },
       getAllUsers: async function(){
         const url = 'clientes/getAllClients';
+        const response = await fetch(url);
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      getAdministrativeStatusList: async function(){
+        const url = 'clientes/getAdministrativeStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -246,6 +261,7 @@ export default {
         const response = data.response;
         if( response.length ){
           this.legalCaseForm = data.response[0];
+          this.legalCaseForm['id'] = id;
           this.editingLegalCase = true;
           this.$bvModal.show('bv-modal-legal-case-form');
         }
