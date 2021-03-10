@@ -25,7 +25,7 @@
                 <div>Estado Judicial: {{ legalCase.judicialStatus }}</div>
                 <div>Notas: {{ legalCase.detail }}</div>
                 <div>Fecha a notificar: {{legalCase.nextNotification}}</div>
-                <b-button @click="fillLegalCaseForm(legalCase.id, user.id)" variant="info">Editar Caso</b-button>
+                <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
               </li>
             </ul>
           </div>
@@ -70,23 +70,24 @@ export default {
         phone: null,
         email: null,
         address: null,
-        role:'99',
+        roleID:'99',
         status: '1'
       },
       legalCaseForm:{
         id: null,
-        subject: null,
+        subjectID: null,
         userID: null,
-        judicialStatus: null,
+        judicialStatusID: null,
         detail: null,
-        nextNotification: null
+        nextNotification: null,
+        legalCaseID: null
       },
       searchClientForm:{
         personalID: null,
         name: null,
         lastName1: null,
         lastName2: null,
-        searchBy: null
+        searchBy: 'personalID'
       },
       legalCases: [],
       editingLegalCase: false,

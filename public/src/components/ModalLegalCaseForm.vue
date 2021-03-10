@@ -14,10 +14,10 @@
               <b-form class="user__case-form">
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
                     <input type="hidden" v-model="legalCaseForm.id">
-                  <b-form-select id="subject" v-model="legalCaseForm.subject" :options="staticData.subjectList" value-field="subject" text-field="subject"></b-form-select>
+                  <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="judicialStatus" label="Estado Judicial">
-                    <b-form-select id="judicialStatus" v-model="legalCaseForm.judicialStatus" :options="staticData.judicialStatusList" value-field="judicialStatus" text-field="judicialStatus"></b-form-select>
+                    <b-form-select id="judicialStatus" v-model="legalCaseForm.judicialStatusID" :options="staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="detail" label="Detalle">
                     <b-form-textarea id="detail" v-model="legalCaseForm.detail" placeholder="Detalle del caso" rows="3" max-rows="6"></b-form-textarea>
@@ -48,10 +48,10 @@ export default {
   methods: {
     checkForm: function(callback){
         this.errors = [];
-        if(!this.legalCaseForm.subject){
+        if(!this.legalCaseForm.subjectID){
             this.errors.push("Seleccione un caso");
         }
-        if(!this.legalCaseForm.judicialStatus){
+        if(!this.legalCaseForm.judicialStatusID){
             this.errors.push("Seleccione el estado judicial del caso");
         }
         if(!this.legalCaseForm.detail){

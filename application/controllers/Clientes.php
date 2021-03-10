@@ -32,7 +32,7 @@ class Clientes extends CI_Controller
             'phone' => $this->input->post('phone'), 
             'email' => $this->input->post('email'), 
             'address' => $this->input->post('address'),
-            'role' => $this->input->post('role') != null ? $this->input->post('role') : '99'
+            'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '99'
         );
 
         $this->clientes_model->addClient($data);
@@ -47,9 +47,9 @@ class Clientes extends CI_Controller
 
     function addLegalCase(){
         $data = array(
-            'subject' => $this->input->post('subject'), 
+            'subjectID' => $this->input->post('subjectID'), 
             'userID' => $this->input->post('userID'), 
-            'judicialStatus' => $this->input->post('judicialStatus'), 
+            'judicialStatusID' => $this->input->post('judicialStatusID'), 
             'detail' => $this->input->post('detail'),
             'nextNotification' => $this->input->post('nextNotification')
         );
@@ -74,7 +74,7 @@ class Clientes extends CI_Controller
             'phone' => $this->input->post('phone'), 
             'email' => $this->input->post('email'), 
             'address' => $this->input->post('address'),
-            'role' => $this->input->post('role')
+            'roleID' => $this->input->post('roleID')
         );
         
         $id = $this->input->post('id');
@@ -90,9 +90,9 @@ class Clientes extends CI_Controller
 
     function editLegalCase(){
         $data = array(
-            'subject' => $this->input->post('subject'), 
+            'subjectID' => $this->input->post('subjectID'), 
             'userID' => $this->input->post('userID'), 
-            'judicialStatus' => $this->input->post('judicialStatus'), 
+            'judicialStatusID' => $this->input->post('judicialStatusID'), 
             'detail' => $this->input->post('detail'),
             'nextNotification' => $this->input->post('nextNotification')
         );
