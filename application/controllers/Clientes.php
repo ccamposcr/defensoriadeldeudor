@@ -55,7 +55,25 @@ class Clientes extends CI_Controller
             'nextNotification' => $this->input->post('nextNotification')
         );
 
-        $this->clientes_model->addLegalCase($data);
+        $legalCaseID = $this->clientes_model->addLegalCase($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'legalCaseID' => $legalCaseID
+        );
+
+        echo json_encode($response);
+    }
+
+    function addLegalCaseNote(){
+        $data = array(
+            'note' => $this->input->post('note'),
+            'legalCaseID' => $this->input->post('legalCaseID'),
+            'userID' => $this->input->post('userID')
+        );
+
+        $this->clientes_model->addLegalCaseNote($data);
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
@@ -185,6 +203,21 @@ class Clientes extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getLegalCasesBy($data)
+        );
+
+        echo json_encode($response);
+    }
+
+    function getLegalCaseNotesBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getLegalCaseNotesBy($data)
         );
 
         echo json_encode($response);
