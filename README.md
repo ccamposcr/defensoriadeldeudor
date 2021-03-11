@@ -35,7 +35,7 @@ Ubicación del expediente
 -> Lista de funcionarios ->  Asignado X Usuario -> el que tiene el expediente
 
 
-Notas o detalle por usuario con fecha -> historial
+Notas o detalle por usuario con fecha -> historial -> LISTO
 
 
 Codigo interno de expediente -> LISTO

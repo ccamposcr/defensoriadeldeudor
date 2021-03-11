@@ -106,7 +106,7 @@ export default {
         const legalCaseNote = {};
         
         legalCaseNote['legalCaseID'] = data.legalCaseID;
-        legalCaseNote['userID'] = userID;
+        legalCaseNote['userID'] = this.$parent.loggedINUser['id'];
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){
@@ -160,7 +160,7 @@ export default {
 
         const legalCaseNote = {};
         legalCaseNote['legalCaseID'] = this.legalCaseForm['legalCaseID'];
-        legalCaseNote['userID'] = userID;
+        legalCaseNote['userID'] = this.$parent.loggedINUser['id'];
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){

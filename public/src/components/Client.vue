@@ -287,7 +287,7 @@ export default {
         const data = await this.getClientBy('id', id);
         const response = data.response;
         if( response.length ){
-          this.clientForm = data.response[0];
+          this.clientForm = response[0];
           this.editingUser = true;
           this.$bvModal.show('bv-modal-client-form');
         }
@@ -297,7 +297,7 @@ export default {
         const data = await this.getLegalCasesBy('id', legalCaseID);
         const response = data.response;
         if( response.length ){
-          this.legalCaseForm = data.response[0];
+          this.legalCaseForm = response[0];
           this.legalCaseForm['id'] = legalCaseID;
           this.editingLegalCase = true;
           this.$bvModal.show('bv-modal-legal-case-form');
