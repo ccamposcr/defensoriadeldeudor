@@ -1,5 +1,6 @@
 <template>
   <div class="client">
+    <welcome></welcome>
     <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
@@ -25,7 +26,6 @@
                 <div><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
                 <div><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
                 <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
-                <!--<div><strong>Detalle:</strong> {{ legalCase.detail }}</div>-->
                 <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                 <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
@@ -39,11 +39,13 @@
                       <div><strong>Fecha:</strong> {{ legalCaseNote.date }}</div>
                     </li>
                   </ul>
+                  <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
                 </div>
 
               </li>
             </ul>
           </div>
+          <span v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
 
         </li>
       </ul>
@@ -65,9 +67,11 @@
 import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
+import Welcome from './Welcome.vue';
+
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm},
+  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, Welcome},
   data () {
     return {
       staticData:{
