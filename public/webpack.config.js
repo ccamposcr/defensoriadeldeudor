@@ -1,39 +1,63 @@
-var path = require('path')
-var webpack = require('webpack')
-require("babel-polyfill");
+const path = require("path");
+const webpack = require("webpack");
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { VueLoaderPlugin } = require('vue-loader')
 const { VuetifyLoaderPlugin } = require('vuetify-loader')
 
+/*
+ * We've enabled HtmlWebpackPlugin for you! This generates a html
+ * page for you when you compile webpack, which will make you start
+ * developing and prototyping faster.
+ *
+ * https://github.com/jantimon/html-webpack-plugin
+ *
+ */
+
 module.exports = {
-  entry: ["babel-polyfill", './src/main.js'],
-  output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+  mode: "development",
+
+  entry: {
   },
+
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new HtmlWebpackPlugin({
+      template: "index.html"
+    }),
+    new VueLoaderPlugin(),
+    new VuetifyLoaderPlugin()
+  ],
+
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ],
+        test: /\.(js|jsx)$/,
+        include: [path.resolve(__dirname, "src")],
+        loader: "babel-loader"
       },
       {
-        test: /\.scss$/,
+        test: /.(sa|sc|c)ss$/,
+
         use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-        ],
-      },
-      {
-        test: /\.sass$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader?indentedSyntax'
-        ],
+          {
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader",
+
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: "sass-loader",
+
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       {
         test: /\.vue$/,
@@ -56,18 +80,6 @@ module.exports = {
           }
           // other vue-loader options go here
         }
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
       }
     ]
   },
@@ -77,38 +89,9 @@ module.exports = {
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
+
   devServer: {
-    historyApiFallback: true,
-    noInfo: true,
-    overlay: true
-  },
-  performance: {
-    hints: false
-  },
-  devtool: '#eval-source-map'
-}
-
-module.exports.plugins.push(
-  new VuetifyLoaderPlugin()
-)
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ])
-}
+    open: true,
+    host: "localhost"
+  }
+};
