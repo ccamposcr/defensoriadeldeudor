@@ -6,9 +6,12 @@
 
 <script>
 
+import Client from './components/Client.vue';
+import Appointment from './components/Appointment.vue';
+
 export default {
   name: 'app',
-  components: { },
+  components: {Client, Appointment },
   data () {
     return {
     }

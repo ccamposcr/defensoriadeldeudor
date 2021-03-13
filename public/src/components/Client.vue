@@ -358,14 +358,16 @@ export default {
       &__legal-cases{
         list-style-type: none;
         padding: 0;
+        display: flex;
       }
     }
     .legal-cases{
       &__case{
         padding: 15px;
-        border-bottom: 1px solid gray;
+        border-right: 1px solid gray;
+        flex: 1 1 100%;
         &:last-child{
-          border-bottom: none;
+          border-right: none;
         }
       }
       &__notes{

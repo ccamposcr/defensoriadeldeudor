@@ -30,7 +30,7 @@ Estado Administrativo -> LISTO
 -> Al Dia
 -> Al Dia pendiente
 
-Ubicación del expediente
+Ubicación del expediente -> Listo
 -> Archivo
 -> Lista de funcionarios ->  Asignado X Usuario -> el que tiene el expediente
 
