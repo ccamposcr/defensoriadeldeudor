@@ -8,7 +8,7 @@
               <div v-if="errors.length">
                   <p>Por favor, corrija el(los) siguiente(s) error(es):</p>
                   <ul>
-                      <li :key="error" v-for="error in errors">{{ error }}</li>
+                      <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
                   </ul>
               </div>
               <b-form class="user__case-form">
@@ -24,6 +24,9 @@
                   </b-form-group>
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
                     <b-form-select id="administrativeStatus" v-model="legalCaseForm.administrativeStatusID" :options="staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
+                  </b-form-group>
+                  <b-form-group label-for="location" label="Ubicación del expediente">
+                    <b-form-select id="location" v-model="legalCaseForm.locationID" :options="staticData.locationList" value-field="id" text-field="location"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="note" label="Nueva nota">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>

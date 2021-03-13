@@ -52,7 +52,8 @@ class Clientes extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
-            'nextNotification' => $this->input->post('nextNotification')
+            'nextNotification' => $this->input->post('nextNotification'),
+            'locationID' => $this->input->post('locationID')
         );
 
         $legalCaseID = $this->clientes_model->addLegalCase($data);
@@ -114,7 +115,8 @@ class Clientes extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'),
-            'nextNotification' => $this->input->post('nextNotification')
+            'nextNotification' => $this->input->post('nextNotification'),
+            'locationID' => $this->input->post('locationID')
         );
         
         $id = $this->input->post('id');

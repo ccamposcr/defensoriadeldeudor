@@ -8,7 +8,7 @@
           <div v-if="errors.length">
               <p>Por favor, corrija el(los) siguiente(s) error(es):</p>
               <ul>
-                  <li :key="error" v-for="error in errors">{{ error }}</li>
+                  <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
               </ul>
           </div>
           <b-form class="client__new-form">

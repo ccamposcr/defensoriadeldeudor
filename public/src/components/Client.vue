@@ -26,6 +26,7 @@
                 <div><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
                 <div><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
                 <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
+                <div><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
                 <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
                 <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                 <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
@@ -49,9 +50,6 @@
 
         </li>
       </ul>
-    </div>
-    <div v-show="!users.length">
-      <p>No hay resultados</p>
     </div>
 
     <div>
@@ -78,7 +76,8 @@ export default {
         roleList: [],
         judicialStatusList: [],
         subjectList: [],
-        administrativeStatusList: []
+        administrativeStatusList: [],
+        locationList: []
       },
       users: [],
       clientForm:{
@@ -102,7 +101,8 @@ export default {
         administrativeStatusID: null,
         note: null,
         nextNotification: null,
-        legalCaseID: null
+        legalCaseID: null,
+        locationID: null
       },
       searchClientForm:{
         personalID: null,
@@ -116,7 +116,8 @@ export default {
       legalCaseUserId: null,
       dateToday: null,
       editingUser: false,
-      legalCaseNotes: []
+      legalCaseNotes: [],
+      locationStaticData: {'999': 'Archivo'}
     }
   },
   created: function(){
@@ -180,6 +181,13 @@ export default {
         const administrativeStatusListData = await this.getAdministrativeStatusList();
         this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
+        const locationListData = await this.getClientBy('roleID !=', '99');
+        this.staticData.locationList = locationListData.response;
+
+        this.staticData.locationList.forEach(item => {
+          item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+        });
+        this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
       },
       getRoleList: async function(){
         const url = 'clientes/getRoleList';
@@ -285,6 +293,9 @@ export default {
       },
       showLegalCases: async function(userID){        
         const data = await this.getLegalCasesBy('userID', userID);
+        data.response.forEach(item => {
+          item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+        });
         this.$set(this.legalCases, userID, data.response);
       },
       fillEditClientForm: async function(id){
