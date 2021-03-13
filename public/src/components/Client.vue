@@ -1,5 +1,6 @@
 <template>
   <div class="client">
+    <welcome></welcome>
     <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
@@ -7,11 +8,11 @@
     <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
-          <div>C&eacute;dula: {{ user.personalID }}</div>
-          <div>Nombre: {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
-          <div>Tel&eacute;fono: {{ user.phone }}</div>
-          <div>Email: {{ user.email }}</div>
-          <div>Direcci&oacute;n: {{ user.address }}</div>
+          <div><strong>C&eacute;dula:</strong> {{ user.personalID }}</div>
+          <div><strong>Nombre:</strong> {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
+          <div><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
+          <div><strong>Email:</strong> {{ user.email }}</div>
+          <div><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
           <div>
             <b-button @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
@@ -21,20 +22,34 @@
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-                <div>Caso: {{ legalCase.subject }}</div>
-                <div>Estado: {{ legalCase.status }}</div>
-                <div>Detalle: {{ legalCase.detail }}</div>
-                <div>Fecha a notificar: {{legalCase.nextNotification}}</div>
-                <b-button @click="fillLegalCaseForm(legalCase.id, user.id)" variant="info">Editar Caso</b-button>
+                <div><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</div>
+                <div><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
+                <div><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
+                <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
+                <div><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
+                <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
+                <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
+                <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
+
+                <div v-if="legalCaseNotes[legalCase.legalCaseID]">
+                  
+                  <ul class="legal-cases__notes">
+                    <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in legalCaseNotes[legalCase.legalCaseID]">
+                      <div><strong>Nota:</strong> {{ legalCaseNote.note }}</div>
+                      <div><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</div>
+                      <div><strong>Fecha:</strong> {{ legalCaseNote.date }}</div>
+                    </li>
+                  </ul>
+                  <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
+                </div>
+
               </li>
             </ul>
           </div>
+          <span v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
 
         </li>
       </ul>
-    </div>
-    <div v-show="!users.length">
-      <p>No hay resultados</p>
     </div>
 
     <div>
@@ -50,15 +65,19 @@
 import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
+import Welcome from './Welcome.vue';
+
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm},
+  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, Welcome},
   data () {
     return {
       staticData:{
         roleList: [],
-        statusList: [],
-        subjectList: []
+        judicialStatusList: [],
+        subjectList: [],
+        administrativeStatusList: [],
+        locationList: []
       },
       users: [],
       clientForm:{
@@ -70,29 +89,35 @@ export default {
         phone: null,
         email: null,
         address: null,
-        role:'99',
+        roleID:'99',
         status: '1'
       },
       legalCaseForm:{
         id: null,
-        subject: null,
+        internalCode: null,
+        subjectID: null,
         userID: null,
-        status: null,
-        detail: null,
-        nextNotification: null
+        judicialStatusID: null,
+        administrativeStatusID: null,
+        note: null,
+        nextNotification: null,
+        legalCaseID: null,
+        locationID: null
       },
       searchClientForm:{
         personalID: null,
         name: null,
         lastName1: null,
         lastName2: null,
-        searchBy: null
+        searchBy: 'personalID'
       },
       legalCases: [],
       editingLegalCase: false,
       legalCaseUserId: null,
       dateToday: null,
-      editingUser: false
+      editingUser: false,
+      legalCaseNotes: [],
+      locationStaticData: {'999': 'Archivo'}
     }
   },
   created: function(){
@@ -147,13 +172,22 @@ export default {
         const roleListData = await this.getRoleList();
         this.staticData.roleList = roleListData.response;
 
-        const statusListData = await this.getStatusList();
-        this.staticData.statusList = statusListData.response;
+        const judicialStatusListData = await this.getJudicialStatusList();
+        this.staticData.judicialStatusList = judicialStatusListData.response;
 
         const subjectListData = await this.getSubjectList();
         this.staticData.subjectList = subjectListData.response;
+        
+        const administrativeStatusListData = await this.getAdministrativeStatusList();
+        this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
-        console.log(this.staticData);
+        const locationListData = await this.getClientBy('roleID !=', '99');
+        this.staticData.locationList = locationListData.response;
+
+        this.staticData.locationList.forEach(item => {
+          item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+        });
+        this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
       },
       getRoleList: async function(){
         const url = 'clientes/getRoleList';
@@ -163,8 +197,8 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      getStatusList: async function(){
-        const url = 'clientes/getStatusList';
+      getJudicialStatusList: async function(){
+        const url = 'clientes/getJudicialStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -181,6 +215,14 @@ export default {
       },
       getAllUsers: async function(){
         const url = 'clientes/getAllClients';
+        const response = await fetch(url);
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      getAdministrativeStatusList: async function(){
+        const url = 'clientes/getAdministrativeStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -225,32 +267,64 @@ export default {
         csrf_hash = data.csrf_hash;
         return data;
       },
-      showLegalCases: async function(id){        
-        const data = await this.getLegalCasesBy('userID', id);
+      getLegalCaseNotesBy: async function(searchBy, value){
+        const url = 'clientes/getLegalCaseNotesBy';
 
-        this.$set(this.legalCases, id, data.response);
+        const params = {
+          'searchBy':searchBy,
+          'value': value
+        };
+        params[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(params),
+          headers:{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+        return data;
+      },
+      showLegalCases: async function(userID){        
+        const data = await this.getLegalCasesBy('userID', userID);
+        data.response.forEach(item => {
+          item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+        });
+        this.$set(this.legalCases, userID, data.response);
       },
       fillEditClientForm: async function(id){
         const data = await this.getClientBy('id', id);
         const response = data.response;
         if( response.length ){
-          this.clientForm = data.response[0];
+          this.clientForm = response[0];
           this.editingUser = true;
           this.$bvModal.show('bv-modal-client-form');
         }
       },
-      fillLegalCaseForm: async function(id, userID){
+      fillLegalCaseForm: async function(legalCaseID, userID){
         this.legalCaseUserId = userID;
-        const data = await this.getLegalCasesBy('id', id);
+        const data = await this.getLegalCasesBy('id', legalCaseID);
         const response = data.response;
         if( response.length ){
-          this.legalCaseForm = data.response[0];
+          this.legalCaseForm = response[0];
+          this.legalCaseForm['id'] = legalCaseID;
           this.editingLegalCase = true;
           this.$bvModal.show('bv-modal-legal-case-form');
         }
       },
+      showLegalCaseNotes: async function(legalCaseID){
+        const data = await this.getLegalCaseNotesBy('legalCaseID', legalCaseID);
+        this.$set(this.legalCaseNotes, legalCaseID, data.response);
+      },
       resetClientVars: function(){
         this.legalCases = [];
+        this.legalCaseNotes = [];
       },
       showLegalCaseForm: async function(userID){
         this.clearForm('legalCaseForm');
@@ -284,10 +358,25 @@ export default {
       &__legal-cases{
         list-style-type: none;
         padding: 0;
+        display: flex;
       }
     }
     .legal-cases{
       &__case{
+        padding: 15px;
+        border-right: 1px solid gray;
+        flex: 1 1 100%;
+        &:last-child{
+          border-right: none;
+        }
+      }
+      &__notes{
+        list-style-type: none;
+        padding: 0;
+      }
+    }
+    .notes{
+      &__note{
         padding: 15px;
         border-bottom: 1px solid gray;
         &:last-child{
