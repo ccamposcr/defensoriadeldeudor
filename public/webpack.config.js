@@ -17,14 +17,13 @@ const { VuetifyLoaderPlugin } = require('vuetify-loader')
 module.exports = {
   mode: "development",
 
-  entry: {
+  entry: ["babel-polyfill", './src/main.js'],
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist/',
+    filename: 'build.js'
   },
-
   plugins: [
-    new webpack.ProgressPlugin(),
-    new HtmlWebpackPlugin({
-      template: "index.html"
-    }),
     new VueLoaderPlugin(),
     new VuetifyLoaderPlugin()
   ],
@@ -32,53 +31,63 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        include: [path.resolve(__dirname, "src")],
-        loader: "babel-loader"
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ],
       },
       {
-        test: /.(sa|sc|c)ss$/,
-
+        test: /\.sass$/,
         use: [
+          'vue-style-loader',
+          'css-loader',
           {
-            loader: "style-loader"
-          },
-          {
-            loader: "css-loader",
-
+            loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
+              implementation: require('sass'),
+              sassOptions: {
+                fiber: require('fibers'),
+                indentedSyntax: true
+              },
+            },
           },
+        ],
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
           {
-            loader: "sass-loader",
-
+            loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              implementation: require('node-sass'),
+              sassOptions: {
+                fiber: require('fibers'),
+                indentedSyntax: false
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
+        loader: 'vue-loader'
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: file => (
+          /node_modules/.test(file) &&
+          !/\.vue\.js/.test(file)
+        )
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
         options: {
-          loaders: {
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
-            'scss': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader'
-            ],
-            'sass': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader?indentedSyntax'
-            ]
-          }
-          // other vue-loader options go here
+          name: '[name].[ext]?[hash]'
         }
       }
     ]
