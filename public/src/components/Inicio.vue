@@ -42,7 +42,7 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .my-event {
   overflow: hidden;
   text-overflow: ellipsis;
