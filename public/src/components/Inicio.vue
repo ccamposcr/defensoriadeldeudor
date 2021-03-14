@@ -18,7 +18,7 @@
 <script>
   export default {
     data: () => ({
-      today: '2019-01-08',
+      today: '',
       events: [
         {
           name: 'Weekly Meeting',
@@ -36,6 +36,14 @@
         },
       ],
     }),
+    computed:{
+      getTodayDate: function(){
+        return this.$parent.getTodayDate().toISOString().substr(0, 10);
+      }
+    },
+    created(){
+      this.today = this.getTodayDate;
+    },
     mounted () {
       this.$refs.calendar.scrollToTime('08:00')
     },

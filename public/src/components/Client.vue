@@ -55,7 +55,7 @@
     <div>
       <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
       <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
-      <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId"></modal-legal-case-form>
+      <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     </div>
 
   </div>
@@ -114,15 +114,20 @@ export default {
       legalCases: [],
       editingLegalCase: false,
       legalCaseUserId: null,
-      dateToday: null,
+      today: '',
       editingUser: false,
       legalCaseNotes: [],
       locationStaticData: {'999': 'Archivo'}
     }
   },
-  created: function(){
-      this.getStaticDataFromDB();
-      this.dateToday = this.getTodayDate();
+  computed:{
+    getTodayDate: function(){
+      return this.$parent.getTodayDate();
+    }
+  },
+  created(){
+    this.getStaticDataFromDB();
+    this.today = this.getTodayDate;
   },
   mounted() {
     /*this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
@@ -159,13 +164,6 @@ export default {
           csrf_name = data.csrf_name;
           csrf_hash = data.csrf_hash;
           return data;
-      },
-      getTodayDate: function(){
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        today.setMonth(today.getMonth() - 2)
-        today.setDate(15)
-        return new Date(today);
       },
       getStaticDataFromDB: async function(){
 

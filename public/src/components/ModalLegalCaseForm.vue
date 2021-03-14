@@ -32,7 +32,7 @@
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
                   <b-form-group label-for="nextNotification" label="Fecha de siguiete pago">
-                    <b-form-datepicker :min="dateToday" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
+                    <b-form-datepicker :min="today" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
                   <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
                   <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">Guardar</b-button>
@@ -48,14 +48,14 @@
 <script>
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId"],
+  props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
   data () {
     return {
       errors:[],
       loggedINUserData: null
     }
   },
-  mounted: function(){
+  mounted(){
     this.$root.$on('loggedINUserData', data => {
         this.loggedINUserData = data;
     });
