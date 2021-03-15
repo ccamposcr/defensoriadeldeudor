@@ -332,7 +332,7 @@ export default {
       },
       clearForm: function(form){
         for(const item in this[form]){
-            this[form][item] = '';
+            this[form][item] = null;
         }
     }
   }

@@ -12,18 +12,18 @@
                     </ul>
                 </div>
                 <b-form class="client__search-form">
-                    <b-form-group>
-                        <b-form-checkbox-group
+                    <b-form-group label="Buscar por">
+                        <b-form-radio-group
                             id="search-by"
                             v-model="searchClientForm.searchBy"
                             name="search-by"
                             label="Seleccione la opción por la que desea buscar"
                         >
-                            <b-form-checkbox value="personalID">Cédula</b-form-checkbox>
-                            <b-form-checkbox value="name">Nombre</b-form-checkbox>
-                            <b-form-checkbox value="lastName1">Primer apellido</b-form-checkbox>
-                            <b-form-checkbox value="lastName2">Segundo apellido</b-form-checkbox>
-                        </b-form-checkbox-group>
+                        <b-form-radio value="personalID">Cédula</b-form-radio>
+                        <b-form-radio value="name">Nombre</b-form-radio>
+                        <b-form-radio value="lastName1" >Primer apellido</b-form-radio>
+                        <b-form-radio value="lastName2">Segundo apellido</b-form-radio>
+                        </b-form-radio-group>
                     </b-form-group>
 
                     <b-form-group v-show="searchClientForm.searchBy == 'personalID'" label-for="personalID2" label="Buscar por cédula">
@@ -76,14 +76,16 @@ export default {
             callback();
         }
     },
-    clearSearchForm: function(){
+    clearSearchForm: function(except){
         for(const item in this.searchClientForm){
-            this.searchClientForm[item] = '';
+            if( !except.includes(item) ){
+                this.searchClientForm[item] = null;
+            }
         }
         this.errors = [];
     },
     cancelSearchForm: function(){
-        this.clearSearchForm();
+        this.clearSearchForm(['searchBy']);
         this.$bvModal.hide('bv-modal-search-form');
     },
     showSearchResults: async function(){   
@@ -108,7 +110,7 @@ export default {
         }    
         
         this.$bvModal.hide('bv-modal-search-form');
-        this.clearSearchForm();
+        this.clearSearchForm(['searchBy']);
       }
   }
 }
