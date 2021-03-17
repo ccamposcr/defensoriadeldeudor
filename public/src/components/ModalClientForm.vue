@@ -98,11 +98,7 @@ export default {
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(this.clientForm),
-            headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-            }
+            body: new URLSearchParams(this.clientForm)
         });
 
         const data = await response.json();
@@ -120,11 +116,7 @@ export default {
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(this.clientForm),
-            headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-            }
+            body: new URLSearchParams(this.clientForm)
         });
 
         const data = await response.json();

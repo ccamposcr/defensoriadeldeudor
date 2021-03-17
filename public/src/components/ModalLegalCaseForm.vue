@@ -101,11 +101,7 @@ export default {
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(this.legalCaseForm),
-            headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-            }
+            body: new URLSearchParams(this.legalCaseForm)
         });
 
         const data = await response.json();
@@ -134,11 +130,7 @@ export default {
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(legalCaseNote),
-            headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-            }
+            body: new URLSearchParams(legalCaseNote)
         });
 
         const data = await response.json();
@@ -155,11 +147,7 @@ export default {
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(this.legalCaseForm),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
+          body: new URLSearchParams(this.legalCaseForm)
         });
 
         const data = await response.json();

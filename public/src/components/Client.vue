@@ -153,11 +153,7 @@ export default {
           const response = await fetch(url, {
               credentials: 'include',
               method: 'POST',
-              body: new URLSearchParams(params),
-              headers:{
-              'Content-Type': 'application/x-www-form-urlencoded',
-              "X-Requested-With": "XMLHttpRequest"
-              }
+              body: new URLSearchParams(params)
           });
 
           const data = await response.json();
@@ -253,11 +249,7 @@ export default {
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(params),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
+          body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -277,11 +269,7 @@ export default {
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(params),
-          headers:{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "X-Requested-With": "XMLHttpRequest"
-          }
+          body: new URLSearchParams(params)
         });
 
         const data = await response.json();
