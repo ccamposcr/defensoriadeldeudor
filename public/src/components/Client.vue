@@ -121,13 +121,10 @@ export default {
     }
   },
   computed:{
-    getTodayDate: function(){
-      return this.$parent.getTodayDate();
-    }
   },
   created(){
     this.getStaticDataFromDB();
-    this.today = this.getTodayDate;
+    //this.today = this.$parent.getTodayDate();
   },
   mounted() {
     /*this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
@@ -140,6 +137,14 @@ export default {
         break;
       }
     })*/
+    /* 
+      params.legalCaseID
+      params.userID
+    */
+
+    const params = this.$route.query;
+    this.loadDataFromURLParams(params);
+    
   },
   methods: {
       getClientBy: async function(searchBy, value){
@@ -322,7 +327,23 @@ export default {
         for(const item in this[form]){
             this[form][item] = null;
         }
-    }
+      },
+      loadDataFromURLParams: async function(params){
+        if(params.userID){
+          const clientData = await this.getClientBy('id', params.userID);
+          const response = clientData.response;
+          if( response.length ){
+            this.users = response;
+          }
+        }
+        if(params.legalCaseID){
+          const legalCasedata = await this.getLegalCasesBy('id', params.legalCaseID);
+          const response = legalCasedata.response;
+          if( response.length ){
+            this.$set(this.legalCases, params.userID, legalCasedata.response);
+          }
+        }
+      }
   }
 }
 </script>
