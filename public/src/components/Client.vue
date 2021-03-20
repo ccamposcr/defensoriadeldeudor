@@ -52,12 +52,9 @@
       </ul>
     </div>
 
-    <div>
-      <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-      <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
-      <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
-    </div>
-
+    <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
+    <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
+    <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
   </div>
 </template>
 
@@ -66,6 +63,8 @@ import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import Welcome from './Welcome.vue';
+import repositories from '../repositories';
+
 
 export default {
   name: 'Client',
@@ -120,8 +119,6 @@ export default {
       locationStaticData: {'999': 'Archivo'}
     }
   },
-  computed:{
-  },
   created(){
     this.getStaticDataFromDB();
     //this.today = this.$parent.getTodayDate();
@@ -147,40 +144,21 @@ export default {
     
   },
   methods: {
-      getClientBy: async function(searchBy, value){
-          const url = 'clientes/getClientBy';
-          
-          const params = {
-              'searchBy':searchBy,
-              'value' :value
-          };
-          params[csrf_name] = csrf_hash;
-          const response = await fetch(url, {
-              credentials: 'include',
-              method: 'POST',
-              body: new URLSearchParams(params)
-          });
-
-          const data = await response.json();
-          csrf_name = data.csrf_name;
-          csrf_hash = data.csrf_hash;
-          return data;
-      },
       getStaticDataFromDB: async function(){
 
-        const roleListData = await this.getRoleList();
+        const roleListData = await repositories.getRoleList();
         this.staticData.roleList = roleListData.response;
 
-        const judicialStatusListData = await this.getJudicialStatusList();
+        const judicialStatusListData = await repositories.getJudicialStatusList();
         this.staticData.judicialStatusList = judicialStatusListData.response;
 
-        const subjectListData = await this.getSubjectList();
+        const subjectListData = await repositories.getSubjectList();
         this.staticData.subjectList = subjectListData.response;
         
-        const administrativeStatusListData = await this.getAdministrativeStatusList();
+        const administrativeStatusListData = await repositories.getAdministrativeStatusList();
         this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
-        const locationListData = await this.getClientBy('roleID !=', '99');
+        const locationListData = await repositories.getClientBy('roleID !=', '99');
         this.staticData.locationList = locationListData.response;
 
         this.staticData.locationList.forEach(item => {
@@ -188,50 +166,10 @@ export default {
         });
         this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
       },
-      getRoleList: async function(){
-        const url = 'clientes/getRoleList';
-        const response = await fetch(url);
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
-      getJudicialStatusList: async function(){
-        const url = 'clientes/getJudicialStatusList';
-        const response = await fetch(url);
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
-      getSubjectList: async function(){
-        const url = 'clientes/getSubjectList';
-        const response = await fetch(url);
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
-      getAllUsers: async function(){
-        const url = 'clientes/getAllClients';
-        const response = await fetch(url);
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
-      getAdministrativeStatusList: async function(){
-        const url = 'clientes/getAdministrativeStatusList';
-        const response = await fetch(url);
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       showAllClients: async function(){
         this.resetClientVars();
 
-        const data = await this.getAllUsers();
+        const data = await repositories.getAllUsers();
         this.users = data.response;
       },
       showSearchClientModal: function(){
@@ -242,55 +180,15 @@ export default {
         this.editingUser = false;
         this.$bvModal.show('bv-modal-client-form');
       },
-      getLegalCasesBy: async function(searchBy, value){
-        const url = 'clientes/getLegalCasesBy';
-
-        const params = {
-          'searchBy':searchBy,
-          'value': value
-        };
-        params[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
-      getLegalCaseNotesBy: async function(searchBy, value){
-        const url = 'clientes/getLegalCaseNotesBy';
-
-        const params = {
-          'searchBy':searchBy,
-          'value': value
-        };
-        params[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       showLegalCases: async function(userID){        
-        const data = await this.getLegalCasesBy('userID', userID);
+        const data = await repositories.getLegalCasesBy('userID', userID);
         data.response.forEach(item => {
           item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
         });
         this.$set(this.legalCases, userID, data.response);
       },
       fillEditClientForm: async function(id){
-        const data = await this.getClientBy('id', id);
+        const data = await repositories.getClientBy('id', id);
         const response = data.response;
         if( response.length ){
           this.clientForm = response[0];
@@ -300,7 +198,7 @@ export default {
       },
       fillLegalCaseForm: async function(legalCaseID, userID){
         this.legalCaseUserId = userID;
-        const data = await this.getLegalCasesBy('id', legalCaseID);
+        const data = await repositories.getLegalCasesBy('id', legalCaseID);
         const response = data.response;
         if( response.length ){
           this.legalCaseForm = response[0];
@@ -310,7 +208,7 @@ export default {
         }
       },
       showLegalCaseNotes: async function(legalCaseID){
-        const data = await this.getLegalCaseNotesBy('legalCaseID', legalCaseID);
+        const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
         this.$set(this.legalCaseNotes, legalCaseID, data.response);
       },
       resetClientVars: function(){
@@ -330,16 +228,19 @@ export default {
       },
       loadDataFromURLParams: async function(params){
         if(params.userID){
-          const clientData = await this.getClientBy('id', params.userID);
+          const clientData = await repositories.getClientBy('id', params.userID);
           const response = clientData.response;
           if( response.length ){
             this.users = response;
           }
         }
         if(params.legalCaseID){
-          const legalCasedata = await this.getLegalCasesBy('id', params.legalCaseID);
+          const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
           const response = legalCasedata.response;
           if( response.length ){
+            legalCasedata.response.forEach(item => {
+              item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+            });
             this.$set(this.legalCases, params.userID, legalCasedata.response);
           }
         }
@@ -356,7 +257,7 @@ export default {
     }
     .list{
       &__user{
-        background-color: lightgray;
+        background-color: #fafafa;
         margin-bottom: 15px;
         padding: 15px;
       }
@@ -372,7 +273,7 @@ export default {
       &__case{
         padding: 15px;
         border-right: 1px solid gray;
-        flex: 1 1 100%;
+        flex: 0 1 100%;
         &:last-child{
           border-right: none;
         }

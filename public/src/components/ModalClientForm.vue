@@ -47,6 +47,8 @@
  
 
 <script>
+import repositories from '../repositories';
+
 export default {
   name: 'ModalClientForm',
   props: ["clientForm", "editingUser"],
@@ -88,40 +90,18 @@ export default {
       return re.test(email);
     },
     showClientByPersonalID: async function(personalID){
-        const data = await this.$parent.getClientBy('PersonalID', personalID);
+        const data = await repositories.getClientBy('PersonalID', personalID);
         this.$emit('update:users', data.response);
     },
     setNewClient: async function(){
-        const url = 'clientes/addClient';
-        this.clientForm[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(this.clientForm)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+        await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
         this.$bvModal.hide('bv-modal-client-form');
     },
     setEditedClient: async function(){
-        const url = 'clientes/editClient';
-        this.clientForm[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(this.clientForm)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+        await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.clearClientForm();
@@ -129,7 +109,7 @@ export default {
     },
     clearClientForm: function(){
         for(const item in this.clientForm){
-            this.clientForm[item] = '';
+            this.clientForm[item] = null;
         }
         this.clientForm.role = '99';
         this.clientForm.status = '1';

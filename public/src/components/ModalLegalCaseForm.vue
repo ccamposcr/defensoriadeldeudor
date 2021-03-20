@@ -46,6 +46,8 @@
  
 
 <script>
+import repositories from '../repositories';
+
 export default {
   name: 'ModalLegalCaseForm',
   props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
@@ -84,7 +86,7 @@ export default {
     },
     clearLegalCaseForm: function(){
         for(const item in this.legalCaseForm){
-            this.legalCaseForm[item] = '';
+            this.legalCaseForm[item] = null;
         }
         this.errors = [];
     },
@@ -94,19 +96,7 @@ export default {
     },
     setNewLegalCase: async function(){
         const userID = this.legalCaseUserId;
-        const url = 'clientes/addLegalCase';
-        this.legalCaseForm[csrf_name] = csrf_hash;
-        this.legalCaseForm['userID'] = userID;
-
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(this.legalCaseForm)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+        const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
         const legalCaseNote = {};
         
@@ -115,44 +105,17 @@ export default {
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){
-          await this.addLegalCaseNote(legalCaseNote);
+          await repositories.addLegalCaseNote(legalCaseNote);
         }
 
         this.$parent.showLegalCases(userID);
         this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
     },
-    addLegalCaseNote: async function(legalCaseNote){
-        const url = 'clientes/addLegalCaseNote';
-
-        legalCaseNote[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(legalCaseNote)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-
-        return data;
-    },
     setEditedLegalCase: async function(){
         const userID = this.legalCaseUserId;
-        const url = 'clientes/editLegalCase';
-        this.legalCaseForm[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(this.legalCaseForm)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+        await repositories.editLegalCase(this.legalCaseForm);
         this.$parent.showLegalCases(userID);
 
         const legalCaseNote = {};
@@ -161,7 +124,7 @@ export default {
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){
-          await this.addLegalCaseNote(legalCaseNote);
+          await repositories.addLegalCaseNote(legalCaseNote);
           this.$parent.showLegalCaseNotes(legalCaseNote['legalCaseID']);
         }
 

@@ -4,6 +4,8 @@
  
 
 <script>
+import repositories from '../repositories';
+
 export default {
   name: 'Welcome',
   props: [],
@@ -17,7 +19,7 @@ export default {
   },
   methods: {
     setLoggedInUser: async function(){
-      const data = await this.$parent.getClientBy('personalID', loggedINUser);
+      const data = await repositories.getClientBy('personalID', loggedINUser);
       this.loggedINUser = data.response[0];
       this.$root.$emit('loggedINUserData', this.loggedINUser);
     }

@@ -73,7 +73,7 @@
 
           </v-toolbar>
         </v-sheet>
-        <v-sheet>
+        <v-sheet height="60%">
           <v-calendar
             ref="calendar"
             :events="events"
@@ -84,6 +84,7 @@
             @click:event="showEvent"
             @click:more="viewDay"
             @click:date="viewDay"
+            @click:time="showAppointmentModal"
           >
             <template v-slot:day-body="{ date, week }">
               <div
@@ -137,11 +138,18 @@
         </v-sheet>
       </v-col>
     </v-row>
+
+    <modal-appointment-form :editing-appointment="editingAppointment"  :appointment-form="appointmentForm"></modal-appointment-form>
   </div>
 </template>
 
 <script>
+  import ModalAppointmentForm from './ModalAppointmentForm.vue';
+  import repositories from '../repositories';
+
   export default {
+    name: 'Inicio',
+    components: {ModalAppointmentForm},
     data: () => ({
       value: '',
       today: '',
@@ -155,7 +163,9 @@
         week: 'Semana',
         day: 'Día',
       },
-      ready: false
+      ready: false,
+      appointmentForm: [],
+      editingAppointment: false
     }),
     computed: {
       cal () {
@@ -170,6 +180,7 @@
       this.ready = true;
       this.scrollToTime();
       this.updateTime();
+      this.$refs.calendar.scrollToTime('08:00');
     },
     methods: {
       viewDay: function ({ date }) {
@@ -189,7 +200,7 @@
         const startDate = start.date;
         const endDate = end.date;
 
-        const data = await this.getLegalCasesByDateRange('nextNotification', startDate, endDate);
+        const data = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
         const response = data.response;
         if( response.length ){
           response.forEach(item => {
@@ -202,29 +213,7 @@
 
         this.events = response;
       },
-      getLegalCasesByDateRange: async function(searchBy, start, end){
-        const url = 'inicio/getLegalCasesByDateRange';
-
-        const params = {
-          'searchBy':searchBy,
-          'start': start,
-          'end': end
-        };
-        params[csrf_name] = csrf_hash;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
-
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        return data;
-      },
       showEvent: function ({ nativeEvent, event }) {
-        console.log('CCO');
         const open = () => {
           this.selectedEvent = event
           this.selectedElement = nativeEvent.target
@@ -242,16 +231,21 @@
 
         nativeEvent.stopPropagation()
       },
-      getCurrentTime () {
+      getCurrentTime: function() {
         return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0
       },
-      scrollToTime () {
+      scrollToTime: function() {
         const time = this.getCurrentTime()
         const first = Math.max(0, time - (time % 30) - 30)
         this.cal.scrollToTime(first)
       },
-      updateTime () {
+      updateTime: function () {
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
+      },
+      showAppointmentModal: function({ date, hour }){
+        console.log(date);
+        console.log(hour);
+        this.$bvModal.show('bv-modal-appointment-form');
       }
     }
   }
@@ -275,5 +269,8 @@
       margin-top: -5px;
       margin-left: -6.5px;
     }
+  }
+  .v-calendar-daily__day-interval{
+    cursor: pointer;
   }
 </style>
