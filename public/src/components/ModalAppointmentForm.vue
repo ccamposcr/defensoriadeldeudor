@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
@@ -36,6 +37,9 @@ export default {
     return {
       errors:[]
     }
+  },
+  mounted (){
+    this.getAllUsers();
   },
   methods: {
     clearAppointmentForm: function(){
@@ -47,6 +51,14 @@ export default {
     cancelAppointmentForm: function(){
       this.clearAppointmentForm();
       this.$bvModal.hide('bv-modal-appointment-form');
+    },
+    getAllUsers: async function(){
+      const data = await repositories.getAllUsers();
+      const response = data.response;
+      response.forEach(item => {
+        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+      });
+      this.$set(this.appointmentForm, 'clientList', response);
     }
 
   }
