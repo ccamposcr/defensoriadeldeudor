@@ -119,15 +119,15 @@ var repositories = {
         csrf_hash = data.csrf_hash;
         return data;
     },
-    addLegalCaseNote: async function(legalCaseNote){
+    addLegalCaseNote: async function(params){
         const url = 'clientes/addLegalCaseNote';
 
-        legalCaseNote[csrf_name] = csrf_hash;
+        params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(legalCaseNote)
+            body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -136,14 +136,14 @@ var repositories = {
 
         return data;
     },
-    addNewClient: async function(form){
+    addNewClient: async function(params){
         const url = 'clientes/addClient';
-        form[csrf_name] = csrf_hash;
+        params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(form)
+            body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -152,14 +152,14 @@ var repositories = {
 
         return data;
     },
-    editClient: async function(form){
+    editClient: async function(params){
         const url = 'clientes/editClient';
-        form[csrf_name] = csrf_hash;
+        params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(form)
+            body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -168,15 +168,15 @@ var repositories = {
 
         return data;
     },
-    addNewLegalCase: async function(userID, form){
+    addNewLegalCase: async function(userID, params){
         const url = 'clientes/addLegalCase';
-        form[csrf_name] = csrf_hash;
-        form['userID'] = userID;
+        params[csrf_name] = csrf_hash;
+        params['userID'] = userID;
 
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(form)
+            body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -185,14 +185,14 @@ var repositories = {
 
         return data;
     },
-    editLegalCase: async function(form){
+    editLegalCase: async function(params){
         const url = 'clientes/editLegalCase';
-        form[csrf_name] = csrf_hash;
+        params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams(form)
+          body: new URLSearchParams(params)
         });
 
         const data = await response.json();
@@ -201,15 +201,15 @@ var repositories = {
 
         return data;
     },
-    addNewAppointment: async function(form){
-        console.log(form);
+    addNewAppointment: async function(params){
+        console.log(params);
         const url = 'citas/addAppointment';
-        form[csrf_name] = csrf_hash;
+        params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',
-            body: new URLSearchParams(form)
+            body: new URLSearchParams(params)
         });
 
         const data = await response.json();

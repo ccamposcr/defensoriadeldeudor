@@ -18,7 +18,7 @@ class Citas extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'date' => $this->input->post('date')
         );
-
+        
         $this->citas_model->addAppointment($data);
 
         $response = array(

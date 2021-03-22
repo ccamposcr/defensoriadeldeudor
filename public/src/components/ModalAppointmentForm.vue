@@ -12,17 +12,23 @@
           </ul>
       </div>
       <b-form class="appointment__new-form">
-          <b-form-group label-for="filter" label="Filtrar por">
-            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Filtro"></b-form-input>
+          <b-form-group>
+            <div><strong>Fecha y Hora de la Cita:</strong> {{appointmentForm.date}}</div>
+          </b-form-group>
+          <b-form-group label-for="filter" label="Filtrar cliente por">
+            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Ingrese la Cédula, o el Nombre, o el Apellido"></b-form-input>
           </b-form-group>
           <b-form-group label-for="client" label="Seleccione el cliente">
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
-          <div>Fecha y Hora de la Cita: {{appointmentForm.date}}</div>
 
           <b-button v-if="!editingAppointment" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">Agendar</b-button>
           <b-button v-if="editingAppointment" @click.prevent="checkForm(function(){setEditedAppointment()})" type="submit" variant="primary">Guardar</b-button>
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
+
+          <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
+            <b-button @click="$router.push('/clientes?showNewClientForm=true')">Agregar Cliente Nuevo</b-button>
+          </b-form-group>
       </b-form>
       
     </div>

@@ -244,6 +244,9 @@ export default {
             this.$set(this.legalCases, params.userID, legalCasedata.response);
           }
         }
+        if(params.showNewClientForm){
+          this.showClientFormModal();
+        }
       }
   }
 }
