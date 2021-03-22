@@ -243,8 +243,8 @@
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
       },
       showAppointmentModal: function({ date, hour }){
-        console.log(date);
-        console.log(hour);
+        //this.appointmentForm['date'] = ;
+        this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00:00');
         this.$bvModal.show('bv-modal-appointment-form');
       }
     }

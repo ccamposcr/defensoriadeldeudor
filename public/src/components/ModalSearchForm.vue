@@ -95,8 +95,7 @@ export default {
         data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
         this.$emit('update:users', data.response);
    
-        this.$bvModal.hide('bv-modal-search-form');
-        this.clearSearchForm(['searchBy']);
+        this.cancelSearchForm();
       }
   }
 }

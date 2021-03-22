@@ -200,6 +200,23 @@ var repositories = {
         csrf_hash = data.csrf_hash;
 
         return data;
+    },
+    addNewAppointment: async function(form){
+        console.log(form);
+        const url = 'citas/addAppointment';
+        form[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(form)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        return data;
     }
 }
   

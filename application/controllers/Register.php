@@ -8,7 +8,7 @@ class Register extends CI_Controller
     public function __construct(){
         parent::__construct();
         if ($this->session->userdata('id')) {
-            redirect('inicio');
+            redirect('login');
         }
         $this->load->library('form_validation');
         $this->load->model('register_model');

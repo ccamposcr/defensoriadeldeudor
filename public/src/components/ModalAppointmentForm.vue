@@ -12,12 +12,15 @@
           </ul>
       </div>
       <b-form class="appointment__new-form">
-         
-          <b-form-group label-for="client" label="Seleccione el cliente">
-            <b-form-select id="client" v-model="appointmentForm.client" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
+          <b-form-group label-for="filter" label="Filtrar por">
+            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Filtro"></b-form-input>
           </b-form-group>
+          <b-form-group label-for="client" label="Seleccione el cliente">
+            <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
+          </b-form-group>
+          <div>Fecha y Hora de la Cita: {{appointmentForm.date}}</div>
 
-          <b-button v-if="!editingAppointment" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">Agregar</b-button>
+          <b-button v-if="!editingAppointment" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">Agendar</b-button>
           <b-button v-if="editingAppointment" @click.prevent="checkForm(function(){setEditedAppointment()})" type="submit" variant="primary">Guardar</b-button>
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
       </b-form>
@@ -35,18 +38,27 @@ export default {
   props: ["appointmentForm", "editingAppointment"],
   data () {
     return {
-      errors:[]
+      errors:[],
+      clientList: []
     }
   },
   mounted (){
     this.getAllUsers();
   },
   methods: {
+    checkForm: function(callback){
+        this.errors = [];
+        if(!this.appointmentForm.userID){
+            this.errors.push("Seleccione un cliente");
+        }
+        if(!this.errors.length){
+            callback();
+        }
+    },
     clearAppointmentForm: function(){
-      for(const item in this.appointmentForm){
-          this.appointmentForm[item] = null;
-      }
-      this.errors = [];
+      this.appointmentForm['filterBy'] = null;
+      this.errors = [],
+      this.appointmentForm['clientList'] = this.clientList;
     },
     cancelAppointmentForm: function(){
       this.clearAppointmentForm();
@@ -54,13 +66,25 @@ export default {
     },
     getAllUsers: async function(){
       const data = await repositories.getAllUsers();
-      const response = data.response;
-      response.forEach(item => {
-        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+      this.clientList = data.response;
+      this.clientList.forEach(item => {
+        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
+        item['userID'] = item.id;
       });
-      this.$set(this.appointmentForm, 'clientList', response);
+      this.$set(this.appointmentForm, 'clientList', this.clientList);
+    },
+    filter: function(){
+      this.appointmentForm['clientList'] =  this.clientList.filter((client) => {
+          return client.personalID.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
+                client.name.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
+                client.lastName1.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
+                client.lastName2.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase());
+      });
+    },
+    setNewAppointment: async function(){
+      await repositories.addNewAppointment(this.appointmentForm);
+      this.cancelAppointmentForm();
     }
-
   }
 }
 </script>

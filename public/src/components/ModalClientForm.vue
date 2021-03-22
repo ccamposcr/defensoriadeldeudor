@@ -14,7 +14,7 @@
           <b-form class="client__new-form">
               <input type="hidden" v-model="clientForm.id">
               <b-form-group label-for="personalID" label="Cédula">
-                <b-form-input v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
+                <b-form-input @blur="checkIfClientAlreadyExists"  v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
               </b-form-group>
               <b-form-group label-for="name" label="Nombre">
                 <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
@@ -25,7 +25,7 @@
               <b-form-group label-for="lastName2" label="Segundo Apellido">
                 <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
               </b-form-group>
-              <b-form-group label-for="phone" label="Teléfono">
+              <b-form-group label-for="phone" label="Teléfono" v-mask="'####-####'">
                 <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
               </b-form-group>
               <b-form-group label-for="email" label="Email">
@@ -97,8 +97,7 @@ export default {
         await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.clearClientForm();
-        this.$bvModal.hide('bv-modal-client-form');
+        this.cancelClientForm();
     },
     setEditedClient: async function(){
         await repositories.editClient(this.clientForm);
@@ -118,6 +117,16 @@ export default {
     cancelClientForm: function(){
         this.clearClientForm();
         this.$bvModal.hide('bv-modal-client-form');
+    },
+    checkIfClientAlreadyExists: async function(){
+      console.log('Client already Exists');
+      const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
+      const response = data.response;
+      if( response.length ){
+        this.$bvModal.hide('bv-modal-client-form');
+        this.showClientByPersonalID(this.clientForm.personalID);
+        this.clearClientForm();
+      }
     }
   }
 }

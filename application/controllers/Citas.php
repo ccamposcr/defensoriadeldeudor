@@ -12,14 +12,21 @@ class Citas extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model('citas_model');
     }
-    
-    function index(){
-        $data['title'] = 'Citas';
-        $this->load->view('global/header', $data);
-        $this->load->view('global/navigation');
-        $this->load->view('global/body');
-        //$this->load->view('clientes');
-        $this->load->view('global/footer');
+
+    function addAppointment(){
+        $data = array(
+            'userID' => $this->input->post('userID'), 
+            'date' => $this->input->post('date')
+        );
+
+        $this->citas_model->addAppointment($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
     }
     
 }

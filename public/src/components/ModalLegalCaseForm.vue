@@ -128,8 +128,7 @@ export default {
           this.$parent.showLegalCaseNotes(legalCaseNote['legalCaseID']);
         }
 
-        this.clearLegalCaseForm();
-        this.$bvModal.hide('bv-modal-legal-case-form');
+        this.cancelLegalForm();
     }
   }
 }
