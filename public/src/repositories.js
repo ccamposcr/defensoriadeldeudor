@@ -19,7 +19,7 @@ var repositories = {
         return data;
     },
     getRoleList: async function(){
-        const url = 'clientes/getRoleList';
+        const url = 'generic/getRoleList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -27,7 +27,7 @@ var repositories = {
         return data;
     },
     getJudicialStatusList: async function(){
-        const url = 'clientes/getJudicialStatusList';
+        const url = 'generic/getJudicialStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -35,7 +35,7 @@ var repositories = {
         return data;
     },
     getSubjectList: async function(){
-        const url = 'clientes/getSubjectList';
+        const url = 'generic/getSubjectList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -51,7 +51,7 @@ var repositories = {
         return data;
     },
     getAdministrativeStatusList: async function(){
-        const url = 'clientes/getAdministrativeStatusList';
+        const url = 'generic/getAdministrativeStatusList';
         const response = await fetch(url);
         const data = await response.json();
         csrf_name = data.csrf_name;
@@ -59,7 +59,7 @@ var repositories = {
         return data;
     },
     getLegalCasesBy: async function(searchBy, value){
-        const url = 'clientes/getLegalCasesBy';
+        const url = 'casosLegales/getLegalCasesBy';
 
         const params = {
           'searchBy':searchBy,
@@ -79,7 +79,7 @@ var repositories = {
         return data;
     },
     getLegalCaseNotesBy: async function(searchBy, value){
-        const url = 'clientes/getLegalCaseNotesBy';
+        const url = 'casosLegales/getLegalCaseNotesBy';
 
         const params = {
           'searchBy':searchBy,
@@ -99,7 +99,7 @@ var repositories = {
         return data;
     },
     getLegalCasesByDateRange: async function(searchBy, start, end){
-        const url = 'inicio/getLegalCasesByDateRange';
+        const url = 'casosLegales/getLegalCasesByDateRange';
 
         const params = {
           'searchBy':searchBy,
@@ -120,7 +120,7 @@ var repositories = {
         return data;
     },
     addLegalCaseNote: async function(params){
-        const url = 'clientes/addLegalCaseNote';
+        const url = 'casosLegales/addLegalCaseNote';
 
         params[csrf_name] = csrf_hash;
 
@@ -169,7 +169,7 @@ var repositories = {
         return data;
     },
     addNewLegalCase: async function(userID, params){
-        const url = 'clientes/addLegalCase';
+        const url = 'casosLegales/addLegalCase';
         params[csrf_name] = csrf_hash;
         params['userID'] = userID;
 
@@ -186,7 +186,7 @@ var repositories = {
         return data;
     },
     editLegalCase: async function(params){
-        const url = 'clientes/editLegalCase';
+        const url = 'casosLegales/editLegalCase';
         params[csrf_name] = csrf_hash;
 
         const response = await fetch(url, {

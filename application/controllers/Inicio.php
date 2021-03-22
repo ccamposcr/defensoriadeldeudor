@@ -19,22 +19,6 @@ class Inicio extends CI_Controller
         $this->load->view('inicio');
         $this->load->view('global/footer');
     }
-    
-    function getLegalCasesByDateRange(){
-        $data = array(
-            'searchBy' => $this->input->post('searchBy'), 
-            'start' => $this->input->post('start'),
-            'end' => $this->input->post('end')
-        );
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->inicio_model->getLegalCasesByDateRange($data)
-        );
-
-        echo json_encode($response);
-    }
 }
 
 ?>
