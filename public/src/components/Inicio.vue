@@ -128,8 +128,17 @@
                   depressed
                   color="primary"
                   :href="selectedEvent.href"
+                  v-if="selectedEvent.type=='notification'"
                 >
                   Ir al caso
+                </v-btn>
+                <v-btn
+                  depressed
+                  color="primary"
+                  :href="selectedEvent.href"
+                  v-if="selectedEvent.type=='appointment'"
+                >
+                  Eliminar Cita
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -203,18 +212,37 @@
         const startDate = start.date;
         const endDate = end.date;
 
-        const data = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
-        const response = data.response;
-        if( response.length ){
-          response.forEach(item => {
+        const dataLegalCases = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
+        const responseLegalCases = dataLegalCases.response;
+
+        if( responseLegalCases.length ){
+          responseLegalCases.forEach(item => {
             item['name'] = 'Cobro -> N.Exp: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
             item['details'] = 'Siguiente pago: '+ item.start +'<br/>Número de expediente: ' + item.internalCode + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             item['href'] = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
             item['color'] = 'orange';
+            item['type'] = 'notification';
           });
         }
 
+        const dataAppointments = await repositories.getAppointmentsByDateRange('date', startDate, endDate);
+        const responseAppointments = dataAppointments.response;
+
+        if( responseAppointments.length ){
+          responseAppointments.forEach(item => {
+            item['name'] = 'Cita -> ' + item.userName + ' ' + item.lastName1;
+            item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
+            item['href'] = base_url + 'citas?cancelCitaID=' + item.appointmentID;
+            item['start'] = item.date;
+            item['color'] = 'green';
+            item['type'] = 'appointment';
+          });
+        }
+
+        const response = responseLegalCases.concat(responseAppointments);
+
         this.events = response;
+        console.log(this.events);
       },
       showEvent: function ({ nativeEvent, event }) {
         const open = () => {
@@ -246,7 +274,7 @@
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
       },
       showAppointmentModal: function({ date, hour }){
-        this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00:00');
+        this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00');
         this.$bvModal.show('bv-modal-appointment-form');
       }
     }

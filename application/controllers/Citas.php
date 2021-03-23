@@ -28,6 +28,22 @@ class Citas extends CI_Controller
 
         echo json_encode($response);
     }
+
+    function getAppointmentsByDateRange(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'start' => $this->input->post('start'),
+            'end' => $this->input->post('end')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->citas_model->getAppointmentsByDateRange($data)
+        );
+
+        echo json_encode($response);
+    }
     
 }
 

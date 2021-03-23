@@ -15,8 +15,8 @@ class Generic extends CI_Controller
 
     function getRoleList(){
         $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
+            //'csrf_name' => $this->security->get_csrf_token_name(),
+            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->generic_model->getRoleList()
         );
 
@@ -25,8 +25,8 @@ class Generic extends CI_Controller
 
     function getJudicialStatusList(){
         $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
+            //'csrf_name' => $this->security->get_csrf_token_name(),
+            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->generic_model->getJudicialStatusList()
         );
 
@@ -35,8 +35,8 @@ class Generic extends CI_Controller
 
     function getAdministrativeStatusList(){
         $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
+            //'csrf_name' => $this->security->get_csrf_token_name(),
+            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->generic_model->getAdministrativeStatusList()
         );
 
@@ -45,8 +45,8 @@ class Generic extends CI_Controller
 
     function getSubjectList(){
         $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
+            //'csrf_name' => $this->security->get_csrf_token_name(),
+            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->generic_model->getSubjectList()
         );
 

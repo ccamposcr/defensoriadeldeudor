@@ -71,8 +71,8 @@ class Clientes extends CI_Controller
 
     function getAllClients(){
         $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
+            //'csrf_name' => $this->security->get_csrf_token_name(),
+            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getAllClients()
         );
 
