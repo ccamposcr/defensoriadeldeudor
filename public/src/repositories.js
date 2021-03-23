@@ -23,8 +23,6 @@ var repositories = {
         const url = 'generic/getRoleList';
         const response = await fetch(url);
         const data = await response.json();
-        //csrf_name = data.csrf_name;
-        //csrf_hash = data.csrf_hash;
 
         return data;
     },
@@ -32,8 +30,6 @@ var repositories = {
         const url = 'generic/getJudicialStatusList';
         const response = await fetch(url);
         const data = await response.json();
-        //csrf_name = data.csrf_name;
-        //csrf_hash = data.csrf_hash;
 
         return data;
     },
@@ -41,8 +37,6 @@ var repositories = {
         const url = 'generic/getSubjectList';
         const response = await fetch(url);
         const data = await response.json();
-        //csrf_name = data.csrf_name;
-        //csrf_hash = data.csrf_hash;
 
         return data;
     },
@@ -50,8 +44,6 @@ var repositories = {
         const url = 'clientes/getAllClients';
         const response = await fetch(url);
         const data = await response.json();
-        //csrf_name = data.csrf_name;
-        //csrf_hash = data.csrf_hash;
 
         return data;
     },
@@ -59,8 +51,6 @@ var repositories = {
         const url = 'generic/getAdministrativeStatusList';
         const response = await fetch(url);
         const data = await response.json();
-        //csrf_name = data.csrf_name;
-        //csrf_hash = data.csrf_hash;
 
         return data;
     },
@@ -246,6 +236,22 @@ var repositories = {
         csrf_name = data.csrf_name;
         csrf_hash = data.csrf_hash;
         
+        return data;
+    },
+    cancelAppointment: async function(params){
+        const url = 'citas/cancelAppointment';
+        params[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(params)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
         return data;
     }
 }

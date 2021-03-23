@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-legal-case-form" hide-footer novalidate="true">
+        <b-modal id="bv-modal-legal-case-form" hide-footer novalidate="true" @hide="cancelLegalForm">
             <template #modal-title>
             Caso Legal
             </template>

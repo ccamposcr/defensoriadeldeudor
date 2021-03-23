@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true">
+    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="cancelAppointmentForm" @show="getAllUsers">
     <template #modal-title>
       Citas
     </template>
@@ -41,15 +41,12 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
-  props: ["appointmentForm", "editingAppointment"],
+  props: ["appointmentForm", "editingAppointment", "date"],
   data () {
     return {
       errors:[],
       clientList: []
     }
-  },
-  mounted (){
-    this.getAllUsers();
   },
   methods: {
     checkForm: function(callback){
@@ -90,6 +87,9 @@ export default {
     setNewAppointment: async function(){
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
+      const start = this.date.start;
+      const end = this.date.end;
+      this.$parent.fetchEvents({start, end});
     }
   }
 }

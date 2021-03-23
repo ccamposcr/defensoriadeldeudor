@@ -73,7 +73,7 @@
 
           </v-toolbar>
         </v-sheet>
-        <v-sheet height="60%">
+        <v-sheet>
           <v-calendar
             ref="calendar"
             :events="events"
@@ -135,7 +135,7 @@
                 <v-btn
                   depressed
                   color="primary"
-                  :href="selectedEvent.href"
+                  @click="cancelAppointment(selectedEvent.appointmentID)"
                   v-if="selectedEvent.type=='appointment'"
                 >
                   Eliminar Cita
@@ -148,7 +148,7 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form :editing-appointment="editingAppointment"  :appointment-form="appointmentForm"></modal-appointment-form>
+    <modal-appointment-form :editing-appointment="editingAppointment" :appointment-form="appointmentForm" :date="date"></modal-appointment-form>
   </div>
 </template>
 
@@ -177,7 +177,11 @@
         data: null,
         userID: null
       },
-      editingAppointment: false
+      editingAppointment: false,
+      date:{
+        start: null,
+        end: null
+      }
     }),
     computed: {
       cal () {
@@ -209,8 +213,11 @@
         this.$refs.calendar.next();
       },
       fetchEvents: async function({ start, end }) {
-        const startDate = start.date;
-        const endDate = end.date;
+        this.date.start = start;
+        this.date.end = end;
+
+        const startDate = this.date.start.date;
+        const endDate = this.date.end.date;
 
         const dataLegalCases = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
         const responseLegalCases = dataLegalCases.response;
@@ -232,7 +239,6 @@
           responseAppointments.forEach(item => {
             item['name'] = 'Cita -> ' + item.userName + ' ' + item.lastName1;
             item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
-            item['href'] = base_url + 'citas?cancelCitaID=' + item.appointmentID;
             item['start'] = item.date;
             item['color'] = 'green';
             item['type'] = 'appointment';
@@ -242,7 +248,6 @@
         const response = responseLegalCases.concat(responseAppointments);
 
         this.events = response;
-        console.log(this.events);
       },
       showEvent: function ({ nativeEvent, event }) {
         const open = () => {
@@ -276,6 +281,13 @@
       showAppointmentModal: function({ date, hour }){
         this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00');
         this.$bvModal.show('bv-modal-appointment-form');
+      },
+      cancelAppointment: async function(appointmentID){
+        await repositories.cancelAppointment({id:appointmentID});
+        const start = this.date.start;
+        const end = this.date.end;
+        this.fetchEvents({start, end});
+        this.selectedOpen = false;
       }
     }
   }

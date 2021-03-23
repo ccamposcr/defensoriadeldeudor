@@ -18,7 +18,6 @@ class Clientes extends CI_Controller
         $this->load->view('global/header', $data);
         $this->load->view('global/navigation');
         $this->load->view('global/body');
-        //$this->load->view('clientes');
         $this->load->view('global/footer');
     }
 
@@ -71,8 +70,6 @@ class Clientes extends CI_Controller
 
     function getAllClients(){
         $response = array(
-            //'csrf_name' => $this->security->get_csrf_token_name(),
-            //'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->clientes_model->getAllClients()
         );
 

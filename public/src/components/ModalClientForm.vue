@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-client-form" hide-footer novalidate="true">
+        <b-modal id="bv-modal-client-form" hide-footer novalidate="true" @hide="cancelClientForm">
         <template #modal-title>
           Cliente
         </template>

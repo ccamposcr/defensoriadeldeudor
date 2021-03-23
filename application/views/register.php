@@ -4,7 +4,6 @@
    <h3>Registro</h3>
 
    <div class="panel panel-default">
-      <div class="panel-heading">Registro</div>
       <div class="panel-body">
          <?php
             $attributes = array('role' => 'form', 'method' => 'post');

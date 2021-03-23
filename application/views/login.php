@@ -4,7 +4,6 @@
    <h3>Ingreso</h3>
    
    <div class="panel panel-default">
-      <div class="panel-heading">Ingreso</div>
       <div class="panel-body">
          <?php
             if($this->session->flashdata('message'))

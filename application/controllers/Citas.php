@@ -44,6 +44,21 @@ class Citas extends CI_Controller
 
         echo json_encode($response);
     }
+
+    function cancelAppointment(){
+        $data = array(
+            'id' => $this->input->post('id')
+        );
+        
+        $this->citas_model->cancelAppointment($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
     
 }
 

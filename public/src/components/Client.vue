@@ -124,24 +124,8 @@ export default {
     //this.today = this.$parent.getTodayDate();
   },
   mounted() {
-    /*this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-      switch(modalId){
-        case 'bv-modal-legal-case-form':
-        break;
-        case 'bv-modal-search-form':
-        break;
-        case 'bv-modal-client-form':
-        break;
-      }
-    })*/
-    /* 
-      params.legalCaseID
-      params.userID
-    */
-
     const params = this.$route.query;
     this.loadDataFromURLParams(params);
-    
   },
   methods: {
       getStaticDataFromDB: async function(){
@@ -270,15 +254,16 @@ export default {
         list-style-type: none;
         padding: 0;
         display: flex;
+        flex-wrap: wrap;
       }
     }
     .legal-cases{
       &__case{
         padding: 15px;
-        border-right: 1px solid gray;
-        flex: 0 1 100%;
-        &:last-child{
-          border-right: none;
+        flex: 1 1 50%;
+
+        &:nth-child(odd){
+          border-right: 1px solid gray;
         }
       }
       &__notes{

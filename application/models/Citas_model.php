@@ -16,6 +16,11 @@ class Citas_model extends CI_Model
         $results = $query->result();
         return $results;
     }
+
+    function cancelAppointment($data){
+        $results = $this->db->delete('userappointment', $data);
+        return $results;
+    }
 }
 
 ?>

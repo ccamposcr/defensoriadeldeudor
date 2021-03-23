@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-search-form" hide-footer novalidate="true">
+        <b-modal id="bv-modal-search-form" hide-footer novalidate="true" @hide="cancelSearchForm">
             <template #modal-title>
             Buscar
             </template>
