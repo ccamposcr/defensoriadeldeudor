@@ -128,8 +128,8 @@ export default {
   methods: {
       getStaticDataFromDB: async function(){
 
-        const roleListData = await repositories.getRoleList();
-        this.staticData.roleList = roleListData.response;
+        /*const roleListData = await repositories.getRoleList();
+        this.staticData.roleList = roleListData.response;*/
 
         const judicialStatusListData = await repositories.getJudicialStatusList();
         this.staticData.judicialStatusList = judicialStatusListData.response;

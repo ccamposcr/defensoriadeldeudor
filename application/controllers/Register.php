@@ -11,7 +11,7 @@ class Register extends CI_Controller
             redirect('login');
         }
         if ($this->session->userdata('roleID') != '1') {
-            redirect('confidential');
+            redirect('confidencial');
         }
         $this->load->library('form_validation');
         $this->load->model('register_model');

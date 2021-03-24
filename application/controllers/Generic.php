@@ -21,6 +21,14 @@ class Generic extends CI_Controller
         echo json_encode($response);
     }
 
+    function getAccessList(){
+        $response = array(
+            'response' => $this->generic_model->getAccessList()
+        );
+
+        echo json_encode($response);
+    }
+
     function getJudicialStatusList(){
         $response = array(
             'response' => $this->generic_model->getJudicialStatusList()

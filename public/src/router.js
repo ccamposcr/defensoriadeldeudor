@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Client    from './components/Client.vue'
 import Inicio    from './components/Inicio.vue'
+import Administracion    from './components/Administracion.vue'
 
 Vue.use(Router)
 
@@ -15,6 +16,10 @@ export default new Router({
         {
             path: '/inicio',
             component: Inicio
+        },
+        {
+            path: '/administracion',
+            component: Administracion
         }
     ],
     mode: "history",

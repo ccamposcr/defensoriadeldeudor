@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Confidential extends CI_Controller
+class Confidencial extends CI_Controller
 {
     
     public function __construct(){
@@ -16,7 +16,7 @@ class Confidential extends CI_Controller
         $this->load->view('global/header', $data);
         $this->load->view('global/navigation');
         $this->load->view('global/welcome');
-        $this->load->view('global/confidential');
+        $this->load->view('global/confidencial');
         $this->load->view('global/body');
         $this->load->view('global/footer');
     }

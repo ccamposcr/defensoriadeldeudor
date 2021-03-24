@@ -8,6 +8,12 @@ class Generic_model extends CI_Model
         return $results;
     }
 
+    function getAccessList(){
+        $query = $this->db->get('accessList');
+        $results = $query->result();
+        return $results;
+    }
+
     function getJudicialStatusList(){
         $query = $this->db->get('judicialstatuslist');
         $results = $query->result();

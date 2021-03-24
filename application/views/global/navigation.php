@@ -6,6 +6,7 @@
    if($this->session->userdata('roleID') == '1')
    {
       echo '<li class="nav__item" role="presentation"><a href="'. base_url() . 'register">Crear Usuarios</a></li>';
+      echo '<li class="nav__item" role="presentation"><a href="'. base_url() . 'administracion">Administrar</a></li>';
    }
    ?>
 </ul>

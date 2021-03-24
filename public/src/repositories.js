@@ -253,6 +253,13 @@ var repositories = {
         csrf_hash = data.csrf_hash;
 
         return data;
+    },
+    getAccessList:  async function(){
+        const url = 'generic/getAccessList';
+        const response = await fetch(url);
+        const data = await response.json();
+
+        return data;
     }
 }
   
