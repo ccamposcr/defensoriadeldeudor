@@ -10,6 +10,9 @@ class Register extends CI_Controller
         if (!$this->session->userdata('id')) {
             redirect('login');
         }
+        if ($this->session->userdata('roleID') != '1') {
+            redirect('confidential');
+        }
         $this->load->library('form_validation');
         $this->load->model('register_model');
         $this->load->model('generic_model');
@@ -20,6 +23,7 @@ class Register extends CI_Controller
         $data['roleList'] = $this->generic_model->getRoleList();
         $this->load->view('global/header', $data);
         $this->load->view('global/navigation');
+        $this->load->view('global/welcome');
         $this->load->view('register', $data);
         $this->load->view('global/footer');
     }
