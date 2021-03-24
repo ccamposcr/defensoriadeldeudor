@@ -64,7 +64,6 @@ export default {
       this.appointmentForm['clientList'] = this.clientList;
     },
     cancelAppointmentForm: function(){
-      this.clearAppointmentForm();
       this.$bvModal.hide('bv-modal-appointment-form');
     },
     getAllUsers: async function(){

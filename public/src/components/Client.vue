@@ -160,7 +160,6 @@ export default {
         this.$bvModal.show('bv-modal-search-form');
       },
       showClientFormModal: function(){
-        this.clearForm('clientForm');
         this.editingUser = false;
         this.$bvModal.show('bv-modal-client-form');
       },
@@ -200,15 +199,9 @@ export default {
         this.legalCaseNotes = [];
       },
       showLegalCaseForm: async function(userID){
-        this.clearForm('legalCaseForm');
         this.editingLegalCase = false;
         this.legalCaseUserId = userID;
         this.$bvModal.show('bv-modal-legal-case-form');
-      },
-      clearForm: function(form){
-        for(const item in this[form]){
-            this[form][item] = null;
-        }
       },
       loadDataFromURLParams: async function(params){
         if(params.userID){

@@ -87,7 +87,6 @@ export default {
         this.errors = [];
     },
     cancelSearchForm: function(){
-        this.clearSearchForm(['searchBy']);
         this.$bvModal.hide('bv-modal-search-form');
     },
     showSearchResults: async function(){   

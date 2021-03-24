@@ -91,7 +91,6 @@ export default {
         this.errors = [];
     },
     cancelLegalForm: function(){
-        this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
     },
     setNewLegalCase: async function(){
@@ -109,7 +108,6 @@ export default {
         }
 
         this.$parent.showLegalCases(userID);
-        this.clearLegalCaseForm();
         this.$bvModal.hide('bv-modal-legal-case-form');
     },
     setEditedLegalCase: async function(){

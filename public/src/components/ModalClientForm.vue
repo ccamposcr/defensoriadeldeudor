@@ -103,7 +103,6 @@ export default {
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.clearClientForm();
         this.$bvModal.hide('bv-modal-client-form');
     },
     clearClientForm: function(){
@@ -115,18 +114,17 @@ export default {
         this.errors = [];
     },
     cancelClientForm: function(){
-        this.clearClientForm();
         this.$bvModal.hide('bv-modal-client-form');
     },
     checkIfClientAlreadyExists: async function(){
-      console.log('Client already Exists');
+     
       const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
       const response = data.response;
       if( response.length ){
-        this.$bvModal.hide('bv-modal-client-form');
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.clearClientForm();
+        this.$bvModal.hide('bv-modal-client-form');
       }
+      
     }
   }
 }

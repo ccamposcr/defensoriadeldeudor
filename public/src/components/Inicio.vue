@@ -82,8 +82,6 @@
             v-model="value"
             @change="fetchEvents"
             @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
             @click:time="showAppointmentModal"
           >
             <template v-slot:day-body="{ date, week }">
@@ -169,8 +167,7 @@
       type: 'week',
       typeToLabel: {
         month: 'Mes',
-        week: 'Semana',
-        day: 'Día',
+        week: 'Semana'
       },
       ready: false,
       appointmentForm: {
@@ -199,10 +196,6 @@
       this.$refs.calendar.scrollToTime('08:00');
     },
     methods: {
-      viewDay: function ({ date }) {
-      this.value = date
-      this.type = 'day'
-    },
       setToday: function() {
         this.value = '';
       },
