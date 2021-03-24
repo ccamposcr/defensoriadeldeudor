@@ -1,6 +1,5 @@
 <template>
   <div class="client">
-    <welcome></welcome>
     <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
@@ -62,13 +61,12 @@
 import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
-import Welcome from './Welcome.vue';
 import repositories from '../repositories';
 
 
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, Welcome},
+  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm},
   data () {
     return {
       staticData:{

@@ -53,14 +53,8 @@ export default {
   props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
   data () {
     return {
-      errors:[],
-      loggedINUserData: null
+      errors:[]
     }
-  },
-  mounted(){
-    this.$root.$on('loggedINUserData', data => {
-        this.loggedINUserData = data;
-    });
   },
   methods: {
     checkForm: function(callback){
@@ -100,7 +94,7 @@ export default {
         const legalCaseNote = {};
         
         legalCaseNote['legalCaseID'] = data.legalCaseID;
-        legalCaseNote['userID'] = this.loggedINUserData['id'];
+        legalCaseNote['userID'] = loggedINUserID;
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){
@@ -118,7 +112,7 @@ export default {
 
         const legalCaseNote = {};
         legalCaseNote['legalCaseID'] = this.legalCaseForm['legalCaseID'];
-        legalCaseNote['userID'] = this.loggedINUserData['id'];
+        legalCaseNote['userID'] = loggedINUserID;
         legalCaseNote['note'] = this.legalCaseForm['note'];
 
         if( legalCaseNote['note'] ){

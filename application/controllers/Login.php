@@ -27,25 +27,33 @@ class Login extends CI_Controller
     
     function validation(){
         
-        $this->form_validation->set_rules('user_personalID', 'ID', 'required|trim');
-        $this->form_validation->set_rules('user_password', 'Password', 'required');
+        $this->form_validation->set_rules('personalID', 'Cédula', 'required|trim', 
+            array('required' => 'Por favor ingrese una cédula.')
+        );
+        $this->form_validation->set_rules('password', 'Contraseña', 'required',
+            array('required' => 'Por favor ingrese la contraseña.')
+        );
 
         if ($this->form_validation->run()) {
       
             $message = 'Cédula o Contraseña incorrecta';
-            $passwordhashFromBD = $this->login_model->getUserPassword($this->input->post('user_personalID'));
+            $user = $this->login_model->login($this->input->post('personalID'));
+            $passwordhashFromBD = $user->password;
             if($passwordhashFromBD){
-                $passwordVerification = $this->verify_hash($this->input->post('user_password'), $passwordhashFromBD);
+                $passwordVerification = $this->verify_hash($this->input->post('password'), $passwordhashFromBD);
             
                 if($passwordVerification){
-                    $message = 'Logged IN';
-                    $this->session->set_userdata('id', $this->input->post('user_personalID'));
+
+                    $this->session->set_userdata('personalID', $this->input->post('personalID'));
+                    $this->session->set_userdata('roleID', $user->roleID);
+                    $this->session->set_userdata('id', $user->id);
+                    $this->session->set_userdata('fullname', $user->name . ' ' . $user->lastName1 . ' ' . $user->lastName2);
                     redirect('inicio');
                     
                 }
             }
   
-            $this->session->set_flashdata('message', $message);
+            //$this->session->set_flashdata('message', $message);
             redirect('login');
         } else {
             $this->index();

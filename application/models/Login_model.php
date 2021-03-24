@@ -2,14 +2,11 @@
 class Login_model extends CI_Model
 {
 
-    function getUserPassword($personalID){
+    function login($personalID){
+        $this->db->select('id, name, lastName1, lastName2, roleID, password');
         $this->db->where('personalID', $personalID);
         $query = $this->db->get('user');
-        
-        foreach ($query->result() as $row) {
-            $results =  $row->password;
-            break;
-        }
+        $results = $query->row();
        
         return $results;
     }

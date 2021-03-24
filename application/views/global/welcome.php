@@ -1,0 +1,1 @@
+<div>Bienvenido: <?php echo $this->session->userdata('fullname')?></div>
