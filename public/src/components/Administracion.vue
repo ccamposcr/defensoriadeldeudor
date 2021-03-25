@@ -1,16 +1,27 @@
 <template>
   <div class="administracion">
-      <b-form class="user__case-form">
-       
-        <b-form-group label-for="role" label="Rol">
-            <b-form-select id="role" v-model="administracionForm.role" :options="staticData.roleList" value-field="privilege" text-field="role"></b-form-select>
-        </b-form-group>
-        <b-form-group label-for="accessList" label="Privilegio">
-            <b-form-select id="accessList" v-model="administracionForm.access" :options="staticData.accessList" value-field="id" text-field="action"></b-form-select>
-        </b-form-group>
-        <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
-        <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">Guardar</b-button>
-        <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
+      <b-form class="rol-form">
+        <div v-for="item in staticData.roleList" :key="item.id">
+
+            <h4 class="role" :id="item.privilege">{{item.role}}</h4>
+
+            <b-form-group label="Accesos">
+                <b-form-checkbox-group
+                    id="accessList"
+                    name="accessList"
+                    label="Accesos del Rol"
+                    value-field="id"
+                    text-field="action"
+                    v-model="administracionForm[item.id]"
+                    :data-index="item.id"
+                >
+                    <b-form-checkbox v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
+                </b-form-checkbox-group>
+            </b-form-group>
+
+        </div>
+
+        <b-button @click.prevent="saveRoleAccessList" type="submit" variant="primary">Guardar</b-button>
     </b-form>
   </div>
 </template>
@@ -28,18 +39,29 @@ import repositories from '../repositories';
                 roleList: [],
                 accessList: []
             },
-            administracionForm: {
-                role: null,
-                access: null
-            }
+            administracionForm: [],
+            roleprivilegeaccess: {
+                data : []
+            },
+            errors: []
         }
     },
     created () {
         this.getStaticDataFromDB();
     },
-    mounted () {
-    },
     methods: {
+        saveRoleAccessList: async function(){
+            this.administracionForm.forEach((roleValue, i) =>  {
+                roleValue.forEach((accessValue, j) => {
+                    this.roleprivilegeaccess.data.push({
+                        'roleID': i,
+                        'accessID': accessValue
+                    });
+                });
+            });
+            await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
+            console.log(this.roleprivilegeaccess.data);
+        },
         getStaticDataFromDB: async function(){
 
             const roleListData = await repositories.getRoleList();
@@ -47,6 +69,12 @@ import repositories from '../repositories';
 
             const accessListData = await repositories.getAccessList();
             this.staticData.accessList = accessListData.response;
+        },
+        clearRolForm: function(){
+            for(const item in this.administracionForm){
+                this.administracionForm[item] = null;
+            }
+            this.errors = [];
         }
     }
   }

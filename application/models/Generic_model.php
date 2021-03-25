@@ -31,6 +31,11 @@ class Generic_model extends CI_Model
         $results = $query->result();
         return $results;
     }
+
+    function setRolePrivilegeAccess($data){
+        $results = $this->db->insert_batch('roleprivilegeaccess', $data);
+        return $results;
+    }
 }
 
 ?>

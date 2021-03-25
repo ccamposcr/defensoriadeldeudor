@@ -52,6 +52,19 @@ class Generic extends CI_Controller
 
         echo json_encode($response);
     }
+
+    function setRolePrivilegeAccess(){
+        $data = $this->input->post('data');
+
+        $this->generic_model->setRolePrivilegeAccess(json_decode($data, true));
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
     
 }
 

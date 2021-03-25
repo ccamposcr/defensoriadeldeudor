@@ -260,6 +260,23 @@ var repositories = {
         const data = await response.json();
 
         return data;
+    },
+    setRolePrivilegeAccess: async function(params){
+        const url = 'generic/setRolePrivilegeAccess';
+        params[csrf_name] = csrf_hash;
+        params.data = JSON.stringify(params.data);
+
+        const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        return data;
     }
 }
   
