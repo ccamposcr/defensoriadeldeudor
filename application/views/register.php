@@ -1,7 +1,7 @@
 
 <div class="container">
    
-   <h3>Registro</h3>
+   <h3>Creación de usuarios</h3>
    <?php
    if($this->session->flashdata('message'))
    {

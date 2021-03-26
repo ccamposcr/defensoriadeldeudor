@@ -44,6 +44,13 @@ class Generic_model extends CI_Model
         $results = $query->result();
         return $results;
     }
+
+    function getPrivilegeAccessByRole($data){
+        $this->db->where($data['searchBy'], $data['value']);
+        $query = $this->db->get('roleprivilegeaccess');
+        $results = $query->result();
+        return $results;
+    }
 }
 
 ?>
