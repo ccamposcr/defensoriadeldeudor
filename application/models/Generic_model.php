@@ -33,7 +33,15 @@ class Generic_model extends CI_Model
     }
 
     function setRolePrivilegeAccess($data){
+        $this->db->empty_table('roleprivilegeaccess');
+        $this->db->query('ALTER TABLE roleprivilegeaccess AUTO_INCREMENT 1');
         $results = $this->db->insert_batch('roleprivilegeaccess', $data);
+        return $results;
+    }
+
+    function getRolePrivilegeAccess(){
+        $query = $this->db->get('roleprivilegeaccess');
+        $results = $query->result();
         return $results;
     }
 }

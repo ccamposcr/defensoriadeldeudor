@@ -65,6 +65,14 @@ class Generic extends CI_Controller
 
         echo json_encode($response);
     }
+
+    function getRolePrivilegeAccess(){
+        $response = array(
+            'response' => $this->generic_model->getRolePrivilegeAccess()
+        );
+
+        echo json_encode($response);
+    }
     
 }
 

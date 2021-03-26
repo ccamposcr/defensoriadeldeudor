@@ -277,6 +277,13 @@ var repositories = {
         csrf_hash = data.csrf_hash;
 
         return data;
+    },
+    getRolePrivilegeAccess:  async function(){
+        const url = 'generic/getRolePrivilegeAccess';
+        const response = await fetch(url);
+        const data = await response.json();
+
+        return data;
     }
 }
   

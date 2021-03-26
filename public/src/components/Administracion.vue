@@ -1,25 +1,33 @@
 <template>
   <div class="administracion">
-      <b-form class="rol-form">
-        <div v-for="item in staticData.roleList" :key="item.id">
-
-            <h4 class="role" :id="item.privilege">{{item.role}}</h4>
-
-            <b-form-group label="Accesos">
-                <b-form-checkbox-group
-                    id="accessList"
-                    name="accessList"
-                    label="Accesos del Rol"
-                    value-field="id"
-                    text-field="action"
-                    v-model="administracionForm[item.id]"
-                    :data-index="item.id"
-                >
-                    <b-form-checkbox v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
-                </b-form-checkbox-group>
+        <b-form class="rol-form">
+            <b-form-group>
+                <h5>Permisos Roles</h5>
+            </b-form-group>
+            <b-form-group>
+                <b-alert v-if="showSuccessMsg" variant="success">Permisos guardados!</b-alert>
             </b-form-group>
 
-        </div>
+            <div v-for="item in staticData.roleList" :key="item.id">
+                
+                <b-form-group>
+                    <h6 class="role" :id="item.privilege">Rol {{item.role}}</h6>
+                </b-form-group>
+
+                <b-form-group>
+                    <b-form-checkbox-group
+                        id="accessList"
+                        name="accessList"
+                        label="Accesos del Rol"
+                        value-field="id"
+                        text-field="action"
+                        v-model="administracionForm[item.id]"
+                    >
+                        <b-form-checkbox :data-role="item.id" :data-access="access.id" v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
+                    </b-form-checkbox-group>
+                </b-form-group>
+
+            </div>
 
         <b-button @click.prevent="saveRoleAccessList" type="submit" variant="primary">Guardar</b-button>
     </b-form>
@@ -43,7 +51,7 @@ import repositories from '../repositories';
             roleprivilegeaccess: {
                 data : []
             },
-            errors: []
+            showSuccessMsg : false
         }
     },
     created () {
@@ -51,6 +59,7 @@ import repositories from '../repositories';
     },
     methods: {
         saveRoleAccessList: async function(){
+            console.log(this.administracionForm);
             this.administracionForm.forEach((roleValue, i) =>  {
                 roleValue.forEach((accessValue, j) => {
                     this.roleprivilegeaccess.data.push({
@@ -60,7 +69,8 @@ import repositories from '../repositories';
                 });
             });
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
-            console.log(this.roleprivilegeaccess.data);
+            this.showSuccessMsg = true;
+
         },
         getStaticDataFromDB: async function(){
 
@@ -69,12 +79,25 @@ import repositories from '../repositories';
 
             const accessListData = await repositories.getAccessList();
             this.staticData.accessList = accessListData.response;
-        },
-        clearRolForm: function(){
-            for(const item in this.administracionForm){
-                this.administracionForm[item] = null;
+
+            const roleprivilegeaccessData = await repositories.getRolePrivilegeAccess();
+            const response = roleprivilegeaccessData.response;
+
+            const administrationFormArray = [];
+          
+            response.forEach(obj => {
+                const { roleID, accessID } = obj;
+                if(administrationFormArray[roleID]){
+                    administrationFormArray[roleID].push(accessID);
+                }else{
+                    administrationFormArray[roleID] = [accessID]
+                }
+            });
+
+            if( administrationFormArray.length ){
+                this.administracionForm = administrationFormArray;
             }
-            this.errors = [];
+           
         }
     }
   }
