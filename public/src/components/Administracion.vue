@@ -5,7 +5,7 @@
                 <h5>Permisos Roles</h5>
             </b-form-group>
             <b-form-group>
-                <b-alert v-if="showSuccessMsg" variant="success">Permisos guardados!</b-alert>
+                <b-alert v-show="showSuccessMsg" variant="success" show>Permisos guardados!</b-alert>
             </b-form-group>
 
             <div v-for="item in staticData.roleList" :key="item.id">
@@ -51,7 +51,7 @@ import repositories from '../repositories';
             roleprivilegeaccess: {
                 data : []
             },
-            showSuccessMsg : false
+            showSuccessMsg: false
         }
     },
     created () {
@@ -59,7 +59,7 @@ import repositories from '../repositories';
     },
     methods: {
         saveRoleAccessList: async function(){
-            console.log(this.administracionForm);
+            this.roleprivilegeaccess.data = [];
             this.administracionForm.forEach((roleValue, i) =>  {
                 roleValue.forEach((accessValue, j) => {
                     this.roleprivilegeaccess.data.push({
