@@ -5,6 +5,7 @@
                 let csrf_hash = '<?php echo $CI->security->get_csrf_hash(); ?>';
                 const loggedINUserID = '<?php echo $this->session->userdata('id') ?>';
                 const loggedINRoleID = '<?php echo $this->session->userdata('roleID') ?>';
+                const loggedINAccessList = '<?php echo $this->session->userdata('accessList') ?>';
             </script>
             <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
             <script type="text/javascript" src="<?php echo base_url();?>public/dist/build.js"></script>

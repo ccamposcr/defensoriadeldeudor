@@ -32,7 +32,7 @@ class Clientes extends CI_Controller
             'phone' => $this->input->post('phone'), 
             'email' => $this->input->post('email'), 
             'address' => $this->input->post('address'),
-            'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '99'
+            'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '0'
         );
 
         $this->clientes_model->addClient($data);

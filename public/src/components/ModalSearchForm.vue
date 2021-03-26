@@ -78,14 +78,6 @@ export default {
             callback();
         }
     },
-    clearSearchForm: function(except){
-        for(const item in this.searchClientForm){
-            if( !except.includes(item) ){
-                this.searchClientForm[item] = null;
-            }
-        }
-        this.errors = [];
-    },
     cancelSearchForm: function(){
         this.$bvModal.hide('bv-modal-search-form');
     },

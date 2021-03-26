@@ -109,7 +109,7 @@ export default {
         for(const item in this.clientForm){
             this.clientForm[item] = null;
         }
-        this.clientForm.role = '99';
+        this.clientForm.roleID = '0';
         this.clientForm.status = '1';
         this.errors = [];
     },

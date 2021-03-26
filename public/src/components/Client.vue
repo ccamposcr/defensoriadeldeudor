@@ -86,7 +86,7 @@ export default {
         phone: null,
         email: null,
         address: null,
-        roleID:'99',
+        roleID:'0',
         status: '1'
       },
       legalCaseForm:{
@@ -140,7 +140,7 @@ export default {
         const administrativeStatusListData = await repositories.getAdministrativeStatusList();
         this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
-        const locationListData = await repositories.getClientBy('roleID !=', '99');
+        const locationListData = await repositories.getClientBy('roleID !=', '0');
         this.staticData.locationList = locationListData.response;
 
         this.staticData.locationList.forEach(item => {

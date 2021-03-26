@@ -11,7 +11,7 @@
             <div v-for="item in staticData.roleList" :key="item.id">
                 
                 <b-form-group>
-                    <h6 class="role" :id="item.privilege">Rol {{item.role}}</h6>
+                    <h6 class="role" :id="item.id">Rol {{item.role}}</h6>
                 </b-form-group>
 
                 <b-form-group>
@@ -60,14 +60,15 @@ import repositories from '../repositories';
     methods: {
         saveRoleAccessList: async function(){
             this.roleprivilegeaccess.data = [];
-            this.administracionForm.forEach((roleValue, i) =>  {
-                roleValue.forEach((accessValue, j) => {
+
+            for (const roleValue in this.administracionForm) {
+                this.administracionForm[roleValue].forEach((accessValue) => {
                     this.roleprivilegeaccess.data.push({
-                        'roleID': i,
+                        'roleID': roleValue,
                         'accessID': accessValue
                     });
                 });
-            });
+            }
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
             this.showSuccessMsg = true;
 
@@ -83,21 +84,8 @@ import repositories from '../repositories';
             const roleprivilegeaccessData = await repositories.getRolePrivilegeAccess();
             const response = roleprivilegeaccessData.response;
 
-            const administrationFormArray = [];
-          
-            response.forEach(obj => {
-                const { roleID, accessID } = obj;
-                if(administrationFormArray[roleID]){
-                    administrationFormArray[roleID].push(accessID);
-                }else{
-                    administrationFormArray[roleID] = [accessID]
-                }
-            });
+            this.administracionForm = response;
 
-            if( administrationFormArray.length ){
-                this.administracionForm = administrationFormArray;
-            }
-           
         }
     }
   }

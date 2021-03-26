@@ -55,7 +55,7 @@ class Generic extends CI_Controller
 
     function setRolePrivilegeAccess(){
         $data = $this->input->post('data');
-
+        
         $this->generic_model->setRolePrivilegeAccess(json_decode($data, true));
 
         $response = array(
@@ -67,8 +67,23 @@ class Generic extends CI_Controller
     }
 
     function getRolePrivilegeAccess(){
+        $response = $this->generic_model->getRolePrivilegeAccess();
+
+        $privelegeAccessArray = [];
+
+        foreach ($response as $obj) {
+            $roleID = $obj->roleID;
+            $accessID = $obj->accessID;
+
+            if(array_key_exists($roleID, $privelegeAccessArray)){
+                array_push($privelegeAccessArray[$roleID], $accessID);
+            }else{
+                $privelegeAccessArray[$roleID] = [$accessID];
+            }
+        }
+
         $response = array(
-            'response' => $this->generic_model->getRolePrivilegeAccess()
+            'response' => $privelegeAccessArray
         );
 
         echo json_encode($response);

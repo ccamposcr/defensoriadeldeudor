@@ -40,6 +40,9 @@ class Login extends CI_Controller
             $message = 'Cédula o Contraseña incorrecta';
             $user = $this->login_model->login($this->input->post('personalID'));
             $passwordhashFromBD = $user->password;
+            $data['searchBy'] = 'roleID';
+            $data['value'] = $user->roleID;
+            $accessList = $this->generic_model->getPrivilegeAccessByRole($data);
             if($passwordhashFromBD){
                 $passwordVerification = $this->verify_hash($this->input->post('password'), $passwordhashFromBD);
             
@@ -49,12 +52,12 @@ class Login extends CI_Controller
                     $this->session->set_userdata('roleID', $user->roleID);
                     $this->session->set_userdata('id', $user->id);
                     $this->session->set_userdata('fullname', $user->name . ' ' . $user->lastName1 . ' ' . $user->lastName2);
+                    $this->session->set_userdata('accessList', json_encode($accessList));
                     redirect('inicio');
                     
                 }
             }
-  
-            //$this->session->set_flashdata('message', $message);
+
             redirect('login');
         } else {
             $this->index();
