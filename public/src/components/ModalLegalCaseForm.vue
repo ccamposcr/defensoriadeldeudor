@@ -86,6 +86,7 @@ export default {
     },
     cancelLegalForm: function(){
         this.$bvModal.hide('bv-modal-legal-case-form');
+        this.clearLegalCaseForm();
     },
     setNewLegalCase: async function(){
         const userID = this.legalCaseUserId;

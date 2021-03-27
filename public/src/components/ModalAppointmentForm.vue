@@ -65,6 +65,7 @@ export default {
     },
     cancelAppointmentForm: function(){
       this.$bvModal.hide('bv-modal-appointment-form');
+      this.clearAppointmentForm();
     },
     getAllUsers: async function(){
       const data = await repositories.getAllUsers();

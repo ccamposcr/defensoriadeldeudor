@@ -115,6 +115,7 @@ export default {
     },
     cancelClientForm: function(){
         this.$bvModal.hide('bv-modal-client-form');
+        this.clearClientForm();
     },
     checkIfClientAlreadyExists: async function(){
      
