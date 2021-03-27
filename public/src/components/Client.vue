@@ -1,7 +1,7 @@
 <template>
   <div class="client">
     <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
-    <b-button variant="info" @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
+    <b-button variant="info" v-if="checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
     <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
 
     <div v-show="users.length">
@@ -62,7 +62,7 @@ import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import repositories from '../repositories';
-
+import global from '../global';
 
 export default {
   name: 'Client',
@@ -125,100 +125,105 @@ export default {
     this.loadDataFromURLParams(params);
   },
   methods: {
-      getStaticDataFromDB: async function(){
+    checkAccessList: function(action){
+      return global.checkAccessList(action);
+    },
+    getStaticDataFromDB: async function(){
 
-        const judicialStatusListData = await repositories.getJudicialStatusList();
-        this.staticData.judicialStatusList = judicialStatusListData.response;
+      const judicialStatusListData = await repositories.getJudicialStatusList();
+      this.staticData.judicialStatusList = judicialStatusListData.response;
 
-        const subjectListData = await repositories.getSubjectList();
-        this.staticData.subjectList = subjectListData.response;
-        
-        const administrativeStatusListData = await repositories.getAdministrativeStatusList();
-        this.staticData.administrativeStatusList = administrativeStatusListData.response;
+      const subjectListData = await repositories.getSubjectList();
+      this.staticData.subjectList = subjectListData.response;
+      
+      const administrativeStatusListData = await repositories.getAdministrativeStatusList();
+      this.staticData.administrativeStatusList = administrativeStatusListData.response;
 
-        const locationListData = await repositories.getClientBy('roleID !=', '0');
-        this.staticData.locationList = locationListData.response;
+      const locationListData = await repositories.getClientBy('roleID !=', '0');
+      this.staticData.locationList = locationListData.response;
 
-        this.staticData.locationList.forEach(item => {
-          item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
-        });
-        this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
-      },
-      showAllClients: async function(){
-        this.resetClientVars();
+      this.staticData.locationList.forEach(item => {
+        item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+      });
+      this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
+    },
+    showAllClients: async function(){
+      this.resetClientVars();
 
-        const data = await repositories.getAllUsers();
-        this.users = data.response;
-      },
-      showSearchClientModal: function(){
-        this.$bvModal.show('bv-modal-search-form');
-      },
-      showClientFormModal: function(){
+      const data = await repositories.getAllUsers();
+      this.users = data.response;
+    },
+    showSearchClientModal: function(){
+      this.$bvModal.show('bv-modal-search-form');
+    },
+    showClientFormModal: function(){
+      if( this.checkAccessList('agregar cliente') ){
         this.editingUser = false;
         this.$bvModal.show('bv-modal-client-form');
-      },
-      showLegalCases: async function(userID){        
-        const data = await repositories.getLegalCasesBy('userID', userID);
-        data.response.forEach(item => {
-          item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
-        });
-        this.$set(this.legalCases, userID, data.response);
-      },
-      fillEditClientForm: async function(id){
-        const data = await repositories.getClientBy('id', id);
-        const response = data.response;
-        if( response.length ){
-          this.clientForm = response[0];
-          this.editingUser = true;
-          this.$bvModal.show('bv-modal-client-form');
-        }
-      },
-      fillLegalCaseForm: async function(legalCaseID, userID){
-        this.legalCaseUserId = userID;
-        const data = await repositories.getLegalCasesBy('id', legalCaseID);
-        const response = data.response;
-        if( response.length ){
-          this.legalCaseForm = response[0];
-          this.legalCaseForm['id'] = legalCaseID;
-          this.editingLegalCase = true;
-          this.$bvModal.show('bv-modal-legal-case-form');
-        }
-      },
-      showLegalCaseNotes: async function(legalCaseID){
-        const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
-        this.$set(this.legalCaseNotes, legalCaseID, data.response);
-      },
-      resetClientVars: function(){
-        this.legalCases = [];
-        this.legalCaseNotes = [];
-      },
-      showLegalCaseForm: async function(userID){
-        this.editingLegalCase = false;
-        this.legalCaseUserId = userID;
+      }
+    },
+    showLegalCases: async function(userID){        
+      const data = await repositories.getLegalCasesBy('userID', userID);
+      data.response.forEach(item => {
+        item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+      });
+      this.$set(this.legalCases, userID, data.response);
+    },
+    fillEditClientForm: async function(id){
+      const data = await repositories.getClientBy('id', id);
+      const response = data.response;
+      if( response.length ){
+        this.clientForm = response[0];
+        this.editingUser = true;
+        this.$bvModal.show('bv-modal-client-form');
+      }
+    },
+    fillLegalCaseForm: async function(legalCaseID, userID){
+      this.legalCaseUserId = userID;
+      const data = await repositories.getLegalCasesBy('id', legalCaseID);
+      const response = data.response;
+      if( response.length ){
+        this.legalCaseForm = response[0];
+        this.legalCaseForm['id'] = legalCaseID;
+        this.editingLegalCase = true;
         this.$bvModal.show('bv-modal-legal-case-form');
-      },
-      loadDataFromURLParams: async function(params){
-        if(params.userID){
-          const clientData = await repositories.getClientBy('id', params.userID);
-          const response = clientData.response;
-          if( response.length ){
-            this.users = response;
-          }
-        }
-        if(params.legalCaseID){
-          const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
-          const response = legalCasedata.response;
-          if( response.length ){
-            legalCasedata.response.forEach(item => {
-              item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
-            });
-            this.$set(this.legalCases, params.userID, legalCasedata.response);
-          }
-        }
-        if(params.showNewClientForm){
-          this.showClientFormModal();
+      }
+    },
+    showLegalCaseNotes: async function(legalCaseID){
+      const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
+      this.$set(this.legalCaseNotes, legalCaseID, data.response);
+    },
+    resetClientVars: function(){
+      this.legalCases = [];
+      this.legalCaseNotes = [];
+    },
+    showLegalCaseForm: async function(userID){
+      this.editingLegalCase = false;
+      this.legalCaseUserId = userID;
+      this.$bvModal.show('bv-modal-legal-case-form');
+    },
+    loadDataFromURLParams: async function(params){
+      if(params.userID){
+        const clientData = await repositories.getClientBy('id', params.userID);
+        const response = clientData.response;
+        if( response.length ){
+          this.users = response;
         }
       }
+      if(params.legalCaseID){
+        const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
+        const response = legalCasedata.response;
+        if( response.length ){
+          legalCasedata.response.forEach(item => {
+            item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+          });
+          this.$set(this.legalCases, params.userID, legalCasedata.response);
+        }
+      }
+      if(params.showNewClientForm){
+        this.showClientFormModal();
+      }
+    }
   }
 }
 </script>

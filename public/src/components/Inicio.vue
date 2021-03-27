@@ -79,7 +79,7 @@
             v-model="value"
             @change="fetchEvents"
             @click:event="showEvent"
-            @click:time="checkAccessList('1') && showAppointmentModal"
+            @click:time="showAppointmentModal"
           >
             <template v-slot:day-body="{ date, week }">
               <div
@@ -131,7 +131,7 @@
                   depressed
                   color="primary"
                   @click="cancelAppointment(selectedEvent.appointmentID)"
-                  v-if="selectedEvent.type=='appointment'"
+                  v-if="checkAccessList('eliminar cita') && selectedEvent.type=='appointment'"
                 >
                   Eliminar Cita
                 </v-btn>
@@ -196,8 +196,8 @@
       this.$refs.calendar.scrollToTime('08:00');
     },
     methods: {
-      checkAccessList: function(actionID){
-        return global.checkAccessList(actionID);
+      checkAccessList: function(action){
+        return global.checkAccessList(action);
       },
       setToday: function() {
         this.value = '';
@@ -275,8 +275,10 @@
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
       },
       showAppointmentModal: function({ date, hour }){
-        this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00');
-        this.$bvModal.show('bv-modal-appointment-form');
+        if( this.checkAccessList('agendar cita') ){
+          this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00');
+          this.$bvModal.show('bv-modal-appointment-form');
+        }
       },
       cancelAppointment: async function(appointmentID){
         await repositories.cancelAppointment({id:appointmentID});

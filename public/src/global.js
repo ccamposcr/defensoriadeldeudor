@@ -1,6 +1,7 @@
 var global = {
-   checkAccessList: function(actionID){
-       return loggedINAccessList.includes(actionID);
+   checkAccessList: function(action){
+       const actionID = loggedINAccessList.filter( entry => { return entry.action === action; });
+       return loggedINRoleAccessList.includes(actionID[0].id);
    }
 }
   
