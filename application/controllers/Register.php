@@ -10,7 +10,7 @@ class Register extends CI_Controller
         if (!$this->session->userdata('id')) {
             redirect('login');
         }
-        if ($this->session->userdata('roleID') != '1') {
+        if (!in_array("7", json_decode($this->session->userdata('accessList')))) {
             redirect('confidencial');
         }
         $this->load->library('form_validation');

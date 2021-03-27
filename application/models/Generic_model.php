@@ -42,13 +42,17 @@ class Generic_model extends CI_Model
     }
 
     function getRolePrivilegeAccess(){
+        //$this->db->join('rolelist', 'rolelist.id = roleprivilegeaccess.roleID', 'left');
+        //$this->db->join('accesslist', 'accesslist.id = roleprivilegeaccess.accessID', 'left');
         $query = $this->db->get('roleprivilegeaccess');
         $results = $query->result();
         return $results;
     }
 
     function getPrivilegeAccessByRole($data){
-        $this->db->where($data['searchBy'], $data['value']);
+        $this->db->where('roleprivilegeaccess.' . $data['searchBy'], $data['value']);
+        //$this->db->join('rolelist', 'rolelist.id = roleprivilegeaccess.roleID', 'left');
+        //$this->db->join('accesslist', 'accesslist.id = roleprivilegeaccess.accessID', 'left');
         $query = $this->db->get('roleprivilegeaccess');
         $results = $query->result();
         return $results;

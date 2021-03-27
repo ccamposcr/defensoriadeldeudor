@@ -284,6 +284,27 @@ var repositories = {
         const data = await response.json();
 
         return data;
+    },
+    getPrivilegeAccessByRole: async function(searchBy, value){
+        const url = 'generic/getPrivilegeAccessByRole';
+
+        const params = {
+          'searchBy':searchBy,
+          'value': value
+        };
+        params[csrf_name] = csrf_hash;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams(params)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        return data;
     }
 }
   

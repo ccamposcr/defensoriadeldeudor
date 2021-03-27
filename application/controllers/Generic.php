@@ -55,7 +55,7 @@ class Generic extends CI_Controller
 
     function setRolePrivilegeAccess(){
         $data = $this->input->post('data');
-        
+
         $this->generic_model->setRolePrivilegeAccess(json_decode($data, true));
 
         $response = array(
@@ -69,21 +69,21 @@ class Generic extends CI_Controller
     function getRolePrivilegeAccess(){
         $response = $this->generic_model->getRolePrivilegeAccess();
 
-        $privelegeAccessArray = [];
+        $formattedData = [];
 
         foreach ($response as $obj) {
             $roleID = $obj->roleID;
             $accessID = $obj->accessID;
 
-            if(array_key_exists($roleID, $privelegeAccessArray)){
-                array_push($privelegeAccessArray[$roleID], $accessID);
+            if(array_key_exists($roleID, $formattedData)){
+                array_push($formattedData[$roleID], $accessID);
             }else{
-                $privelegeAccessArray[$roleID] = [$accessID];
+                $formattedData[$roleID] = [$accessID];
             }
         }
 
         $response = array(
-            'response' => $privelegeAccessArray
+            'response' => $formattedData
         );
 
         echo json_encode($response);
@@ -96,10 +96,25 @@ class Generic extends CI_Controller
             'value' => $this->input->post('value')
         );
 
+        $response = $this->generic_model->getPrivilegeAccessByRole($data);
+
+        $formattedData = [];
+
+        foreach ($response as $obj) {
+            $roleID = $obj->roleID;
+            $accessID = $obj->accessID;
+
+            if(array_key_exists($roleID, $formattedData)){
+                array_push($formattedData[$roleID], $accessID);
+            }else{
+                $formattedData[$roleID] = [$accessID];
+            }
+        }
+
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->generic_model->getPrivilegeAccessByRole($data)
+            'response' => $formattedData
         );
 
         echo json_encode($response);

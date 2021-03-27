@@ -42,7 +42,16 @@ class Login extends CI_Controller
             $passwordhashFromBD = $user->password;
             $data['searchBy'] = 'roleID';
             $data['value'] = $user->roleID;
-            $accessList = $this->generic_model->getPrivilegeAccessByRole($data);
+
+
+            $response = $this->generic_model->getPrivilegeAccessByRole($data);           
+            $formattedData = [];
+
+            foreach ($response as $obj) {
+                $accessID = $obj->accessID;
+                array_push($formattedData, $accessID);
+            }
+
             if($passwordhashFromBD){
                 $passwordVerification = $this->verify_hash($this->input->post('password'), $passwordhashFromBD);
             
@@ -52,12 +61,13 @@ class Login extends CI_Controller
                     $this->session->set_userdata('roleID', $user->roleID);
                     $this->session->set_userdata('id', $user->id);
                     $this->session->set_userdata('fullname', $user->name . ' ' . $user->lastName1 . ' ' . $user->lastName2);
-                    $this->session->set_userdata('accessList', json_encode($accessList));
+                    $this->session->set_userdata('accessList', json_encode($formattedData));
                     redirect('inicio');
                     
                 }
             }
 
+            $this->session->set_flashdata('message', $message);
             redirect('login');
         } else {
             $this->index();
