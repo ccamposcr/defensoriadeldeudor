@@ -13,8 +13,8 @@
           <div><strong>Email:</strong> {{ user.email }}</div>
           <div><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
           <div>
-            <b-button @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
-            <b-button @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
+            <b-button v-if="checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
+            <b-button v-if="checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
             <b-button @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
           </div>
 
@@ -27,7 +27,7 @@
                 <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
                 <div><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
                 <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
-                <b-button @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
+                <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                 <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
 
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
@@ -170,23 +170,27 @@ export default {
       this.$set(this.legalCases, userID, data.response);
     },
     fillEditClientForm: async function(id){
-      const data = await repositories.getClientBy('id', id);
-      const response = data.response;
-      if( response.length ){
-        this.clientForm = response[0];
-        this.editingUser = true;
-        this.$bvModal.show('bv-modal-client-form');
+      if( this.checkAccessList('editar cliente') ){
+        const data = await repositories.getClientBy('id', id);
+        const response = data.response;
+        if( response.length ){
+          this.clientForm = response[0];
+          this.editingUser = true;
+          this.$bvModal.show('bv-modal-client-form');
+        }
       }
     },
     fillLegalCaseForm: async function(legalCaseID, userID){
-      this.legalCaseUserId = userID;
-      const data = await repositories.getLegalCasesBy('id', legalCaseID);
-      const response = data.response;
-      if( response.length ){
-        this.legalCaseForm = response[0];
-        this.legalCaseForm['id'] = legalCaseID;
-        this.editingLegalCase = true;
-        this.$bvModal.show('bv-modal-legal-case-form');
+      if( this.checkAccessList('editar caso') ){
+        this.legalCaseUserId = userID;
+        const data = await repositories.getLegalCasesBy('id', legalCaseID);
+        const response = data.response;
+        if( response.length ){
+          this.legalCaseForm = response[0];
+          this.legalCaseForm['id'] = legalCaseID;
+          this.editingLegalCase = true;
+          this.$bvModal.show('bv-modal-legal-case-form');
+        }
       }
     },
     showLegalCaseNotes: async function(legalCaseID){
@@ -198,9 +202,11 @@ export default {
       this.legalCaseNotes = [];
     },
     showLegalCaseForm: async function(userID){
-      this.editingLegalCase = false;
-      this.legalCaseUserId = userID;
-      this.$bvModal.show('bv-modal-legal-case-form');
+      if( this.checkAccessList('agregar caso') ){
+        this.editingLegalCase = false;
+        this.legalCaseUserId = userID;
+        this.$bvModal.show('bv-modal-legal-case-form');
+      }
     },
     loadDataFromURLParams: async function(params){
       if(params.userID){
