@@ -79,7 +79,7 @@
             v-model="value"
             @change="fetchEvents"
             @click:event="showEvent"
-            @click:time="showAppointmentModal"
+            @click:time="checkAccessList('1') && showAppointmentModal"
           >
             <template v-slot:day-body="{ date, week }">
               <div
@@ -150,6 +150,7 @@
 <script>
   import ModalAppointmentForm from './ModalAppointmentForm.vue';
   import repositories from '../repositories';
+  import global from '../global';
 
   export default {
     name: 'Inicio',
@@ -195,6 +196,9 @@
       this.$refs.calendar.scrollToTime('08:00');
     },
     methods: {
+      checkAccessList: function(actionID){
+        return global.checkAccessList(actionID);
+      },
       setToday: function() {
         this.value = '';
       },
