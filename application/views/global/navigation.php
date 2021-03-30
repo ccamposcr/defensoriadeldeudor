@@ -4,7 +4,7 @@
   <?php
    if(in_array("7", json_decode($this->session->userdata('roleAccessList'))))
    {
-      echo '<li class="nav__item" role="presentation"><a href="'. base_url() . 'register">Crear Usuarios</a></li>';
+      echo '<li class="nav__item" role="presentation"><a href="'. base_url() . 'register">Usuarios</a></li>';
    }
    if(in_array("8", json_decode($this->session->userdata('roleAccessList'))))
    {

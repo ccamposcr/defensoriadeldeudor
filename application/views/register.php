@@ -1,7 +1,7 @@
 
 <div class="container">
    
-   <h3>Creación de usuarios</h3>
+   <h3>Usuarios</h3>
    <?php
    if($this->session->flashdata('message'))
    {
@@ -11,7 +11,13 @@
          </div>
          ';
    }
+
+   if(in_array("9", json_decode($this->session->userdata('roleAccessList'))))
+   {
+      echo '<a class="btn btn-info" href="'. base_url() . 'clientes?showSystemUsers=true">Editar Usuarios</a></li>';
+   }
    ?>
+   
 
    <div class="panel panel-default">
       <div class="panel-body">
@@ -64,7 +70,7 @@
                <span class="text-danger"><?php echo form_error('confirmPassword'); ?></span>
             </div>
             <div class="form-group">
-               <input type="submit" name="register" value="Register" class="btn btn-info" />
+               <input type="submit" name="register" value="Crear" class="btn btn-info" />
             </div>
          </form>
       </div>

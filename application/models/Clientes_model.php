@@ -21,6 +21,15 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function getAllUsers(){
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, roleID');
+        $this->db->order_by('name ASC');
+        $this->db->where('roleID !=', '0');
+        $query = $this->db->get('user');
+        $results = $query->result();
+        return $results;
+    }
+
     function getClientBy($data){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID');
         $this->db->where($data['searchBy'], $data['value']);

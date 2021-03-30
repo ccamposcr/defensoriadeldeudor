@@ -1,32 +1,34 @@
 <template>
   <div class="client">
-    <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
-    <b-button variant="info" v-if="checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="info" @click="showAllClients">Ver todos los Clientes</b-button>
+    <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
+    <b-button variant="info" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
+    <b-button variant="info" v-if="!systemUsersInterface" @click="showAllClients">Ver todos los Clientes</b-button>
 
     <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
-          <div><strong>C&eacute;dula:</strong> {{ user.personalID }}</div>
-          <div><strong>Nombre:</strong> {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
-          <div><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
-          <div><strong>Email:</strong> {{ user.email }}</div>
-          <div><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
+          <div v-if="user.personalID"><strong>C&eacute;dula:</strong> {{ user.personalID }}</div>
+          <div v-if="user.name"><strong>Nombre:</strong> {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
+          <div v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
+          <div v-if="user.email"><strong>Email:</strong> {{ user.email }}</div>
+          <div v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
           <div>
-            <b-button v-if="checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
-            <b-button v-if="checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
-            <b-button @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
+            <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
+            <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
+            <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
+            <b-button v-if="systemUsersInterface" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
+            <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="info">Cambiar Contraseña</b-button>
           </div>
 
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-                <div><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</div>
-                <div><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
-                <div><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
-                <div><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
-                <div><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
-                <div><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
+                <div v-if="legalCase.internalCode"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</div>
+                <div v-if="legalCase.subject"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
+                <div v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
+                <div v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
+                <div v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
+                <div v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
                 <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                 <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
 
@@ -34,9 +36,9 @@
                   
                   <ul class="legal-cases__notes">
                     <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in legalCaseNotes[legalCase.legalCaseID]">
-                      <div><strong>Nota:</strong> {{ legalCaseNote.note }}</div>
-                      <div><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</div>
-                      <div><strong>Fecha:</strong> {{ legalCaseNote.date }}</div>
+                      <div v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</div>
+                      <div v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</div>
+                      <div v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</div>
                     </li>
                   </ul>
                   <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
@@ -113,12 +115,12 @@ export default {
       today: '',
       editingUser: false,
       legalCaseNotes: [],
-      locationStaticData: {'999': 'Archivo'}
+      locationStaticData: {'999': 'Archivo'},
+      systemUsersInterface: false
     }
   },
   created(){
     this.getStaticDataFromDB();
-    //this.today = this.$parent.getTodayDate();
   },
   mounted() {
     const params = this.$route.query;
@@ -148,6 +150,12 @@ export default {
       this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
     },
     showAllClients: async function(){
+      this.resetClientVars();
+
+      const data = await repositories.getAllClients();
+      this.users = data.response;
+    },
+    showAllUsers: async function(){
       this.resetClientVars();
 
       const data = await repositories.getAllUsers();
@@ -228,6 +236,11 @@ export default {
       }
       if(params.showNewClientForm){
         this.showClientFormModal();
+      }
+
+      if(params.showSystemUsers){
+        this.systemUsersInterface = true;
+        this.showAllUsers();
       }
     }
   }

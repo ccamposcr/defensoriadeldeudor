@@ -40,8 +40,15 @@ var repositories = {
 
         return data;
     },
-    getAllUsers: async function(){
+    getAllClients: async function(){
         const url = 'clientes/getAllClients';
+        const response = await fetch(url);
+        const data = await response.json();
+
+        return data;
+    },
+    getAllUsers: async function(){
+        const url = 'clientes/getAllUsers';
         const response = await fetch(url);
         const data = await response.json();
 

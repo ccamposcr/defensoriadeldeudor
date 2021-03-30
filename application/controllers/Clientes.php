@@ -77,6 +77,14 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
+    function getAllUsers(){
+        $response = array(
+            'response' => $this->clientes_model->getAllUsers()
+        );
+
+        echo json_encode($response);
+    }
+
     function getClientBy(){
         $data = array(
             'searchBy' => $this->input->post('searchBy'), 
