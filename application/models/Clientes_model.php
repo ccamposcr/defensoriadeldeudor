@@ -25,6 +25,7 @@ class Clientes_model extends CI_Model
         $this->db->select('id, personalID, name, lastName1, lastName2, status, roleID');
         $this->db->order_by('name ASC');
         $this->db->where('roleID !=', '0');
+        $this->db->where('status', '1');
         $query = $this->db->get('user');
         $results = $query->result();
         return $results;
@@ -35,6 +36,12 @@ class Clientes_model extends CI_Model
         $this->db->where($data['searchBy'], $data['value']);
         $query = $this->db->get('user');
         $results = $query->result();
+        return $results;
+    }
+
+    function deleteUser($id, $data){
+        $this->db->where('id', $id);
+        $results = $this->db->update('user', $data);
         return $results;
     }
 }

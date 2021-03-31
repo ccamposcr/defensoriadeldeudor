@@ -16,7 +16,7 @@
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
             <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
-            <b-button v-if="systemUsersInterface" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
+            <b-button v-if="systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="info">Cambiar Contraseña</b-button>
           </div>
 
@@ -235,13 +235,27 @@ export default {
         }
       }
       if(params.showNewClientForm){
-        this.showClientFormModal();
+        if( this.checkAccessList('agregar cliente') ){
+          this.showClientFormModal();
+        }else{
+          this.$router.push('/confidencial');
+        }
       }
 
       if(params.showSystemUsers){
-        this.systemUsersInterface = true;
-        this.showAllUsers();
+        if( this.checkAccessList('administrar') ){
+          this.systemUsersInterface = true;
+          this.showAllUsers();
+        }else{
+          this.$router.push('/confidencial');
+        }
       }
+    },
+    deleteUser: async function(userID){
+      const data = {};
+      data['id'] = userID;
+      await repositories.deleteUser(data);
+      this.showAllUsers();
     }
   }
 }

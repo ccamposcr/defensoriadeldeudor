@@ -99,6 +99,22 @@ class Clientes extends CI_Controller
 
         echo json_encode($response);
     }
+
+    function deleteUser(){
+        $data = array(
+            'status' => '0'
+        );
+        $id = $this->input->post('id');
+        
+        $this->clientes_model->deleteUser($id, $data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
     
 }
 

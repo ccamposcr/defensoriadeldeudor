@@ -312,6 +312,22 @@ var repositories = {
         csrf_hash = data.csrf_hash;
 
         return data;
+    },
+    deleteUser: async function(params){
+        const url = 'clientes/deleteUser';
+        params[csrf_name] = csrf_hash;
+        console.log(params);
+        const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        return data;
     }
 }
   
