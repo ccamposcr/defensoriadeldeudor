@@ -1,7 +1,7 @@
 
 <div class="container">
    
-   <h3>Usuarios</h3>
+   <h3>Crear Usuarios</h3>
    <?php
    if($this->session->flashdata('message'))
    {
@@ -10,11 +10,6 @@
             '.$this->session->flashdata("message").'
          </div>
          ';
-   }
-
-   if(in_array("9", json_decode($this->session->userdata('roleAccessList'))))
-   {
-      echo '<a class="btn btn-info" href="'. base_url() . 'clientes?showSystemUsers=true">Editar Usuarios</a></li>';
    }
    ?>
    

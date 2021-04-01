@@ -316,7 +316,24 @@ var repositories = {
     deleteUser: async function(params){
         const url = 'clientes/deleteUser';
         params[csrf_name] = csrf_hash;
-        console.log(params);
+
+        const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+        });
+
+        const data = await response.json();
+        csrf_name = data.csrf_name;
+        csrf_hash = data.csrf_hash;
+
+        return data;
+    },
+    updatePassword: async function(userID, params){
+        const url = 'clientes/updatePassword';
+        params['id'] = userID;
+        params[csrf_name] = csrf_hash;
+
         const response = await fetch(url, {
             credentials: 'include',
             method: 'POST',

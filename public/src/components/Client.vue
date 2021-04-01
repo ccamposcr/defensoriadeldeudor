@@ -12,11 +12,12 @@
           <div v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
           <div v-if="user.email"><strong>Email:</strong> {{ user.email }}</div>
           <div v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
+          <div v-if="user.role"><strong>Rol:</strong> {{ user.role }}</div>
           <div>
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
             <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
-            <b-button v-if="systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
+            <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="info">Cambiar Contraseña</b-button>
           </div>
 
@@ -56,6 +57,7 @@
     <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
     <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
     <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-update-password-form :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
   </div>
 </template>
 
@@ -63,12 +65,13 @@
 import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
 import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
+import ModalUpdatePasswordForm from './ModalUpdatePasswordForm.vue';
 import repositories from '../repositories';
 import global from '../global';
 
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm},
+  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
   data () {
     return {
       staticData:{
@@ -109,6 +112,10 @@ export default {
         lastName2: null,
         searchBy: 'personalID'
       },
+      updatePasswordForm:{
+        password: null,
+        confirmPassword: null
+      },
       legalCases: [],
       editingLegalCase: false,
       legalCaseUserId: null,
@@ -116,7 +123,8 @@ export default {
       editingUser: false,
       legalCaseNotes: [],
       locationStaticData: {'999': 'Archivo'},
-      systemUsersInterface: false
+      systemUsersInterface: false,
+      updatePasswordUserId: null
     }
   },
   created(){
@@ -256,6 +264,10 @@ export default {
       data['id'] = userID;
       await repositories.deleteUser(data);
       this.showAllUsers();
+    },
+    updatePassword: async function(userID){
+      this.updatePasswordUserId = userID;
+      this.$bvModal.show('bv-modal-update-password-form');
     }
   }
 }

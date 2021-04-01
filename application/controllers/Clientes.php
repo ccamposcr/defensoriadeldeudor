@@ -106,7 +106,25 @@ class Clientes extends CI_Controller
         );
         $id = $this->input->post('id');
         
-        $this->clientes_model->deleteUser($id, $data);
+        $this->clientes_model->updateUser($id, $data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
+    function updatePassword(){
+        $id = $this->input->post('id');
+        $encrypted_password = $this->hash_password($this->input->post('password'));
+
+        $data = array(
+            'password' => $encrypted_password
+        );
+
+        $this->clientes_model->updateUser($id, $data);
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
