@@ -12,6 +12,11 @@ class Clientes extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model('clientes_model');
     }
+
+    function hash_password($password){
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        return $hashed_password;
+    }
     
     function index(){
         $data['title'] = 'Clientes';

@@ -64,7 +64,7 @@ export default {
     },
     updatePassword: async function(){   
         await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
-        this.cancelSearchForm();
+        this.cancelUpdatePasswordForm();
       }
   }
 }
