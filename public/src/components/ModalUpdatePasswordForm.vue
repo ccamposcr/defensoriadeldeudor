@@ -33,7 +33,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
-  props: ["updatePasswordForm, updatePasswordUserId"],
+  props: ["updatePasswordForm", "updatePasswordUserId"],
   data () {
     return {
         errors:[]
