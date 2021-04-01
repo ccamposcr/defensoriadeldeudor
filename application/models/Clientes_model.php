@@ -2,8 +2,9 @@
 class Clientes_model extends CI_Model
 {
     function addClient($data){       
-        $results = $this->db->insert('user', $data);
-        return $results;
+        $this->db->insert('user', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
     }
 
     function editClient($id, $data){    

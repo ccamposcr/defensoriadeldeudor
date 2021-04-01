@@ -40,11 +40,12 @@ class Clientes extends CI_Controller
             'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '0'
         );
 
-        $this->clientes_model->addClient($data);
+        $clientID = $this->clientes_model->addClient($data);
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash()
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'clientID' => $clientID
         );
 
         echo json_encode($response);

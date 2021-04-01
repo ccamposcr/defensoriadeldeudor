@@ -54,8 +54,12 @@ export default {
   props: ["clientForm", "editingUser"],
   data () {
     return {
-      errors:[]
+      errors:[],
+      URLparams: null
     }
+  },
+  mounted() {
+    this.URLparams = this.$route.query;
   },
   methods: {
     checkForm: function(callback){
@@ -94,10 +98,14 @@ export default {
         this.$emit('update:users', data.response);
     },
     setNewClient: async function(){
-        await repositories.addNewClient(this.clientForm);
+        const data = await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
+
+        if( this.URLparams.appointmentDate ){
+          this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate+'&clientID='+data.clientID);
+        }
     },
     setEditedClient: async function(){
         await repositories.editClient(this.clientForm);

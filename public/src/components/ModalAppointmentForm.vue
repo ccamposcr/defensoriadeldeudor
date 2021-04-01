@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="cancelAppointmentForm" @show="getAllUsers">
+    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="cancelAppointmentForm" @show="getAllClients">
     <template #modal-title>
       Citas
     </template>
@@ -27,7 +27,7 @@
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
 
           <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
-            <b-button @click="$router.push('/clientes?showNewClientForm=true')">Agregar Cliente Nuevo</b-button>
+            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)">Agregar Cliente Nuevo</b-button>
           </b-form-group>
       </b-form>
       
@@ -67,8 +67,8 @@ export default {
       this.$bvModal.hide('bv-modal-appointment-form');
       this.clearAppointmentForm();
     },
-    getAllUsers: async function(){
-      const data = await repositories.getAllUsers();
+    getAllClients: async function(){
+      const data = await repositories.getAllClients();
       this.clientList = data.response;
       this.clientList.forEach(item => {
         item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;

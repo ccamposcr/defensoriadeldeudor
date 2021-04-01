@@ -170,8 +170,10 @@
         },
         ready: false,
         appointmentForm: {
-          data: null,
-          userID: null
+          date: null,
+          userID: null,
+          filterBy: null,
+          clientList: []
         },
         editingAppointment: false,
         date:{
@@ -194,6 +196,8 @@
       this.scrollToTime();
       this.updateTime();
       this.$refs.calendar.scrollToTime('08:00');
+      const params = this.$route.query;
+      this.loadDataFromURLParams(params);
     },
     methods: {
       checkAccessList: function(action){
@@ -286,6 +290,15 @@
         const end = this.date.end;
         this.fetchEvents({start, end});
         this.selectedOpen = false;
+      },
+      loadDataFromURLParams: async function(params){
+        if(this.checkAccessList('agendar cita') && params.appointmentDate){
+          this.$set(this.appointmentForm, 'date', params.appointmentDate);
+          this.$bvModal.show('bv-modal-appointment-form');
+        }
+        if(this.checkAccessList('agendar cita') && params.clientID){
+          this.$set(this.appointmentForm, 'userID', params.clientID);
+        }
       }
     }
   }
