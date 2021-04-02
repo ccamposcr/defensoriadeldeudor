@@ -27,7 +27,7 @@
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
 
           <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
-            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)">Agregar Cliente Nuevo</b-button>
+            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
           </b-form-group>
       </b-form>
       

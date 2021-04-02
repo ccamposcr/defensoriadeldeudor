@@ -70,7 +70,7 @@
 
           </v-toolbar>
         </v-sheet>
-        <v-sheet>
+        <v-sheet height="800">
           <v-calendar
             ref="calendar"
             :events="events"
@@ -80,6 +80,8 @@
             @change="fetchEvents"
             @click:event="showEvent"
             @click:time="showAppointmentModal"
+            interval-count="14"
+            first-time="06:00"
           >
             <template v-slot:day-body="{ date, week }">
               <div
@@ -129,7 +131,7 @@
                 </v-btn>
                 <v-btn
                   depressed
-                  color="primary"
+                  color="error"
                   @click="cancelAppointment(selectedEvent.appointmentID)"
                   v-if="checkAccessList('eliminar cita') && selectedEvent.type=='appointment'"
                 >

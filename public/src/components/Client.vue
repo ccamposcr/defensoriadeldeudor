@@ -1,45 +1,45 @@
 <template>
   <div class="client">
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
-    <b-button variant="info" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="info" v-if="!systemUsersInterface" @click="showAllClients">Ver todos los Clientes</b-button>
+    <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
+    <b-button variant="primary" v-if="!systemUsersInterface" @click="showAllClients">Ver todos los Clientes</b-button>
 
     <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
-          <div v-if="user.personalID"><strong>C&eacute;dula:</strong> {{ user.personalID }}</div>
-          <div v-if="user.name"><strong>Nombre:</strong> {{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</div>
-          <div v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</div>
-          <div v-if="user.email"><strong>Email:</strong> {{ user.email }}</div>
-          <div v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</div>
-          <div v-if="user.role"><strong>Rol:</strong> {{ user.role }}</div>
+          <p v-if="user.personalID"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
+          <p v-if="user.name"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
+          <p v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
+          <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
+          <p v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
+          <p v-if="user.role"><strong>Rol:</strong> {{ user.role }}</p>
           <div>
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
-            <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="info">Agregar Caso</b-button>
-            <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="info">Ver Casos</b-button>
-            <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="info">Eliminar Usuario</b-button>
-            <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="info">Cambiar Contraseña</b-button>
+            <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
+            <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">Ver Casos</b-button>
+            <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
+            <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
           </div>
 
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-                <div v-if="legalCase.internalCode"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</div>
-                <div v-if="legalCase.subject"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</div>
-                <div v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</div>
-                <div v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</div>
-                <div v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</div>
-                <div v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</div>
+                <p v-if="legalCase.internalCode"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
+                <p v-if="legalCase.subject"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
+                <p v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
+                <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
+                <p v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
+                <p v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</p>
                 <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
-                <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="info">Ver notas</b-button>
+                <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
 
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
                   
                   <ul class="legal-cases__notes">
                     <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in legalCaseNotes[legalCase.legalCaseID]">
-                      <div v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</div>
-                      <div v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</div>
-                      <div v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</div>
+                      <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
+                      <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
+                      <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
                     </li>
                   </ul>
                   <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
@@ -284,6 +284,9 @@ export default {
         background-color: #fafafa;
         margin-bottom: 15px;
         padding: 15px;
+        p{
+          margin-bottom: 0;
+        }
       }
     }
     .user{
@@ -292,12 +295,18 @@ export default {
         padding: 0;
         display: flex;
         flex-wrap: wrap;
+        background-color: #e4e4e4;
+      }
+      &__name{
+        font-size: 20px;
+        font-weight: bold;
       }
     }
     .legal-cases{
       &__case{
         padding: 15px;
         flex: 1 1 50%;
+        border-bottom: 1px solid gray;
 
         &:nth-child(odd){
           border-right: 1px solid gray;
@@ -306,6 +315,7 @@ export default {
       &__notes{
         list-style-type: none;
         padding: 0;
+        background-color: #fafafa;
       }
     }
     .notes{

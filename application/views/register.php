@@ -65,7 +65,7 @@
                <span class="text-danger"><?php echo form_error('confirmPassword'); ?></span>
             </div>
             <div class="form-group">
-               <input type="submit" name="register" value="Crear" class="btn btn-info" />
+               <input type="submit" name="register" value="Crear" class="btn btn-primary" />
             </div>
          </form>
       </div>

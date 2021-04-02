@@ -32,7 +32,7 @@
             </div>
             
             <div class="form-group">
-               <input type="submit" name="login" value="Login" class="btn btn-info" />
+               <input type="submit" name="login" value="Login" class="btn btn-primary" />
                <!--<a href="<?php echo base_url(); ?>register">Registrarse</a>-->
             </div>
          </form>
