@@ -28,6 +28,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+  @import "./scss/navigation.scss";
 </style>

@@ -1,8 +1,9 @@
 .nav{
+    margin-bottom: 30px;
     &__item{
-        margin-left: 25px;
+        margin-right: 10px;
         &:last-child{
-            margin-left: none;
+            margin-right: none;
         }
     }
 }
