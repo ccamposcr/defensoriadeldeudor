@@ -1,350 +1,446 @@
 var repositories = {
     getClientBy: async function(searchBy, value){
-        const url = 'clientes/getClientBy';
-        
-        const params = {
-            'searchBy':searchBy,
-            'value' :value
-        };
-        params[csrf_name] = csrf_hash;
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+        try {
+            const url = 'clientes/getClientBy';
+            
+            const params = {
+                'searchBy':searchBy,
+                'value' :value
+            };
+            params[csrf_name] = csrf_hash;
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getRoleList: async function(){
-        const url = 'generic/getRoleList';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getRoleList';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getJudicialStatusList: async function(){
-        const url = 'generic/getJudicialStatusList';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getJudicialStatusList';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getSubjectList: async function(){
-        const url = 'generic/getSubjectList';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getSubjectList';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getAllClients: async function(){
-        const url = 'clientes/getAllClients';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'clientes/getAllClients';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getAllUsers: async function(){
-        const url = 'clientes/getAllUsers';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'clientes/getAllUsers';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getAdministrativeStatusList: async function(){
-        const url = 'generic/getAdministrativeStatusList';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getAdministrativeStatusList';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getLegalCasesBy: async function(searchBy, value){
-        const url = 'casosLegales/getLegalCasesBy';
+        try {
+            const url = 'casosLegales/getLegalCasesBy';
 
-        const params = {
-          'searchBy':searchBy,
-          'value': value
-        };
-        params[csrf_name] = csrf_hash;
+            const params = {
+            'searchBy':searchBy,
+            'value': value
+            };
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getLegalCaseNotesBy: async function(searchBy, value){
-        const url = 'casosLegales/getLegalCaseNotesBy';
+        try {
+            const url = 'casosLegales/getLegalCaseNotesBy';
 
-        const params = {
-          'searchBy':searchBy,
-          'value': value
-        };
-        params[csrf_name] = csrf_hash;
+            const params = {
+            'searchBy':searchBy,
+            'value': value
+            };
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getLegalCasesByDateRange: async function(searchBy, start, end){
-        const url = 'casosLegales/getLegalCasesByDateRange';
+        try {
+            const url = 'casosLegales/getLegalCasesByDateRange';
 
-        const params = {
-          'searchBy':searchBy,
-          'start': start,
-          'end': end
-        };
-        params[csrf_name] = csrf_hash;
+            const params = {
+            'searchBy':searchBy,
+            'start': start,
+            'end': end
+            };
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     addLegalCaseNote: async function(params){
-        const url = 'casosLegales/addLegalCaseNote';
+        try {
+            const url = 'casosLegales/addLegalCaseNote';
 
-        params[csrf_name] = csrf_hash;
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     addNewClient: async function(params){
-        const url = 'clientes/addClient';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'clientes/addClient';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     editClient: async function(params){
-        const url = 'clientes/editClient';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'clientes/editClient';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     addNewLegalCase: async function(userID, params){
-        const url = 'casosLegales/addLegalCase';
-        params[csrf_name] = csrf_hash;
-        params['userID'] = userID;
+        try {
+            const url = 'casosLegales/addLegalCase';
+            params[csrf_name] = csrf_hash;
+            params['userID'] = userID;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     editLegalCase: async function(params){
-        const url = 'casosLegales/editLegalCase';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'casosLegales/editLegalCase';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     addNewAppointment: async function(params){
-        const url = 'citas/addAppointment';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'citas/addAppointment';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getAppointmentsByDateRange: async function(searchBy, start, end){
-        const url = 'citas/getAppointmentsByDateRange';
+        try {
+            const url = 'citas/getAppointmentsByDateRange';
 
-        const params = {
-          'searchBy':searchBy,
-          'start': start,
-          'end': end
-        };
-        params[csrf_name] = csrf_hash;
+            const params = {
+            'searchBy':searchBy,
+            'start': start,
+            'end': end
+            };
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
-        
-        return data;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+            
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     cancelAppointment: async function(params){
-        const url = 'citas/cancelAppointment';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'citas/cancelAppointment';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getAccessList:  async function(){
-        const url = 'generic/getAccessList';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getAccessList';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     setRolePrivilegeAccess: async function(params){
-        const url = 'generic/setRolePrivilegeAccess';
-        params[csrf_name] = csrf_hash;
-        params.data = JSON.stringify(params.data);
+        try {
+            const url = 'generic/setRolePrivilegeAccess';
+            params[csrf_name] = csrf_hash;
+            params.data = JSON.stringify(params.data);
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getRolePrivilegeAccess:  async function(){
-        const url = 'generic/getRolePrivilegeAccess';
-        const response = await fetch(url);
-        const data = await response.json();
+        try {
+            const url = 'generic/getRolePrivilegeAccess';
+            const response = await fetch(url);
+            const data = await response.json();
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     getPrivilegeAccessByRole: async function(searchBy, value){
-        const url = 'generic/getPrivilegeAccessByRole';
+        try {
+            const url = 'generic/getPrivilegeAccessByRole';
 
-        const params = {
-          'searchBy':searchBy,
-          'value': value
-        };
-        params[csrf_name] = csrf_hash;
+            const params = {
+            'searchBy':searchBy,
+            'value': value
+            };
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          method: 'POST',
-          body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     deleteUser: async function(params){
-        const url = 'clientes/deleteUser';
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'clientes/deleteUser';
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     },
     updatePassword: async function(userID, params){
-        const url = 'clientes/updatePassword';
-        params['id'] = userID;
-        params[csrf_name] = csrf_hash;
+        try {
+            const url = 'clientes/updatePassword';
+            params['id'] = userID;
+            params[csrf_name] = csrf_hash;
 
-        const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
-        });
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
 
-        const data = await response.json();
-        csrf_name = data.csrf_name;
-        csrf_hash = data.csrf_hash;
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
 
-        return data;
+            return data;
+        } catch(err) {
+            alert('Error:' + err);
+        }
     }
 }
   
