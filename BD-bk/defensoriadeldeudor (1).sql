@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2021 at 06:00 PM
+-- Generation Time: Apr 03, 2021 at 10:03 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -37,14 +37,16 @@ CREATE TABLE `accesslist` (
 --
 
 INSERT INTO `accesslist` (`id`, `action`) VALUES
-(1, 'agregar cita'),
+(1, 'agendar cita'),
 (2, 'eliminar cita'),
 (3, 'agregar cliente'),
 (4, 'editar cliente'),
 (5, 'agregar caso'),
 (6, 'editar caso'),
 (7, 'crear usuarios'),
-(8, 'administrar');
+(8, 'administrar'),
+(9, 'editar usuarios'),
+(10, 'eliminar usuarios');
 
 -- --------------------------------------------------------
 
@@ -167,7 +169,10 @@ INSERT INTO `legalcasenoteshistory` (`id`, `note`, `date`, `legalCaseID`, `userI
 (15, 'otra nota ya no es moroso', '2021-03-22 20:16:47', 34, 28),
 (16, 'otra nota mas', '2021-03-24 01:23:49', 39, 28),
 (17, 'editando otra  nota mas', '2021-03-24 01:24:50', 39, 56),
-(18, 'nueva nota', '2021-03-24 01:28:15', 32, 56);
+(18, 'nueva nota', '2021-03-24 01:28:15', 32, 56),
+(19, 'otra nota mas', '2021-04-02 05:11:35', 28, 28),
+(20, 'una nueva nota', '2021-04-02 05:11:42', 28, 28),
+(21, 'otra nota', '2021-04-02 05:25:24', 35, 28);
 
 -- --------------------------------------------------------
 
@@ -177,20 +182,18 @@ INSERT INTO `legalcasenoteshistory` (`id`, `note`, `date`, `legalCaseID`, `userI
 
 CREATE TABLE `rolelist` (
   `id` int(11) NOT NULL,
-  `role` varchar(50) NOT NULL,
-  `privilege` int(11) NOT NULL
+  `role` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `rolelist`
 --
 
-INSERT INTO `rolelist` (`id`, `role`, `privilege`) VALUES
-(1, 'Administrador', 1),
-(2, 'Legal', 2),
-(3, 'Financiero', 3),
-(4, 'Servicio Cliente', 4),
-(5, 'Cliente', 99);
+INSERT INTO `rolelist` (`id`, `role`) VALUES
+(1, 'Administrador'),
+(2, 'Legal'),
+(3, 'Financiero'),
+(4, 'Servicio Cliente');
 
 -- --------------------------------------------------------
 
@@ -210,19 +213,15 @@ CREATE TABLE `roleprivilegeaccess` (
 
 INSERT INTO `roleprivilegeaccess` (`id`, `accessID`, `roleID`) VALUES
 (1, 1, 1),
-(2, 3, 1),
-(3, 2, 1),
-(4, 5, 1),
-(5, 4, 1),
-(6, 7, 1),
-(7, 8, 1),
-(8, 6, 1),
-(9, 1, 4),
-(10, 2, 4),
-(11, 3, 4),
-(12, 4, 4),
-(13, 5, 4),
-(14, 6, 4);
+(2, 2, 1),
+(3, 3, 1),
+(4, 4, 1),
+(5, 5, 1),
+(6, 6, 1),
+(7, 7, 1),
+(8, 8, 1),
+(9, 9, 1),
+(10, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -277,10 +276,14 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `personalID`, `name`, `lastName1`, `lastName2`, `status`, `dateCreated`, `phone`, `email`, `password`, `address`, `roleID`, `verificationKey`) VALUES
 (28, '113100938', 'Christian', 'Campos', 'Olivares', 1, '2021-01-20 04:37:29', '83180160', 'ccamposcr@gmail.com', '$2y$10$noVtfVJq7ZuRvY8qQKDQ8OYKB6bxGzsY8mDvrsyGVd79xfjMo4xdC', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 1, 'f1dd491af6c0ef9337d9a77f5618bcf4'),
-(50, '801020133', 'Carolina', 'Borge', 'Espinoza', 1, '2021-03-11 02:19:39', '8318-0160', 'carobe18685@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 99, ''),
-(51, '302340045', 'Martin', 'Campos', 'Arias', 1, '2021-03-12 04:59:21', '8318-0160', 'martincamposarias@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 99, ''),
-(56, '302980014', 'Xinia', 'Olivares', 'Pacheco', 1, '2021-03-23 23:58:30', '', '', '$2y$10$YG9MnMkIKV4lOJbgqMMZw.RO5dmOigwPMjlPusf.QIaDcgq5xE2UC', '', 2, '5b0497a8732e10916165f2a4462c9b14'),
-(58, '123456789', 'Nombre', 'apellido', 'apellido', 1, '2021-03-24 00:32:40', '5123-123', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 99, '');
+(50, '801020133', 'Carolina', 'Borge', 'Espinoza', 1, '2021-03-11 02:19:39', '8318-0160', 'carobe18685@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
+(51, '302340045', 'Martin', 'Campos', 'Arias', 1, '2021-03-12 04:59:21', '8318-0160', 'martincamposarias@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
+(56, '302980014', 'Xinia', 'Olivares', 'Pacheco', 1, '2021-03-23 23:58:30', '', '', '$2y$10$8wse/RKlSk1k6NUtXw3jF.bvGGVUhczwAscP0.nsYHDBcghw9kiTC', '', 2, '5b0497a8732e10916165f2a4462c9b14'),
+(58, '123456789', 'Nombre', 'apellido', 'apellido', 1, '2021-03-24 00:32:40', '5123-123', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
+(59, '987654321', 'Cliente', 'Prueba', 'Prueba', 1, '2021-03-29 23:53:10', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
+(60, '98765432', 'Usuario', 'Prueba', 'Prueba', 1, '2021-03-29 23:54:17', '', '', '$2y$10$S183za2Wi7oNdsoTPCdUAutvfyqwfbd76V9Emp.J5kIHUReSN.Hwi', '', 1, 'f922e01cd2577965fb701a40335b885e'),
+(69, '12345', 'Laura', 'Campos', 'Olivares', 1, '2021-04-01 23:15:53', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
+(70, '123456', 'Maria', 'Borge', 'Espinoza', 1, '2021-04-02 04:18:14', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, '');
 
 -- --------------------------------------------------------
 
@@ -303,7 +306,14 @@ INSERT INTO `userappointment` (`id`, `userID`, `dateCreated`, `date`) VALUES
 (3, 51, '2021-03-22 20:12:31', '2021-03-21 10:00:00'),
 (5, 50, '2021-03-23 06:22:16', '2021-03-22 06:00:00'),
 (6, 50, '2021-03-23 20:56:45', '2021-03-23 06:00:00'),
-(8, 50, '2021-03-24 01:28:44', '2021-03-24 04:00:00');
+(8, 50, '2021-03-24 01:28:44', '2021-03-24 04:00:00'),
+(9, 51, '2021-03-27 06:16:36', '2021-03-21 00:00:00'),
+(10, 51, '2021-03-27 06:16:47', '2021-03-21 01:00:00'),
+(11, 50, '2021-03-27 06:16:52', '2021-03-22 01:00:00'),
+(12, 58, '2021-03-27 06:16:57', '2021-03-22 02:00:00'),
+(13, 50, '2021-03-27 07:07:18', '2021-03-25 03:00:00'),
+(14, 51, '2021-03-27 07:07:22', '2021-03-26 02:00:00'),
+(17, 70, '2021-04-02 04:18:26', '2021-03-31 03:00:00');
 
 --
 -- Indexes for dumped tables
@@ -377,7 +387,7 @@ ALTER TABLE `userappointment`
 -- AUTO_INCREMENT for table `accesslist`
 --
 ALTER TABLE `accesslist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `administrativestatuslist`
@@ -401,7 +411,7 @@ ALTER TABLE `legalcase`
 -- AUTO_INCREMENT for table `legalcasenoteshistory`
 --
 ALTER TABLE `legalcasenoteshistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `rolelist`
@@ -413,7 +423,7 @@ ALTER TABLE `rolelist`
 -- AUTO_INCREMENT for table `roleprivilegeaccess`
 --
 ALTER TABLE `roleprivilegeaccess`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `subjectlist`
@@ -425,13 +435,13 @@ ALTER TABLE `subjectlist`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `userappointment`
 --
 ALTER TABLE `userappointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
