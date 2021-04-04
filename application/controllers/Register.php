@@ -22,8 +22,8 @@ class Register extends CI_Controller
         $data['title'] = 'Register';
         $data['roleList'] = $this->generic_model->getRoleList();
         $this->load->view('global/header', $data);
-        $this->load->view('global/navigation');
         $this->load->view('global/welcome');
+        $this->load->view('global/navigation');
         $this->load->view('register', $data);
         $this->load->view('global/footer');
     }

@@ -19,8 +19,8 @@ class Administracion extends CI_Controller
     function index(){
         $data['title'] = 'Administracion';
         $this->load->view('global/header', $data);
-        $this->load->view('global/navigation');
         $this->load->view('global/welcome');
+        $this->load->view('global/navigation');
         $this->load->view('global/body');
         $this->load->view('global/footer');
     }

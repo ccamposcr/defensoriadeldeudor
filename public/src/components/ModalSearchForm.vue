@@ -38,7 +38,10 @@
                     <b-form-group v-show="searchClientForm.searchBy == 'lastName2'" label-for="lastName2_2" label="Buscar por segundo apellido">
                         <b-form-input v-model="searchClientForm.lastName2" type="text" class="form-control" id="lastName2_2" placeholder="Segundo Apellido"></b-form-input>
                     </b-form-group>
-                    <b-button v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">Buscar</b-button>
+                    <b-button :disabled="actioned" v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
+                        <b-spinner v-if="actioned" small></b-spinner>
+                        Buscar
+                    </b-button>
                     <b-button @click.prevent="cancelSearchForm" variant="danger">Cancelar</b-button>
                 </b-form>
 
@@ -56,7 +59,8 @@ export default {
   props: ["searchClientForm"],
   data () {
     return {
-        errors:[]
+        errors:[],
+        actioned: false
     }
   },
   methods: {
@@ -81,12 +85,14 @@ export default {
     cancelSearchForm: function(){
         this.$bvModal.hide('bv-modal-search-form');
     },
-    showSearchResults: async function(){   
+    showSearchResults: async function(){
+        this.actioned = true;
         let data = null;
         data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
         this.$emit('update:users', data.response);
    
         this.cancelSearchForm();
+        this.actioned = false;
       }
   }
 }

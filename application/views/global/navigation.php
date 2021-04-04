@@ -16,7 +16,6 @@
             echo '<li class="nav__item" role="presentation"><a class="btn btn btn-secondary" href="'. base_url() . 'administracion">Administrar</a></li>';
          }
          ?>
-         <li class="nav__item" role="presentation"><a class="btn btn btn-danger" href="<?php echo base_url(); ?>logout">Desconectarse</a></li>
    </ul>
 </div>
 

@@ -18,7 +18,10 @@
                     <b-form-group label-for="confirmPassword" label="Confirmar contraseña">
                         <b-form-input v-model="updatePasswordForm.confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Contraseña"></b-form-input>
                     </b-form-group>
-                    <b-button @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">Cambiar</b-button>
+                    <b-button :disabled="actioned" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
+                        <b-spinner v-if="actioned" small></b-spinner>
+                        Actualizar
+                    </b-button>
                     <b-button @click.prevent="cancelUpdatePasswordForm" variant="danger">Cancelar</b-button>
                 </b-form>
 
@@ -36,7 +39,8 @@ export default {
   props: ["updatePasswordForm", "updatePasswordUserId"],
   data () {
     return {
-        errors:[]
+        errors:[],
+        actioned: false
     }
   },
   methods: {
@@ -62,9 +66,11 @@ export default {
         this.$bvModal.hide('bv-modal-update-password-form');
         this.clearUpdatePasswordForm();
     },
-    updatePassword: async function(){   
+    updatePassword: async function(){
+        this.actioned = true; 
         await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
         this.cancelUpdatePasswordForm();
+        this.actioned = false;
       }
   }
 }

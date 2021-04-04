@@ -1,5 +1,5 @@
 <template>
-  <div class="administracion">
+  <div class="administration">
         <b-form class="rol-form">
             <b-form-group>
                 <h5>Permisos Roles</h5>
@@ -8,7 +8,7 @@
                 <b-alert v-show="showSuccessMsg" variant="success" show>Permisos guardados!</b-alert>
             </b-form-group>
 
-            <div v-for="item in staticData.roleList" :key="item.id">
+            <div class="administration__group" v-for="item in staticData.roleList" :key="item.id">
                 
                 <b-form-group>
                     <h6 class="role" :id="item.id">Rol {{item.role}}</h6>
@@ -23,13 +23,16 @@
                         text-field="action"
                         v-model="administracionForm[item.id]"
                     >
-                        <b-form-checkbox :data-role="item.id" :data-access="access.id" v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
+                        <b-form-checkbox class="group__role" :data-role="item.id" :data-access="access.id" v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
                     </b-form-checkbox-group>
                 </b-form-group>
 
             </div>
 
-        <b-button @click.prevent="saveRoleAccessList" type="submit" variant="primary">Guardar</b-button>
+        <b-button :disabled="actioned" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
+            <b-spinner v-if="actioned" small></b-spinner>
+            Guardar
+        </b-button>
     </b-form>
   </div>
 </template>
@@ -51,7 +54,8 @@ import repositories from '../repositories';
             roleprivilegeaccess: {
                 data : []
             },
-            showSuccessMsg: false
+            showSuccessMsg: false,
+            actioned: false
         }
     },
     created () {
@@ -59,6 +63,7 @@ import repositories from '../repositories';
     },
     methods: {
         saveRoleAccessList: async function(){
+            this.actioned = true;
             this.roleprivilegeaccess.data = [];
 
             for (const roleValue in this.administracionForm) {
@@ -71,6 +76,7 @@ import repositories from '../repositories';
             }
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
             this.showSuccessMsg = true;
+            this.actioned = false;
 
         },
         getStaticDataFromDB: async function(){
@@ -92,5 +98,11 @@ import repositories from '../repositories';
 </script>
 
 <style lang="scss">
-
+.administration{
+    .group{
+        &__role{
+            margin-bottom: 10px;
+        }
+    }
+}
 </style>

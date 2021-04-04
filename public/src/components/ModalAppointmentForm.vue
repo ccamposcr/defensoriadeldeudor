@@ -22,8 +22,10 @@
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
-          <b-button v-if="!editingAppointment" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">Agendar</b-button>
-          <b-button v-if="editingAppointment" @click.prevent="checkForm(function(){setEditedAppointment()})" type="submit" variant="primary">Guardar</b-button>
+          <b-button :disabled="actioned" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
+            <b-spinner v-if="actioned" small></b-spinner>
+            Agendar
+          </b-button>
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
 
           <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
@@ -45,7 +47,8 @@ export default {
   data () {
     return {
       errors:[],
-      clientList: []
+      clientList: [],
+      actioned: false
     }
   },
   methods: {
@@ -85,11 +88,13 @@ export default {
       });
     },
     setNewAppointment: async function(){
+      this.actioned = true;
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
       this.$parent.fetchEvents({start, end});
+      this.actioned = false;
     }
   }
 }

@@ -2,7 +2,10 @@
   <div class="client">
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="primary" v-if="!systemUsersInterface" @click="showAllClients">Ver todos los Clientes</b-button>
+    <b-button variant="primary" :disabled="actioned" v-if="!systemUsersInterface" @click="showAllClients">
+      <b-spinner v-if="actioned" small></b-spinner>
+      Ver todos los Clientes
+    </b-button>
 
     <div v-show="users.length">
       <ul class="client__list">
@@ -13,10 +16,13 @@
           <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
           <p v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
           <p v-if="user.role"><strong>Rol:</strong> {{ user.role }}</p>
-          <div>
+          <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">Ver Casos</b-button>
+            <b-button :disabled="actioned" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">
+              <b-spinner v-if="actioned" small></b-spinner>
+              Ver Casos
+            </b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
           </div>
@@ -30,8 +36,13 @@
                 <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
                 <p v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
                 <p v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</p>
-                <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
-                <b-button @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                <div class="case__options">
+                  <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
+                  <b-button :disabled="actioned" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
+                    <b-spinner v-if="actioned" small></b-spinner>
+                    Ver notas
+                  </b-button>
+                </div>
 
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
                   
@@ -124,7 +135,8 @@ export default {
       legalCaseNotes: [],
       locationStaticData: {'999': 'Archivo'},
       systemUsersInterface: false,
-      updatePasswordUserId: null
+      updatePasswordUserId: null,
+      actioned: false
     }
   },
   created(){
@@ -158,10 +170,12 @@ export default {
       this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
     },
     showAllClients: async function(){
+      this.actioned = true;
       this.resetClientVars();
 
       const data = await repositories.getAllClients();
       this.users = data.response;
+      this.actioned = false;
     },
     showAllUsers: async function(){
       this.resetClientVars();
@@ -178,12 +192,14 @@ export default {
         this.$bvModal.show('bv-modal-client-form');
       }
     },
-    showLegalCases: async function(userID){        
+    showLegalCases: async function(userID){      
+      this.actioned = true;  
       const data = await repositories.getLegalCasesBy('userID', userID);
       data.response.forEach(item => {
         item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
       });
       this.$set(this.legalCases, userID, data.response);
+      this.actioned = false;
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
@@ -210,8 +226,10 @@ export default {
       }
     },
     showLegalCaseNotes: async function(legalCaseID){
+      this.actioned = true;
       const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
       this.$set(this.legalCaseNotes, legalCaseID, data.response);
+      this.actioned = false;
     },
     resetClientVars: function(){
       this.legalCases = [];
@@ -275,9 +293,17 @@ export default {
 
 <style lang="scss" scoped>
   .client{
+    .btn{
+      margin-right: 10px;
+      margin-bottom: 10px;
+      &:last-child{
+        margin-right: 0;
+      }
+    }
     &__list{
       list-style-type: none;
       padding: 0;
+      margin-top: 30px;
     }
     .list{
       &__user{
@@ -296,10 +322,14 @@ export default {
         display: flex;
         flex-wrap: wrap;
         background-color: #e4e4e4;
+        margin-top: 30px;
       }
       &__name{
         font-size: 20px;
         font-weight: bold;
+      }
+      &__options{
+        margin-top: 30px;
       }
     }
     .legal-cases{
@@ -316,6 +346,12 @@ export default {
         list-style-type: none;
         padding: 0;
         background-color: #fafafa;
+        margin-top: 30px;
+      }
+    }
+    .case{
+      &__options{
+        margin-top: 30px;
       }
     }
     .notes{

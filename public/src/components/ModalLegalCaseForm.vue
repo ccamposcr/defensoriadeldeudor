@@ -34,8 +34,14 @@
                   <b-form-group label-for="nextNotification" label="Fecha de siguiete pago">
                     <b-form-datepicker :min="today" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
-                  <b-button v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">Agregar</b-button>
-                  <b-button v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">Guardar</b-button>
+                  <b-button :disabled="actioned" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
+                    <b-spinner v-if="actioned" small></b-spinner>
+                    Agregar
+                  </b-button>
+                  <b-button :disabled="actioned" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
+                    <b-spinner v-if="actioned" small></b-spinner>
+                    Guardar
+                  </b-button>
                   <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
               </b-form>
 
@@ -53,7 +59,8 @@ export default {
   props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
   data () {
     return {
-      errors:[]
+      errors:[],
+      actioned: false
     }
   },
   methods: {
@@ -89,6 +96,7 @@ export default {
         this.clearLegalCaseForm();
     },
     setNewLegalCase: async function(){
+        this.actioned = true;
         const userID = this.legalCaseUserId;
         const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
@@ -104,8 +112,10 @@ export default {
 
         this.$parent.showLegalCases(userID);
         this.$bvModal.hide('bv-modal-legal-case-form');
+        this.actioned = false;
     },
     setEditedLegalCase: async function(){
+        this.actioned = true;
         const userID = this.legalCaseUserId;
 
         await repositories.editLegalCase(this.legalCaseForm);
@@ -122,6 +132,7 @@ export default {
         }
 
         this.cancelLegalForm();
+        this.actioned = false;
     }
   }
 }

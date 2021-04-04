@@ -35,8 +35,14 @@
                 <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
-              <b-button v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">Agregar</b-button>
-              <b-button v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">Guardar</b-button>
+              <b-button :disabled="actioned" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
+                <b-spinner v-if="actioned" small></b-spinner>
+                Agregar
+              </b-button>
+              <b-button :disabled="actioned" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
+                <b-spinner v-if="actioned" small></b-spinner>
+                Guardar
+              </b-button>
               <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
           </b-form>
           
@@ -55,7 +61,8 @@ export default {
   data () {
     return {
       errors:[],
-      URLparams: null
+      URLparams: null,
+      actioned: false
     }
   },
   mounted() {
@@ -98,20 +105,24 @@ export default {
         this.$emit('update:users', data.response);
     },
     setNewClient: async function(){
+        this.actioned = true;
         const data = await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
 
+        this.actioned = false;
         if( this.URLparams.appointmentDate ){
           this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate+'&clientID='+data.clientID);
         }
     },
     setEditedClient: async function(){
+        this.actioned = true;
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.$bvModal.hide('bv-modal-client-form');
+        this.actioned = false;
     },
     clearClientForm: function(){
         for(const item in this.clientForm){
