@@ -20,7 +20,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getRoleList: async function(){
@@ -31,7 +31,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getJudicialStatusList: async function(){
@@ -42,7 +42,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getSubjectList: async function(){
@@ -53,7 +53,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getAllClients: async function(){
@@ -64,7 +64,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getAllUsers: async function(){
@@ -75,7 +75,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getAdministrativeStatusList: async function(){
@@ -86,7 +86,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getLegalCasesBy: async function(searchBy, value){
@@ -111,7 +111,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getLegalCaseNotesBy: async function(searchBy, value){
@@ -136,7 +136,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getLegalCasesByDateRange: async function(searchBy, start, end){
@@ -162,7 +162,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     addLegalCaseNote: async function(params){
@@ -183,7 +183,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     addNewClient: async function(params){
@@ -203,7 +203,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     editClient: async function(params){
@@ -223,7 +223,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     addNewLegalCase: async function(userID, params){
@@ -244,7 +244,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     editLegalCase: async function(params){
@@ -264,7 +264,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     addNewAppointment: async function(params){
@@ -284,7 +284,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getAppointmentsByDateRange: async function(searchBy, start, end){
@@ -310,7 +310,7 @@ var repositories = {
             
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     cancelAppointment: async function(params){
@@ -330,7 +330,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getAccessList:  async function(){
@@ -341,7 +341,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     setRolePrivilegeAccess: async function(params){
@@ -362,7 +362,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getRolePrivilegeAccess:  async function(){
@@ -373,7 +373,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     getPrivilegeAccessByRole: async function(searchBy, value){
@@ -398,7 +398,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     deleteUser: async function(params){
@@ -418,7 +418,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     },
     updatePassword: async function(userID, params){
@@ -439,7 +439,7 @@ var repositories = {
 
             return data;
         } catch(err) {
-            alert('Error: ' + err);
+            console.log('Error: ' + err);
         }
     }
 }

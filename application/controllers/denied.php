@@ -17,6 +17,7 @@ class Denied extends CI_Controller
         $this->load->view('global/welcome');
         $this->load->view('global/navigation');
         $this->load->view('global/denied');
+        $this->load->view('global/body');
         $this->load->view('global/footer');
     }
     
