@@ -2,7 +2,7 @@
 <div class="container login">
    <div class="row justify-content-center">
       <div class="col-md-12 login__logo-wrap">
-         <a href="/inicio" class="login__logo">
+         <a href="<?php echo base_url(); ?>inicio" class="login__logo">
             <img width="100px" src="<?php echo base_url(); ?>public/images/logo.jpg"/>
          </a>
       </div>

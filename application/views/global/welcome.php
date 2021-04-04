@@ -1,7 +1,7 @@
 <div class="welcome">
     <div class="row">
         <div class="col-md-2">
-            <a href="/inicio" class="welcome__logo">
+            <a href="<?php echo base_url(); ?>inicio" class="welcome__logo">
                 <img width="100px" src="<?php echo base_url(); ?>public/images/logo.jpg"/>
             </a>
         </div>
