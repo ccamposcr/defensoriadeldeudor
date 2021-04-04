@@ -1,1 +1,0 @@
-<h1>Privado: No tiene acceso a esta página</h1>

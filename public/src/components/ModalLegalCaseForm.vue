@@ -7,7 +7,7 @@
             <div class="d-block">
               <div v-if="errors.length">
                   <p>Por favor, corrija el(los) siguiente(s) error(es):</p>
-                  <ul>
+                  <ul class="errors-list">
                       <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
                   </ul>
               </div>
@@ -139,4 +139,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.errors-list{
+    list-style-type: decimal;
+    padding-left: 16px;
+    color: red;
+}
 </style>

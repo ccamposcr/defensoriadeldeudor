@@ -264,7 +264,7 @@ export default {
         if( this.checkAccessList('agregar cliente') ){
           this.showClientFormModal();
         }else{
-          this.$router.push('/confidencial');
+          window.location.href = base_url + 'denied';
         }
       }
 
@@ -273,7 +273,7 @@ export default {
           this.systemUsersInterface = true;
           this.showAllUsers();
         }else{
-          this.$router.push('/confidencial');
+          window.location.href = base_url + 'denied';
         }
       }
     },

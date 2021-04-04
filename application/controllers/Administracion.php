@@ -10,7 +10,7 @@ class Administracion extends CI_Controller
             redirect('login');
         }
         if (!in_array("8", json_decode($this->session->userdata('roleAccessList')))) {
-            redirect('confidencial');
+            redirect('denied');
         }
         $this->load->library('form_validation');
         $this->load->model('generic_model');

@@ -7,7 +7,7 @@
     <div class="d-block">
       <div v-if="errors.length">
           <p>Por favor, corrija el(los) siguiente(s) error(es):</p>
-          <ul>
+          <ul class="errors-list">
               <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
           </ul>
       </div>
@@ -16,7 +16,7 @@
             <div><strong>Fecha y Hora de la Cita:</strong> {{appointmentForm.date}}</div>
           </b-form-group>
           <b-form-group label-for="filter" label="Filtrar cliente por">
-            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Ingrese la Cédula, o el Nombre, o el Apellido"></b-form-input>
+            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Filtre por Cédula, o el Nombre, o el Apellido"></b-form-input>
           </b-form-group>
           <b-form-group label-for="client" label="Seleccione el cliente">
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
@@ -101,5 +101,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.errors-list{
+    list-style-type: decimal;
+    padding-left: 16px;
+    color: red;
+}
 </style>
