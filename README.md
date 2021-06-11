@@ -45,3 +45,12 @@ Fecha de cobro -> LISTO
 _______________________________________________-
 Citas por cliente
 Fecha de la cita
+
+
+PENDIENTE
+----
+Monto de pago en las notificaciones ->
+N Fechas de siguientes pagos -> una lista con los siguientes pagos
+------ 
+Restringir el ver la notificacion de cobro por role
+

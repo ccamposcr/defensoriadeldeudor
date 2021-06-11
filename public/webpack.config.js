@@ -2,8 +2,9 @@ const path = require("path");
 const webpack = require("webpack");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { VueLoaderPlugin } = require('vue-loader')
-const { VuetifyLoaderPlugin } = require('vuetify-loader')
+const { VueLoaderPlugin } = require('vue-loader');
+const { VuetifyLoaderPlugin } = require('vuetify-loader');
+const CopyPlugin = require('copy-webpack-plugin');
 
 /*
  * We've enabled HtmlWebpackPlugin for you! This generates a html
@@ -25,7 +26,12 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new VuetifyLoaderPlugin()
+    new VuetifyLoaderPlugin(),
+    new CopyPlugin({
+        patterns: [
+          { from:'src/images',to:'images' } 
+        ]
+    })
   ],
 
   module: {
