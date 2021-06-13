@@ -203,25 +203,47 @@ export default {
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
-        const data = await repositories.getClientBy('id', id);
-        const response = data.response;
-        if( response.length ){
-          this.clientForm = response[0];
-          this.editingUser = true;
-          this.$bvModal.show('bv-modal-client-form');
+        const promise = await repositories.isClientInUse({'id': id});
+        const inUseResponse = promise.response;
+        let isInUse = 0;
+        if( inUseResponse.length ){
+          isInUse = inUseResponse[0].inUse;
+        }
+        if(isInUse === '1'){
+          alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
+        }else{
+          await repositories.updateClientIsInUse({'id': id, 'inUse': 1});
+          const data = await repositories.getClientBy('id', id);
+          const response = data.response;
+          if( response.length ){
+            this.clientForm = response[0];
+            this.editingUser = true;
+            this.$bvModal.show('bv-modal-client-form');
+          }
         }
       }
     },
     fillLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
-        this.legalCaseUserId = userID;
-        const data = await repositories.getLegalCasesBy('id', legalCaseID);
-        const response = data.response;
-        if( response.length ){
-          this.legalCaseForm = response[0];
-          this.legalCaseForm['id'] = legalCaseID;
-          this.editingLegalCase = true;
-          this.$bvModal.show('bv-modal-legal-case-form');
+        const promise = await repositories.isLegalCaseInUse({'id': legalCaseID});
+        inUseResponse = promise.response;
+        let isInUse = 0;
+         if( inUseResponse.length ){
+          isInUse = inUseResponse[0].inUse;
+        }
+        if(isInUse === '1'){
+          alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
+        }else{
+          await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 1});
+          this.legalCaseUserId = userID;
+          const data = await repositories.getLegalCasesBy('id', legalCaseID);
+          const response = data.response;
+          if( response.length ){
+            this.legalCaseForm = response[0];
+            this.legalCaseForm['id'] = legalCaseID;
+            this.editingLegalCase = true;
+            this.$bvModal.show('bv-modal-legal-case-form');
+          }
         }
       }
     },

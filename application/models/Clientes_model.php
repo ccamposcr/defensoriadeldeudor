@@ -13,6 +13,21 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function isInUse($id){
+        $this->db->select('inUse');
+        $this->db->where('id', $id);
+        $query = $this->db->get('user');
+        $results = $query->result();
+        return $results;
+    }
+
+    function updateIsInUse($id, $state){    
+        $this->db->set('inUse', $state);    
+        $this->db->where('id', $id);
+        $results = $this->db->update('user');
+        return $results;
+    }
+
     function getAllClients(){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID');
         $this->db->order_by('name ASC');

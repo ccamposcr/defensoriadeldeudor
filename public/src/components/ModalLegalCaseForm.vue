@@ -91,9 +91,12 @@ export default {
         }
         this.errors = [];
     },
-    cancelLegalForm: function(){
-        this.$bvModal.hide('bv-modal-legal-case-form');
-        this.clearLegalCaseForm();
+    cancelLegalForm: async function(){
+      if( this.legalCaseForm.id ){
+        await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
+      }
+      this.$bvModal.hide('bv-modal-legal-case-form');
+      this.clearLegalCaseForm();
     },
     setNewLegalCase: async function(){
         this.actioned = true;

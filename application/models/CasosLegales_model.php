@@ -2,16 +2,31 @@
 class CasosLegales_model extends CI_Model
 {
 
+    function addLegalCase($data){       
+        $this->db->insert('legalcase', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+
     function editLegalCase($id, $data){    
         $this->db->where('id', $id);
         $results = $this->db->update('legalcase', $data);
         return $results;
     }
-    
-    function addLegalCase($data){       
-        $this->db->insert('legalcase', $data);
-        $insert_id = $this->db->insert_id();
-        return $insert_id;
+
+    function isInUse($id){
+        $this->db->select('inUse');
+        $this->db->where('id', $id);
+        $query = $this->db->get('legalcase');
+        $results = $query->result();
+        return $results;
+    }
+
+    function updateIsInUse($id, $state){    
+        $this->db->set('inUse', $state);    
+        $this->db->where('id', $id);
+        $results = $this->db->update('legalcase');
+        return $results;
     }
 
     function addLegalCaseNote($data){       

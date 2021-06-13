@@ -226,6 +226,46 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
+    isClientInUse: async function(params){
+        try {
+            const url = 'clientes/isInUse';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    updateClientIsInUse: async function(params){
+        try {
+            const url = 'clientes/updateIsInUse';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
     addNewLegalCase: async function(userID, params){
         try {
             const url = 'casosLegales/addLegalCase';
@@ -256,6 +296,46 @@ var repositories = {
             credentials: 'include',
             method: 'POST',
             body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    isLegalCaseInUse: async function(params){
+        try {
+            const url = 'casosLegales/isInUse';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    updateLegalCaseIsInUse: async function(params){
+        try {
+            const url = 'casosLegales/updateIsInUse';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
             });
 
             const data = await response.json();

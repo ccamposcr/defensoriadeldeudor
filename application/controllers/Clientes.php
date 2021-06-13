@@ -75,6 +75,32 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
+    function isInUse(){
+        $id = $this->input->post('id');
+        $isInUse = $this->clientes_model->isInUse($id);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $isInUse
+        );
+
+        echo json_encode($response);
+    }
+
+    function updateIsInUse(){
+        $id = $this->input->post('id');
+        $state = $this->input->post('inUse');
+        $isInUse = $this->clientes_model->updateIsInUse($id, $state);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
     function getAllClients(){
         $response = array(
             'response' => $this->clientes_model->getAllClients()

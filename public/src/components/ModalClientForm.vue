@@ -121,8 +121,8 @@ export default {
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.$bvModal.hide('bv-modal-client-form');
-        this.actioned = false;
+        this.cancelClientForm();
+        this.actioned = false; 
     },
     clearClientForm: function(){
         for(const item in this.clientForm){
@@ -132,12 +132,15 @@ export default {
         this.clientForm.status = '1';
         this.errors = [];
     },
-    cancelClientForm: function(){
-        this.$bvModal.hide('bv-modal-client-form');
-        this.clearClientForm();
-        if( this.URLparams.appointmentDate ){
-          this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate);
-        }
+    cancelClientForm: async function(){
+      if( this.clientForm.id ){
+        await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
+      }
+      this.$bvModal.hide('bv-modal-client-form');
+      this.clearClientForm();
+      if( this.URLparams.appointmentDate ){
+        this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate);
+      }
     },
     checkIfClientAlreadyExists: async function(){
      
