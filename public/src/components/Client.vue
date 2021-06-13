@@ -226,7 +226,7 @@ export default {
     fillLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
         const promise = await repositories.isLegalCaseInUse({'id': legalCaseID});
-        inUseResponse = promise.response;
+        const inUseResponse = promise.response;
         let isInUse = 0;
          if( inUseResponse.length ){
           isInUse = inUseResponse[0].inUse;
