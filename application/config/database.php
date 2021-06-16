@@ -75,10 +75,14 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
+	//'hostname' => 'localhost',
 	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'defensoriadeldeudor',
+	//'username' => 'root',
+	//'password' => '',
+	'username' => 'gradoinq',
+	'password' => '-JclnQgV8Z',
+	//'database' => 'defensoriadeldeudor',
+	'database' => 'defensoriadeldeudor_new1',	
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

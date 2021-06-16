@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2021 at 10:03 AM
+-- Generation Time: Jun 16, 2021 at 05:14 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -119,27 +119,9 @@ CREATE TABLE `legalcase` (
   `administrativeStatusID` int(11) NOT NULL,
   `locationID` int(11) NOT NULL,
   `dateCreated` timestamp NOT NULL DEFAULT current_timestamp(),
-  `nextNotification` date NOT NULL
+  `nextNotification` date NOT NULL,
+  `inUse` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `legalcase`
---
-
-INSERT INTO `legalcase` (`id`, `internalCode`, `subjectID`, `userID`, `judicialStatusID`, `administrativeStatusID`, `locationID`, `dateCreated`, `nextNotification`) VALUES
-(27, '1', 2, 28, 2, 2, 999, '2021-03-11 03:08:22', '2021-03-31'),
-(28, '2', 2, 50, 1, 3, 999, '2021-03-11 03:08:45', '2021-03-31'),
-(29, '12', 1, 28, 2, 2, 999, '2021-03-12 04:14:56', '2021-03-31'),
-(30, '13', 2, 28, 2, 2, 999, '2021-03-12 04:18:16', '2021-03-31'),
-(31, '13', 2, 28, 2, 2, 999, '2021-03-12 04:18:17', '2021-03-31'),
-(32, '13', 2, 28, 2, 2, 999, '2021-03-12 04:18:17', '2021-03-31'),
-(33, '13', 2, 28, 2, 2, 28, '2021-03-12 04:18:18', '2021-03-31'),
-(34, '03299234', 2, 50, 3, 2, 999, '2021-03-12 04:43:18', '2021-03-31'),
-(35, '1', 1, 51, 2, 3, 999, '2021-03-12 21:24:15', '2021-03-14'),
-(36, '2', 2, 51, 2, 2, 999, '2021-03-12 21:49:36', '2021-03-17'),
-(37, '3', 6, 51, 8, 4, 50, '2021-03-13 00:09:59', '2021-03-18'),
-(38, '4', 1, 51, 7, 4, 999, '2021-03-15 01:48:20', '2021-03-14'),
-(39, '13123', 2, 58, 2, 2, 56, '2021-03-24 01:23:49', '2021-03-31');
 
 -- --------------------------------------------------------
 
@@ -154,25 +136,6 @@ CREATE TABLE `legalcasenoteshistory` (
   `legalCaseID` int(11) NOT NULL,
   `userID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `legalcasenoteshistory`
---
-
-INSERT INTO `legalcasenoteshistory` (`id`, `note`, `date`, `legalCaseID`, `userID`) VALUES
-(9, 'una nota', '2021-03-12 04:42:42', 28, 28),
-(10, 'otra nota de chris', '2021-03-12 04:43:18', 34, 28),
-(11, 'una nueva nota', '2021-03-12 21:24:15', 35, 28),
-(12, 'otr anota mia', '2021-03-12 21:49:36', 36, 28),
-(13, 'en archivo fisico', '2021-03-13 00:09:59', 37, 28),
-(14, 'otra nota', '2021-03-15 01:48:20', 38, 28),
-(15, 'otra nota ya no es moroso', '2021-03-22 20:16:47', 34, 28),
-(16, 'otra nota mas', '2021-03-24 01:23:49', 39, 28),
-(17, 'editando otra  nota mas', '2021-03-24 01:24:50', 39, 56),
-(18, 'nueva nota', '2021-03-24 01:28:15', 32, 56),
-(19, 'otra nota mas', '2021-04-02 05:11:35', 28, 28),
-(20, 'una nueva nota', '2021-04-02 05:11:42', 28, 28),
-(21, 'otra nota', '2021-04-02 05:25:24', 35, 28);
 
 -- --------------------------------------------------------
 
@@ -267,23 +230,17 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `address` varchar(150) NOT NULL,
   `roleID` int(11) NOT NULL,
-  `verificationKey` varchar(255) NOT NULL
+  `verificationKey` varchar(255) NOT NULL,
+  `inUse` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `personalID`, `name`, `lastName1`, `lastName2`, `status`, `dateCreated`, `phone`, `email`, `password`, `address`, `roleID`, `verificationKey`) VALUES
-(28, '113100938', 'Christian', 'Campos', 'Olivares', 1, '2021-01-20 04:37:29', '83180160', 'ccamposcr@gmail.com', '$2y$10$noVtfVJq7ZuRvY8qQKDQ8OYKB6bxGzsY8mDvrsyGVd79xfjMo4xdC', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 1, 'f1dd491af6c0ef9337d9a77f5618bcf4'),
-(50, '801020133', 'Carolina', 'Borge', 'Espinoza', 1, '2021-03-11 02:19:39', '8318-0160', 'carobe18685@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
-(51, '302340045', 'Martin', 'Campos', 'Arias', 1, '2021-03-12 04:59:21', '8318-0160', 'martincamposarias@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
-(56, '302980014', 'Xinia', 'Olivares', 'Pacheco', 1, '2021-03-23 23:58:30', '', '', '$2y$10$8wse/RKlSk1k6NUtXw3jF.bvGGVUhczwAscP0.nsYHDBcghw9kiTC', '', 2, '5b0497a8732e10916165f2a4462c9b14'),
-(58, '123456789', 'Nombre', 'apellido', 'apellido', 1, '2021-03-24 00:32:40', '5123-123', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
-(59, '987654321', 'Cliente', 'Prueba', 'Prueba', 1, '2021-03-29 23:53:10', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
-(60, '98765432', 'Usuario', 'Prueba', 'Prueba', 1, '2021-03-29 23:54:17', '', '', '$2y$10$S183za2Wi7oNdsoTPCdUAutvfyqwfbd76V9Emp.J5kIHUReSN.Hwi', '', 1, 'f922e01cd2577965fb701a40335b885e'),
-(69, '12345', 'Laura', 'Campos', 'Olivares', 1, '2021-04-01 23:15:53', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, ''),
-(70, '123456', 'Maria', 'Borge', 'Espinoza', 1, '2021-04-02 04:18:14', '8724-2587', 'ccamposcr@gmail.com', '', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 0, '');
+INSERT INTO `user` (`id`, `personalID`, `name`, `lastName1`, `lastName2`, `status`, `dateCreated`, `phone`, `email`, `password`, `address`, `roleID`, `verificationKey`, `inUse`) VALUES
+(28, '113100938', 'Christian', 'Campos', 'Olivares', 1, '2021-01-20 04:37:29', '83180160', 'ccamposcr@gmail.com', '$2y$10$noVtfVJq7ZuRvY8qQKDQ8OYKB6bxGzsY8mDvrsyGVd79xfjMo4xdC', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 1, 'f1dd491af6c0ef9337d9a77f5618bcf4', 0),
+(60, '98765432', 'Usuario', 'Prueba', 'Prueba', 1, '2021-03-29 23:54:17', '', '', '$2y$10$S183za2Wi7oNdsoTPCdUAutvfyqwfbd76V9Emp.J5kIHUReSN.Hwi', '', 1, 'f922e01cd2577965fb701a40335b885e', 0);
 
 -- --------------------------------------------------------
 
@@ -297,23 +254,6 @@ CREATE TABLE `userappointment` (
   `dateCreated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `userappointment`
---
-
-INSERT INTO `userappointment` (`id`, `userID`, `dateCreated`, `date`) VALUES
-(3, 51, '2021-03-22 20:12:31', '2021-03-21 10:00:00'),
-(5, 50, '2021-03-23 06:22:16', '2021-03-22 06:00:00'),
-(6, 50, '2021-03-23 20:56:45', '2021-03-23 06:00:00'),
-(8, 50, '2021-03-24 01:28:44', '2021-03-24 04:00:00'),
-(9, 51, '2021-03-27 06:16:36', '2021-03-21 00:00:00'),
-(10, 51, '2021-03-27 06:16:47', '2021-03-21 01:00:00'),
-(11, 50, '2021-03-27 06:16:52', '2021-03-22 01:00:00'),
-(12, 58, '2021-03-27 06:16:57', '2021-03-22 02:00:00'),
-(13, 50, '2021-03-27 07:07:18', '2021-03-25 03:00:00'),
-(14, 51, '2021-03-27 07:07:22', '2021-03-26 02:00:00'),
-(17, 70, '2021-04-02 04:18:26', '2021-03-31 03:00:00');
 
 --
 -- Indexes for dumped tables
@@ -405,7 +345,7 @@ ALTER TABLE `judicialstatuslist`
 -- AUTO_INCREMENT for table `legalcase`
 --
 ALTER TABLE `legalcase`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `legalcasenoteshistory`
@@ -441,7 +381,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `userappointment`
 --
 ALTER TABLE `userappointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
