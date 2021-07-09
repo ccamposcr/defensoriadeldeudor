@@ -2,6 +2,14 @@
   <div class="inicio">
     <v-row>
       <v-col>
+        <v-btn
+          outlined
+          class=""
+          color="green darken-2"
+          @click="sync"
+        >
+          Sincronizar
+        </v-btn>
         <v-sheet height="64">
           <v-toolbar
             flat
@@ -301,6 +309,11 @@
         if(this.checkAccessList('agendar cita') && params.clientID){
           this.$set(this.appointmentForm, 'userID', params.clientID);
         }
+      },
+      sync: function(){
+        const start = this.date.start;
+        const end = this.date.end;
+        this.fetchEvents({start, end});
       }
     }
   }
