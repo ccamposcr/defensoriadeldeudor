@@ -31,6 +31,11 @@
           <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
             <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
           </b-form-group>
+
+          <div v-if="errors.length">
+            <p class="label label-danger">Por favor, corrija el(los) error(es) del formulario</p>
+          </div>
+
       </b-form>
       
     </div>
@@ -104,6 +109,8 @@ export default {
 .errors-list{
     list-style-type: decimal;
     padding-left: 16px;
+}
+.label-danger{
     color: red;
 }
 </style>

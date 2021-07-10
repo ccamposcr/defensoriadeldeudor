@@ -16,7 +16,7 @@ const CopyPlugin = require('copy-webpack-plugin');
  */
 
 module.exports = {
-  mode: "production",
+  mode: "development",
 
   entry: ["babel-polyfill", './src/main.js'],
   output: {

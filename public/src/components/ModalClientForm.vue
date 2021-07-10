@@ -45,6 +45,10 @@
               </b-button>
               <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
           </b-form>
+
+          <div v-if="errors.length">
+            <p class="label label-danger">Por favor, corrija el(los) error(es) del formulario</p>
+          </div>
           
         </div>
       </b-modal>
@@ -160,6 +164,8 @@ export default {
 .errors-list{
     list-style-type: decimal;
     padding-left: 16px;
+}
+.label-danger{
     color: red;
 }
 </style>
