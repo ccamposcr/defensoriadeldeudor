@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 16, 2021 at 05:14 AM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.6
+-- Generation Time: Jul 10, 2021 at 02:47 AM
+-- Server version: 10.4.19-MariaDB
+-- PHP Version: 7.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -137,6 +137,13 @@ CREATE TABLE `legalcasenoteshistory` (
   `userID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `legalcasenoteshistory`
+--
+
+INSERT INTO `legalcasenoteshistory` (`id`, `note`, `date`, `legalCaseID`, `userID`) VALUES
+(1, 'nueva nota', '2021-07-10 00:45:27', 1, 28);
+
 -- --------------------------------------------------------
 
 --
@@ -239,8 +246,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `personalID`, `name`, `lastName1`, `lastName2`, `status`, `dateCreated`, `phone`, `email`, `password`, `address`, `roleID`, `verificationKey`, `inUse`) VALUES
-(28, '113100938', 'Christian', 'Campos', 'Olivares', 1, '2021-01-20 04:37:29', '83180160', 'ccamposcr@gmail.com', '$2y$10$noVtfVJq7ZuRvY8qQKDQ8OYKB6bxGzsY8mDvrsyGVd79xfjMo4xdC', '125m al oeste y 25 al sur de la Cruz Roja de Vazquez de Coronado', 1, 'f1dd491af6c0ef9337d9a77f5618bcf4', 0),
-(60, '98765432', 'Usuario', 'Prueba', 'Prueba', 1, '2021-03-29 23:54:17', '', '', '$2y$10$S183za2Wi7oNdsoTPCdUAutvfyqwfbd76V9Emp.J5kIHUReSN.Hwi', '', 1, 'f922e01cd2577965fb701a40335b885e', 0);
+(1, '113100938', 'Christian', 'Campos', 'Olivares', 1, '2021-01-20 04:37:29', '83180160', 'ccamposcr@gmail.com', '$2y$10$4oH2duopVWESH3Ay2QTlC.ai5zPX1c5U4eR9bJ7o.d9APcu86KJI.', 'Coronado', 1, 'f1dd491af6c0ef9337d9a77f5618bcf4', 0);
 
 -- --------------------------------------------------------
 
@@ -345,13 +351,13 @@ ALTER TABLE `judicialstatuslist`
 -- AUTO_INCREMENT for table `legalcase`
 --
 ALTER TABLE `legalcase`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `legalcasenoteshistory`
 --
 ALTER TABLE `legalcasenoteshistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rolelist`
@@ -375,13 +381,13 @@ ALTER TABLE `subjectlist`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `userappointment`
 --
 ALTER TABLE `userappointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

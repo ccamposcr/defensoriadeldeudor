@@ -31,7 +31,7 @@
                   <b-form-group label-for="note" label="Nueva nota">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
-                  <b-form-group label-for="nextNotification" label="Fecha de siguiete pago">
+                  <b-form-group label-for="nextNotification" label="Fecha más próxima de siguiete pago">
                     <b-form-datepicker :min="today" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
                   </b-form-group>
                   <b-button :disabled="actioned" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
