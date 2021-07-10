@@ -35,7 +35,7 @@ class CasosLegales_model extends CI_Model
     }
 
     function getLegalCasesBy($data){
-        $this->db->select('legalcase.id legalCaseID, legalCase.internalCode, legalcase.subjectID, legalcase.userID, legalcase.judicialStatusID, legalcase.administrativeStatusID, legalcase.nextNotification, legalcase.locationID, subjectlist.subject, judicialstatuslist.judicialStatus, administrativestatuslist.administrativeStatus, user.name, user.lastName1, user.lastName2');
+        $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.subjectID, legalcase.userID, legalcase.judicialStatusID, legalcase.administrativeStatusID, legalcase.nextNotification, legalcase.locationID, subjectlist.subject, judicialstatuslist.judicialStatus, administrativestatuslist.administrativeStatus, user.name, user.lastName1, user.lastName2');
         $this->db->from('legalcase');
         $this->db->where('legalcase.' . $data['searchBy'], $data['value']);
         $this->db->join('judicialstatuslist', 'judicialstatuslist.id = legalcase.judicialStatusID', 'left');
@@ -58,7 +58,7 @@ class CasosLegales_model extends CI_Model
     }
 
     function getLegalCasesByDateRange($data){
-        $this->db->select('legalcase.id legalCaseID, legalCase.internalCode, legalcase.userID, legalcase.nextNotification start, user.name userName, user.lastName1, user.lastName2');
+        $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.userID, legalcase.nextNotification start, user.name userName, user.lastName1, user.lastName2');
         $this->db->from('legalcase');
         $this->db->where('legalcase.' . $data['searchBy'] . '>=', $data['start']);
         $this->db->where('legalcase.' . $data['searchBy'] . '<=', $data['end']);

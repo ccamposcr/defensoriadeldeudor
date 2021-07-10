@@ -9,7 +9,7 @@ class Generic_model extends CI_Model
     }
 
     function getAccessList(){
-        $query = $this->db->get('accessList');
+        $query = $this->db->get('accesslist');
         $results = $query->result();
         return $results;
     }

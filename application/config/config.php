@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://localhost/defensoriadeldeudor';
-//$config['base_url'] = 'https://www.defensoriadeldeudor.com/app/';
+//$config['base_url'] = 'https://dddapp.online/';
 
 /*
 |--------------------------------------------------------------------------
