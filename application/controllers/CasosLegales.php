@@ -166,9 +166,8 @@ class CasosLegales extends CI_Controller
         echo json_encode($response);
     }
 
-    function getLegalCasesByDateRange(){
-        $data = array(
-            'searchBy' => $this->input->post('searchBy'), 
+    function getPaymentDatesByDateRange(){
+        $data = array( 
             'start' => $this->input->post('start'),
             'end' => $this->input->post('end')
         );
@@ -176,7 +175,7 @@ class CasosLegales extends CI_Controller
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->casosLegales_model->getLegalCasesByDateRange($data)
+            'response' => $this->casosLegales_model->getPaymentDatesByDateRange($data)
         );
 
         echo json_encode($response);

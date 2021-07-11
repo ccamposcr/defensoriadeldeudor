@@ -72,11 +72,13 @@ class CasosLegales_model extends CI_Model
         return $results;
     }
 
-    function getLegalCasesByDateRange($data){
-        $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.userID, legalcase.totalAmount, legalcase.nextNotification start, user.name userName, user.lastName1, user.lastName2');
-        $this->db->from('legalcase');
-        $this->db->where('legalcase.' . $data['searchBy'] . '>=', $data['start']);
-        $this->db->where('legalcase.' . $data['searchBy'] . '<=', $data['end']);
+    function getPaymentDatesByDateRange($data){
+        $this->db->select('paymentdates.legalCaseID legalCaseID, legalcase.internalCode, legalcase.userID, legalcase.totalAmount, paymentdates.date start, user.name userName, user.lastName1, user.lastName2');
+        $this->db->from('paymentdates');
+        $this->db->where('paymentdates.date >=', $data['start']);
+        $this->db->where('paymentdates.date <=', $data['end']);
+        $this->db->where('paymentdates.status', '1');
+        $this->db->join('legalcase', 'paymentdates.legalCaseID = legalcase.id', 'left');
         $this->db->join('user', 'user.id = legalcase.userID', 'left');
         $query = $this->db->get();
         $results = $query->result();

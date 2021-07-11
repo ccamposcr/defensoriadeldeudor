@@ -164,12 +164,11 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
-    getLegalCasesByDateRange: async function(searchBy, start, end){
+    getPaymentDatesByDateRange: async function(start, end){
         try {
-            const url = 'casosLegales/getLegalCasesByDateRange';
+            const url = 'casosLegales/getPaymentDatesByDateRange';
 
             const params = {
-            'searchBy':searchBy,
             'start': start,
             'end': end
             };

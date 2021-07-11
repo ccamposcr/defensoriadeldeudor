@@ -129,7 +129,6 @@ export default {
         const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
         const legalCaseNote = {};
-        
         legalCaseNote['legalCaseID'] = data.legalCaseID;
         legalCaseNote['userID'] = loggedINUserID;
         legalCaseNote['note'] = this.legalCaseForm['note'];
@@ -141,7 +140,7 @@ export default {
         if( this.paymentDates.dates.length ){
           this.paymentDates.legalCaseID = data.legalCaseID;
           const paymentDatesStr = {
-            'legalCaseID': data.legalCaseID,
+            'legalCaseID': this.paymentDates.legalCaseID,
             'dates': JSON.stringify(this.paymentDates.dates)
           }
           await repositories.addPaymentDates(paymentDatesStr);
@@ -169,7 +168,13 @@ export default {
         }
 
         if( this.paymentDates.dates.length ){
-
+          this.paymentDates.legalCaseID = this.legalCaseForm['legalCaseID'];
+          const paymentDatesStr = {
+            'legalCaseID': this.paymentDates.legalCaseID,
+            'dates': JSON.stringify(this.paymentDates.dates)
+          }
+          await repositories.addPaymentDates(paymentDatesStr);
+          this.$parent.showLegalPaymentDates(this.paymentDates.legalCaseID);
         }
 
         this.cancelLegalForm();
