@@ -229,7 +229,7 @@
         const startDate = this.date.start.date;
         const endDate = this.date.end.date;
 
-        const dataLegalCases = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
+       /* const dataLegalCases = await repositories.getLegalCasesByDateRange('nextNotification', startDate, endDate);
         const responseLegalCases = dataLegalCases.response;
 
         if( responseLegalCases.length ){
@@ -258,6 +258,7 @@
         const response = responseLegalCases.concat(responseAppointments);
 
         this.events = response;
+        */
       },
       showEvent: function ({ nativeEvent, event }) {
         const open = () => {

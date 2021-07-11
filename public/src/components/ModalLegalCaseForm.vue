@@ -11,7 +11,7 @@
                       <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
                   </ul>
               </div>
-              <b-form class="user__case-form">
+              <b-form class="legal__case-form">
                   <input type="hidden" v-model="legalCaseForm.id">
                   <b-form-group label-for="internalCode" label="Número de expediente">
                     <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente" :disabled="editingLegalCase"></b-form-input>
@@ -31,9 +31,27 @@
                   <b-form-group label-for="note" label="Nueva nota">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
-                  <b-form-group label-for="nextNotification" label="Fecha más próxima de siguiete pago">
-                    <b-form-datepicker :min="today" id="nextNotification" v-model="legalCaseForm.nextNotification" locale="es"></b-form-datepicker>
+                  <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago">
+                    <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
                   </b-form-group>
+
+                  <b-form-group>
+                    <b-button :disabled="!nextPaymentDay" @click.prevent="addNewPaymentDay" variant="primary">
+                      Agregar
+                    </b-button>
+                  </b-form-group>
+
+                  <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
+                      <ul class="case-form__list">
+                          <li class="list__date" :key="date" v-for="(date, index) in paymentDates.dates">
+                            Fecha de pago: {{ date }}
+                            <b-button @click.prevent="removePaymentDay(index)" variant="danger">
+                              Eliminar
+                            </b-button>
+                          </li>
+                      </ul>
+                  </b-form-group>
+                  
                   <b-button :disabled="actioned" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
                     <b-spinner v-if="actioned" small></b-spinner>
                     Agregar
@@ -60,11 +78,12 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
+  props: ["paymentDates", "legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
   data () {
     return {
       errors:[],
-      actioned: false
+      actioned: false,
+      nextPaymentDay: null
     }
   },
   methods: {
@@ -81,9 +100,6 @@ export default {
         }
         if(!this.legalCaseForm.administrativeStatusID){
             this.errors.push("Seleccione el estado administrativo");
-        }
-        if(!this.legalCaseForm.nextNotification){
-            this.errors.push("Ingrese una fecha de alerta válida");
         }
         if(!this.errors.length){
             callback();
@@ -140,6 +156,15 @@ export default {
 
         this.cancelLegalForm();
         this.actioned = false;
+    },
+    addNewPaymentDay: function(){
+      if (this.nextPaymentDay){
+        this.paymentDates.dates.push(this.nextPaymentDay);
+        this.nextPaymentDay = null;
+      }
+    },
+    removePaymentDay: function(index){
+      this.paymentDates.dates.splice(index, 1);
     }
   }
 }
@@ -152,5 +177,16 @@ export default {
 }
 .label-danger{
     color: red;
+}
+.case-form{
+  &__list{
+    list-style-type: none;
+  }
+}
+
+.list{
+  &__date{
+    padding: 10px 0;
+  }
 }
 </style>

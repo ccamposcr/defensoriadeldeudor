@@ -35,7 +35,7 @@
                 <p v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
                 <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
                 <p v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-                <p v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</p>
+                <!--<p v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</p>-->
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                   <b-button :disabled="actioned" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
@@ -67,7 +67,7 @@
 
     <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
     <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
-    <modal-legal-case-form :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-legal-case-form :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     <modal-update-password-form :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
   </div>
 </template>
@@ -112,9 +112,14 @@ export default {
         judicialStatusID: null,
         administrativeStatusID: null,
         note: null,
-        nextNotification: null,
+        //nextNotification: null,
         legalCaseID: null,
         locationID: null
+      },
+      paymentDates:{
+        id: null,
+        legalCaseID: null,
+        dates: []
       },
       searchClientForm:{
         personalID: null,
