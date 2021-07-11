@@ -35,7 +35,7 @@
                 <p v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
                 <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
                 <p v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-                <!--<p v-if="legalCase.nextNotification"><strong>Fecha de siguiente pago:</strong> {{legalCase.nextNotification}}</p>-->
+                <p v-if="legalCase.totalAmount"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar Caso</b-button>
                   <b-button :disabled="actioned" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
@@ -112,7 +112,7 @@ export default {
         judicialStatusID: null,
         administrativeStatusID: null,
         note: null,
-        //nextNotification: null,
+        totalAmount: null,
         legalCaseID: null,
         locationID: null
       },

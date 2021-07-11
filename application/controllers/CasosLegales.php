@@ -20,7 +20,7 @@ class CasosLegales extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
-            'nextNotification' => $this->input->post('nextNotification'),
+            'totalAmount' => $this->input->post('totalAmount'),
             'locationID' => $this->input->post('locationID')
         );
 
@@ -59,7 +59,7 @@ class CasosLegales extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'),
-            'nextNotification' => $this->input->post('nextNotification'),
+            'totalAmount' => $this->input->post('totalAmount'),
             'locationID' => $this->input->post('locationID')
         );
         

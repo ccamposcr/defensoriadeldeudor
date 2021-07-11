@@ -31,6 +31,9 @@
                   <b-form-group label-for="note" label="Nueva nota">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
+                  <b-form-group label-for="totalAmount" label="Monto Total">
+                    <b-form-input v-model="legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto Total"></b-form-input>
+                  </b-form-group>
                   <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago">
                     <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
                   </b-form-group>
@@ -43,7 +46,7 @@
 
                   <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
                       <ul class="case-form__list">
-                          <li class="list__date" :key="date" v-for="(date, index) in paymentDates.dates">
+                          <li class="list__date" :key="index" v-for="(date, index) in paymentDates.dates">
                             <strong>Fecha de pago:</strong> {{ date }}
                             <b-button @click.prevent="removePaymentDay(index)" variant="danger">
                               Eliminar
