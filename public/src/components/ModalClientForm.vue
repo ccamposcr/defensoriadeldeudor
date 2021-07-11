@@ -35,12 +35,10 @@
                 <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
-              <b-button :disabled="actioned" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
-                <b-spinner v-if="actioned" small></b-spinner>
+              <b-button :disabled="showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
                 Agregar
               </b-button>
-              <b-button :disabled="actioned" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
-                <b-spinner v-if="actioned" small></b-spinner>
+              <b-button :disabled="showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
                 Guardar
               </b-button>
               <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
@@ -61,12 +59,11 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["clientForm", "editingUser"],
+  props: ["showLoader", "clientForm", "editingUser"],
   data () {
     return {
       errors:[],
-      URLparams: null,
-      actioned: false
+      URLparams: null
     }
   },
   mounted() {
@@ -105,28 +102,30 @@ export default {
       return re.test(email);
     },
     showClientByPersonalID: async function(personalID){
-        const data = await repositories.getClientBy('PersonalID', personalID);
-        this.$emit('update:users', data.response);
+      this.showLoader = true;
+      const data = await repositories.getClientBy('PersonalID', personalID);
+      this.$emit('update:users', data.response);
+      this.showLoader = false;
     },
     setNewClient: async function(){
-        this.actioned = true;
+        this.showLoader = true;
         const data = await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
 
-        this.actioned = false;
+        this.showLoader = false;
         if( this.URLparams.appointmentDate ){
           this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate+'&clientID='+data.clientID);
         }
     },
     setEditedClient: async function(){
-        this.actioned = true;
+        this.showLoader = true;
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
-        this.actioned = false; 
+        this.showLoader = false; 
     },
     clearClientForm: function(){
         for(const item in this.clientForm){
@@ -138,7 +137,9 @@ export default {
     },
     cancelClientForm: async function(){
       if( this.clientForm.id ){
+        this.showLoader = true;
         await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
+        this.showLoader = false;
       }
       this.$bvModal.hide('bv-modal-client-form');
       this.clearClientForm();
@@ -147,25 +148,18 @@ export default {
       }
     },
     checkIfClientAlreadyExists: async function(){
-     
+      this.showLoader = true;
       const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
       const response = data.response;
       if( response.length ){
         this.showClientByPersonalID(this.clientForm.personalID);
         this.$bvModal.hide('bv-modal-client-form');
       }
-      
+      this.showLoader = false;
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.errors-list{
-    list-style-type: decimal;
-    padding-left: 16px;
-}
-.label-danger{
-    color: red;
-}
 </style>

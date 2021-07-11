@@ -19,6 +19,7 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "./scss/global.scss";
   @import "./scss/navigation.scss";
   @import "./scss/welcome.scss";
   @import "./scss/login.scss";

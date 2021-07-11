@@ -153,7 +153,11 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form :editing-appointment="editingAppointment" :appointment-form="appointmentForm" :date="date"></modal-appointment-form>
+    <modal-appointment-form :show-loader="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date"></modal-appointment-form>
+
+    <div v-if="showLoader" class="loader">
+      <b-spinner large></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -189,7 +193,8 @@
         date:{
           start: null,
           end: null
-        }
+        },
+        showLoader: false
       }
     },
     computed: {
@@ -223,6 +228,7 @@
         this.$refs.calendar.next();
       },
       fetchEvents: async function({ start, end }) {
+        this.showLoader = true;
         this.date.start = start;
         this.date.end = end;
 
@@ -260,6 +266,8 @@
         const response = responseLegalCases.concat(responseAppointments);
 
         this.events = response;
+
+        this.showLoader = false;
         
       },
       showEvent: function ({ nativeEvent, event }) {
@@ -298,11 +306,13 @@
         }
       },
       cancelAppointment: async function(appointmentID){
+        this.showLoader = true;
         await repositories.cancelAppointment({id:appointmentID});
         const start = this.date.start;
         const end = this.date.end;
         this.fetchEvents({start, end});
         this.selectedOpen = false;
+        this.showLoader = false;
       },
       loadDataFromURLParams: async function(params){
         if(this.checkAccessList('agendar cita') && params.appointmentDate){

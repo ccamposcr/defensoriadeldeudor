@@ -2,8 +2,7 @@
   <div class="client">
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="primary" :disabled="actioned" v-if="!systemUsersInterface" @click="showAllClients">
-      <b-spinner v-if="actioned" small></b-spinner>
+    <b-button variant="primary" :disabled="showLoader" v-if="!systemUsersInterface" @click="showAllClients">
       Ver todos los Clientes
     </b-button>
 
@@ -19,8 +18,7 @@
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button :disabled="actioned" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">
-              <b-spinner v-if="actioned" small></b-spinner>
+            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">
               Ver Casos
             </b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
@@ -38,12 +36,10 @@
                 <p v-if="legalCase.totalAmount"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                  <b-button :disabled="actioned" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
-                    <b-spinner v-if="actioned" small></b-spinner>
+                  <b-button :disabled="showLoader" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
                     Ver notas
                   </b-button>
-                  <b-button :disabled="actioned" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">
-                    <b-spinner v-if="actioned" small></b-spinner>
+                  <b-button :disabled="showLoader" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">
                     Ver fechas de pago
                   </b-button>
                 </div>
@@ -83,10 +79,13 @@
       </ul>
     </div>
 
-    <modal-client-form :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-    <modal-search-form :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
-    <modal-legal-case-form :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
-    <modal-update-password-form :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
+    <modal-client-form :show-loader="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
+    <modal-search-form :show-loader="showLoader" :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
+    <modal-legal-case-form :show-loader="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-update-password-form :show-loader="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
+    <div v-if="showLoader" class="loader">
+      <b-spinner large></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -160,7 +159,7 @@ export default {
       locationStaticData: {'999': 'Archivo'},
       systemUsersInterface: false,
       updatePasswordUserId: null,
-      actioned: false
+      showLoader: false
     }
   },
   created(){
@@ -194,18 +193,20 @@ export default {
       this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
     },
     showAllClients: async function(){
-      this.actioned = true;
+      this.showLoader = true;
       this.resetClientVars();
 
       const data = await repositories.getAllClients();
       this.users = data.response;
-      this.actioned = false;
+      this.showLoader = false;
     },
     showAllUsers: async function(){
+      this.showLoader = true;
       this.resetClientVars();
 
       const data = await repositories.getAllUsers();
       this.users = data.response;
+      this.showLoader = false;
     },
     showSearchClientModal: function(){
       this.$bvModal.show('bv-modal-search-form');
@@ -217,25 +218,28 @@ export default {
       }
     },
     showLegalCases: async function(userID){      
-      this.actioned = true;  
+      this.showLoader = true;  
       const data = await repositories.getLegalCasesBy('userID', userID);
       data.response.forEach(item => {
         item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
       });
       this.$set(this.legalCases, userID, data.response);
-      this.actioned = false;
+      this.showLoader = false;
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
+        this.showLoader = true;
         const promise = await repositories.isClientInUse({'id': id});
         const inUseResponse = promise.response;
         let isInUse = 0;
+        this.showLoader = false;
         if( inUseResponse.length ){
           isInUse = inUseResponse[0].inUse;
         }
         if(isInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
+          this.showLoader = true;
           await repositories.updateClientIsInUse({'id': id, 'inUse': 1});
           const data = await repositories.getClientBy('id', id);
           const response = data.response;
@@ -244,20 +248,24 @@ export default {
             this.editingUser = true;
             this.$bvModal.show('bv-modal-client-form');
           }
+          this.showLoader = false;
         }
       }
     },
     fillLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
+        this.showLoader = true;
         const promise = await repositories.isLegalCaseInUse({'id': legalCaseID});
         const inUseResponse = promise.response;
         let isInUse = 0;
+        this.showLoader = false;
          if( inUseResponse.length ){
           isInUse = inUseResponse[0].inUse;
         }
         if(isInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
+          this.showLoader = true;
           await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 1});
           this.legalCaseUserId = userID;
           const data = await repositories.getLegalCasesBy('id', legalCaseID);
@@ -268,20 +276,21 @@ export default {
             this.editingLegalCase = true;
             this.$bvModal.show('bv-modal-legal-case-form');
           }
+          this.showLoader = false;
         }
       }
     },
     showLegalCaseNotes: async function(legalCaseID){
-      this.actioned = true;
+      this.showLoader = true;
       const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
       this.$set(this.legalCaseNotes, legalCaseID, data.response);
-      this.actioned = false;
+      this.showLoader = false;
     },
     showLegalPaymentDates: async function(legalCaseID){
-      this.actioned = true;
+      this.showLoader = true;
       const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
       this.$set(this.legalPaymentDates, legalCaseID, data.response);
-      this.actioned = false;
+      this.showLoader = false;
     },
     resetClientVars: function(){
       this.legalCases = [];
@@ -296,13 +305,16 @@ export default {
     },
     loadDataFromURLParams: async function(params){
       if(params.userID){
+        this.showLoader = true;
         const clientData = await repositories.getClientBy('id', params.userID);
         const response = clientData.response;
         if( response.length ){
           this.users = response;
         }
+        this.showLoader = false;
       }
       if(params.legalCaseID){
+        this.showLoader = true;
         const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
         const response = legalCasedata.response;
         if( response.length ){
@@ -311,6 +323,7 @@ export default {
           });
           this.$set(this.legalCases, params.userID, legalCasedata.response);
         }
+        this.showLoader = false;
       }
       if(params.showNewClientForm){
         if( this.checkAccessList('agregar cliente') ){
@@ -330,20 +343,24 @@ export default {
       }
     },
     deleteUser: async function(userID){
+      this.showLoader = true;
       const data = {};
       data['id'] = userID;
       await repositories.deleteUser(data);
       this.showAllUsers();
+      this.showLoader = false;
     },
     updatePassword: async function(userID){
       this.updatePasswordUserId = userID;
       this.$bvModal.show('bv-modal-update-password-form');
     },
     removePaymentDate: async function(legalPaymentDateID, legalCaseID){
+      this.showLoader = true;
       const data = {};
       data['id'] = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
       this.showLegalPaymentDates(legalCaseID);
+      this.showLoader = false;
     }
   }
 }

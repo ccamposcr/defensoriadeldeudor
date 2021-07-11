@@ -29,11 +29,13 @@
 
             </div>
 
-        <b-button :disabled="actioned" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
-            <b-spinner v-if="actioned" small></b-spinner>
+        <b-button :disabled="showLoader" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
             Guardar
         </b-button>
     </b-form>
+    <div v-if="showLoader" class="loader">
+      <b-spinner large></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -55,7 +57,7 @@ import repositories from '../repositories';
                 data : []
             },
             showSuccessMsg: false,
-            actioned: false
+            showLoader: false
         }
     },
     created () {
@@ -63,7 +65,7 @@ import repositories from '../repositories';
     },
     methods: {
         saveRoleAccessList: async function(){
-            this.actioned = true;
+            this.showLoader = true;
             this.roleprivilegeaccess.data = [];
 
             for (const roleValue in this.administracionForm) {
@@ -76,11 +78,11 @@ import repositories from '../repositories';
             }
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
             this.showSuccessMsg = true;
-            this.actioned = false;
+            this.showLoader = false;
 
         },
         getStaticDataFromDB: async function(){
-
+            this.showLoader = true;
             const roleListData = await repositories.getRoleList();
             this.staticData.roleList = roleListData.response;
 
@@ -91,7 +93,7 @@ import repositories from '../repositories';
             const response = roleprivilegeaccessData.response;
 
             this.administracionForm = response;
-
+            this.showLoader = false;
         }
     }
   }

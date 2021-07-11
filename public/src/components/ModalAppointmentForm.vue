@@ -22,8 +22,7 @@
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
-          <b-button :disabled="actioned" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
-            <b-spinner v-if="actioned" small></b-spinner>
+          <b-button :disabled="showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
             Agendar
           </b-button>
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
@@ -48,12 +47,11 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
-  props: ["appointmentForm", "editingAppointment", "date"],
+  props: ["showLoader", "appointmentForm", "editingAppointment", "date"],
   data () {
     return {
       errors:[],
-      clientList: [],
-      actioned: false
+      clientList: []
     }
   },
   methods: {
@@ -76,6 +74,7 @@ export default {
       this.clearAppointmentForm();
     },
     getAllClients: async function(){
+      this.showLoader = true;
       const data = await repositories.getAllClients();
       this.clientList = data.response;
       this.clientList.forEach(item => {
@@ -83,6 +82,7 @@ export default {
         item['userID'] = item.id;
       });
       this.$set(this.appointmentForm, 'clientList', this.clientList);
+      this.showLoader = false;
     },
     filter: function(){
       this.appointmentForm['clientList'] =  this.clientList.filter((client) => {
@@ -93,24 +93,17 @@ export default {
       });
     },
     setNewAppointment: async function(){
-      this.actioned = true;
+      this.showLoader = true;
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
       this.$parent.fetchEvents({start, end});
-      this.actioned = false;
+      this.showLoader = false;
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.errors-list{
-    list-style-type: decimal;
-    padding-left: 16px;
-}
-.label-danger{
-    color: red;
-}
 </style>

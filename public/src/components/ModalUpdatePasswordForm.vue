@@ -18,8 +18,7 @@
                     <b-form-group label-for="confirmPassword" label="Confirmar contraseña">
                         <b-form-input v-model="updatePasswordForm.confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Contraseña"></b-form-input>
                     </b-form-group>
-                    <b-button :disabled="actioned" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
-                        <b-spinner v-if="actioned" small></b-spinner>
+                    <b-button :disabled="showLoader" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
                         Actualizar
                     </b-button>
                     <b-button @click.prevent="cancelUpdatePasswordForm" variant="danger">Cancelar</b-button>
@@ -40,11 +39,10 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
-  props: ["updatePasswordForm", "updatePasswordUserId"],
+  props: ["showLoader", "updatePasswordForm", "updatePasswordUserId"],
   data () {
     return {
-        errors:[],
-        actioned: false
+        errors:[]
     }
   },
   methods: {
@@ -71,21 +69,14 @@ export default {
         this.clearUpdatePasswordForm();
     },
     updatePassword: async function(){
-        this.actioned = true; 
+        this.showLoader = true; 
         await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
         this.cancelUpdatePasswordForm();
-        this.actioned = false;
+        this.showLoader = false;
       }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.errors-list{
-    list-style-type: decimal;
-    padding-left: 16px;
-}
-.label-danger{
-    color: red;
-}
 </style>

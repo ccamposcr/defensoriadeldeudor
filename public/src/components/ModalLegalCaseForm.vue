@@ -55,12 +55,10 @@
                       </ul>
                   </b-form-group>
                   
-                  <b-button :disabled="actioned" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
-                    <b-spinner v-if="actioned" small></b-spinner>
+                  <b-button :disabled="showLoader" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
                     Agregar
                   </b-button>
-                  <b-button :disabled="actioned" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
-                    <b-spinner v-if="actioned" small></b-spinner>
+                  <b-button :disabled="showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
                     Guardar
                   </b-button>
                   <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
@@ -81,11 +79,10 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["paymentDates", "legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
+  props: ["showLoader", "paymentDates", "legalCaseForm", "editingLegalCase", "staticData", "legalCaseUserId", "today"],
   data () {
     return {
       errors:[],
-      actioned: false,
       nextPaymentDay: null
     }
   },
@@ -118,13 +115,15 @@ export default {
     },
     cancelLegalForm: async function(){
       if( this.legalCaseForm.id ){
+        this.showLoader = true;
         await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
+        this.showLoader = false;
       }
       this.$bvModal.hide('bv-modal-legal-case-form');
       this.clearLegalCaseForm();
     },
     setNewLegalCase: async function(){
-        this.actioned = true;
+        this.showLoader = true;
         const userID = this.legalCaseUserId;
         const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
@@ -148,10 +147,10 @@ export default {
 
         this.$parent.showLegalCases(userID);
         this.$bvModal.hide('bv-modal-legal-case-form');
-        this.actioned = false;
+        this.showLoader = false;
     },
     setEditedLegalCase: async function(){
-        this.actioned = true;
+        this.showLoader = true;
         const userID = this.legalCaseUserId;
 
         await repositories.editLegalCase(this.legalCaseForm);
@@ -178,7 +177,7 @@ export default {
         }
 
         this.cancelLegalForm();
-        this.actioned = false;
+        this.showLoader = false;
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){
@@ -194,13 +193,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.errors-list{
-    list-style-type: decimal;
-    padding-left: 16px;
-}
-.label-danger{
-    color: red;
-}
 .case-form{
   &__list{
     list-style-type: none;
