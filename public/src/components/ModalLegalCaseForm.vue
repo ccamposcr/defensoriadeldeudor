@@ -44,7 +44,7 @@
                   <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
                       <ul class="case-form__list">
                           <li class="list__date" :key="date" v-for="(date, index) in paymentDates.dates">
-                            Fecha de pago: {{ date }}
+                            <strong>Fecha de pago:</strong> {{ date }}
                             <b-button @click.prevent="removePaymentDay(index)" variant="danger">
                               Eliminar
                             </b-button>
