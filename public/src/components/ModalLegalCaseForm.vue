@@ -40,15 +40,15 @@
 
                   <b-form-group>
                     <b-button :disabled="!nextPaymentDay" @click.prevent="addNewPaymentDay" variant="primary">
-                      Agregar
+                      Agregar fecha
                     </b-button>
                   </b-form-group>
 
                   <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
                       <ul class="case-form__list">
-                          <li class="list__date" :key="index" v-for="(date, index) in paymentDates.dates">
-                            <strong>Fecha de pago:</strong> {{ date }}
-                            <b-button @click.prevent="removePaymentDay(index)" variant="danger">
+                          <li class="list__date" :key="index" v-for="(item, index) in paymentDates.dates">
+                            <strong>Fecha de pago:</strong> {{ item.date }}
+                            <b-button @click.prevent="removePaymentDate(index)" variant="danger">
                               Eliminar
                             </b-button>
                           </li>
@@ -112,6 +112,8 @@ export default {
         for(const item in this.legalCaseForm){
             this.legalCaseForm[item] = null;
         }
+        this.paymentDates.dates = [];
+        this.paymentDates.legalCaseID = null;
         this.errors = [];
     },
     cancelLegalForm: async function(){
@@ -136,6 +138,15 @@ export default {
           await repositories.addLegalCaseNote(legalCaseNote);
         }
 
+        if( this.paymentDates.dates.length ){
+          this.paymentDates.legalCaseID = data.legalCaseID;
+          const paymentDatesStr = {
+            'legalCaseID': data.legalCaseID,
+            'dates': JSON.stringify(this.paymentDates.dates)
+          }
+          await repositories.addPaymentDates(paymentDatesStr);
+        }
+
         this.$parent.showLegalCases(userID);
         this.$bvModal.hide('bv-modal-legal-case-form');
         this.actioned = false;
@@ -157,16 +168,20 @@ export default {
           this.$parent.showLegalCaseNotes(legalCaseNote['legalCaseID']);
         }
 
+        if( this.paymentDates.dates.length ){
+
+        }
+
         this.cancelLegalForm();
         this.actioned = false;
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){
-        this.paymentDates.dates.push(this.nextPaymentDay);
+        this.paymentDates.dates.push({'date': this.nextPaymentDay});
         this.nextPaymentDay = null;
       }
     },
-    removePaymentDay: function(index){
+    removePaymentDate: function(index){
       this.paymentDates.dates.splice(index, 1);
     }
   }

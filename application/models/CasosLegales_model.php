@@ -34,6 +34,11 @@ class CasosLegales_model extends CI_Model
         return $results;
     }
 
+    function addPaymentDates($data){
+        $results = $this->db->insert('paymentdates', $data);
+        return $results;
+    }
+
     function getLegalCasesBy($data){
         $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.subjectID, legalcase.userID, legalcase.judicialStatusID, legalcase.administrativeStatusID, legalcase.locationID, legalcase.totalAmount, subjectlist.subject, judicialstatuslist.judicialStatus, administrativestatuslist.administrativeStatus, user.name, user.lastName1, user.lastName2');
         $this->db->from('legalcase');
@@ -57,6 +62,16 @@ class CasosLegales_model extends CI_Model
         return $results;
     }
 
+    function getLegalPaymentDatesBy($data){
+        $this->db->select('id, date');
+        $this->db->from('paymentdates');
+        $this->db->where($data['searchBy'], $data['value']);
+        $this->db->where('status', '1');
+        $query = $this->db->get();
+        $results = $query->result();
+        return $results;
+    }
+
     function getLegalCasesByDateRange($data){
         $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.userID, legalcase.totalAmount, legalcase.nextNotification start, user.name userName, user.lastName1, user.lastName2');
         $this->db->from('legalcase');
@@ -65,6 +80,12 @@ class CasosLegales_model extends CI_Model
         $this->db->join('user', 'user.id = legalcase.userID', 'left');
         $query = $this->db->get();
         $results = $query->result();
+        return $results;
+    }
+
+    function updatePaymentDate($id, $data){
+        $this->db->where('id', $id);
+        $results = $this->db->update('paymentdates', $data);
         return $results;
     }
 }

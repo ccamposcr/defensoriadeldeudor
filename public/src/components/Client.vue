@@ -42,6 +42,10 @@
                     <b-spinner v-if="actioned" small></b-spinner>
                     Ver notas
                   </b-button>
+                  <b-button :disabled="actioned" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">
+                    <b-spinner v-if="actioned" small></b-spinner>
+                    Ver fechas de pago
+                  </b-button>
                 </div>
 
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
@@ -54,6 +58,20 @@
                     </li>
                   </ul>
                   <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
+                </div>
+
+
+                <div v-if="legalPaymentDates[legalCase.legalCaseID]">
+                  
+                  <ul class="legal-cases__payment-dates">
+                    <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in legalPaymentDates[legalCase.legalCaseID]">
+                      <p v-if="legalPaymentDate.date"><strong>Fecha de pago:</strong> {{ legalPaymentDate.date }}</p>
+                      <b-button @click.prevent="removePaymentDate(legalPaymentDate.id, legalCase.legalCaseID)" variant="danger">
+                        Eliminar
+                      </b-button>
+                    </li>
+                  </ul>
+                  <span v-if="legalPaymentDates[legalCase.legalCaseID] && !legalPaymentDates[legalCase.legalCaseID].length">No hay fechas de pago</span>
                 </div>
 
               </li>
@@ -138,6 +156,7 @@ export default {
       today: '',
       editingUser: false,
       legalCaseNotes: [],
+      legalPaymentDates: [],
       locationStaticData: {'999': 'Archivo'},
       systemUsersInterface: false,
       updatePasswordUserId: null,
@@ -258,6 +277,12 @@ export default {
       this.$set(this.legalCaseNotes, legalCaseID, data.response);
       this.actioned = false;
     },
+    showLegalPaymentDates: async function(legalCaseID){
+      this.actioned = true;
+      const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
+      this.$set(this.legalPaymentDates, legalCaseID, data.response);
+      this.actioned = false;
+    },
     resetClientVars: function(){
       this.legalCases = [];
       this.legalCaseNotes = [];
@@ -313,6 +338,12 @@ export default {
     updatePassword: async function(userID){
       this.updatePasswordUserId = userID;
       this.$bvModal.show('bv-modal-update-password-form');
+    },
+    removePaymentDate: async function(legalPaymentDateID, legalCaseID){
+      const data = {};
+      data['id'] = legalPaymentDateID;
+      await repositories.deletePaymentDate(data);
+      this.showLegalPaymentDates(legalCaseID);
     }
   }
 }
@@ -369,11 +400,12 @@ export default {
           border-right: 1px solid gray;
         }
       }
-      &__notes{
+      &__notes,
+      &__payment-dates{
         list-style-type: none;
         padding: 0;
-        background-color: #fafafa;
         margin-top: 30px;
+        background-color: #fafafa;
       }
     }
     .case{
@@ -381,13 +413,12 @@ export default {
         margin-top: 30px;
       }
     }
-    .notes{
-      &__note{
-        padding: 15px;
-        border-bottom: 1px solid gray;
-        &:last-child{
-          border-bottom: none;
-        }
+    .notes__note,
+    .payment-dates__date{
+      padding: 15px;
+      border-bottom: 1px solid gray;
+      &:last-child{
+        border-bottom: none;
       }
     }
   }
