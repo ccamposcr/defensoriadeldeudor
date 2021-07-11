@@ -59,7 +59,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["showLoader", "clientForm", "editingUser"],
+  props: ["showLoader", "clientForm", "editingUser", "users"],
   data () {
     return {
       errors:[],
@@ -102,30 +102,30 @@ export default {
       return re.test(email);
     },
     showClientByPersonalID: async function(personalID){
-      this.showLoader = true;
+      this.$emit('update:showLoader', true);
       const data = await repositories.getClientBy('PersonalID', personalID);
       this.$emit('update:users', data.response);
-      this.showLoader = false;
+      this.$emit('update:showLoader', false);
     },
     setNewClient: async function(){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         const data = await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
 
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
         if( this.URLparams.appointmentDate ){
           this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate+'&clientID='+data.clientID);
         }
     },
     setEditedClient: async function(){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
         this.cancelClientForm();
-        this.showLoader = false; 
+        this.$emit('update:showLoader', false);
     },
     clearClientForm: function(){
         for(const item in this.clientForm){
@@ -137,9 +137,9 @@ export default {
     },
     cancelClientForm: async function(){
       if( this.clientForm.id ){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
       }
       this.$bvModal.hide('bv-modal-client-form');
       this.clearClientForm();
@@ -148,14 +148,14 @@ export default {
       }
     },
     checkIfClientAlreadyExists: async function(){
-      this.showLoader = true;
+      this.$emit('update:showLoader', true);
       const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
       const response = data.response;
       if( response.length ){
         this.showClientByPersonalID(this.clientForm.personalID);
         this.$bvModal.hide('bv-modal-client-form');
       }
-      this.showLoader = false;
+      this.$emit('update:showLoader', false);
     }
   }
 }

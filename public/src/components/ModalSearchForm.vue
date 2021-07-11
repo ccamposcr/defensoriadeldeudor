@@ -59,7 +59,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalSearchForm',
-  props: ["showLoader", "searchClientForm"],
+  props: ["showLoader", "searchClientForm", "users"],
   data () {
     return {
         errors:[]
@@ -88,13 +88,13 @@ export default {
         this.$bvModal.hide('bv-modal-search-form');
     },
     showSearchResults: async function(){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         let data = null;
         data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
         this.$emit('update:users', data.response);
    
         this.cancelSearchForm();
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
       }
   }
 }

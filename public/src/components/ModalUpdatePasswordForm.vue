@@ -69,10 +69,10 @@ export default {
         this.clearUpdatePasswordForm();
     },
     updatePassword: async function(){
-        this.showLoader = true; 
+        this.$emit('update:showLoader', true);
         await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
         this.cancelUpdatePasswordForm();
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
       }
   }
 }

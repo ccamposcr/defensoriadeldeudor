@@ -79,10 +79,10 @@
       </ul>
     </div>
 
-    <modal-client-form :show-loader="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-    <modal-search-form :show-loader="showLoader" :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
-    <modal-legal-case-form :show-loader="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
-    <modal-update-password-form :show-loader="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
+    <modal-client-form :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
+    <modal-search-form :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
+    <modal-legal-case-form :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
     </div>

@@ -74,7 +74,7 @@ export default {
       this.clearAppointmentForm();
     },
     getAllClients: async function(){
-      this.showLoader = true;
+      this.$emit('update:showLoader', true);
       const data = await repositories.getAllClients();
       this.clientList = data.response;
       this.clientList.forEach(item => {
@@ -82,7 +82,7 @@ export default {
         item['userID'] = item.id;
       });
       this.$set(this.appointmentForm, 'clientList', this.clientList);
-      this.showLoader = false;
+      this.$emit('update:showLoader', false);
     },
     filter: function(){
       this.appointmentForm['clientList'] =  this.clientList.filter((client) => {
@@ -93,13 +93,13 @@ export default {
       });
     },
     setNewAppointment: async function(){
-      this.showLoader = true;
+      this.$emit('update:showLoader', true);
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
       this.$parent.fetchEvents({start, end});
-      this.showLoader = false;
+      this.$emit('update:showLoader', false);
     }
   }
 }

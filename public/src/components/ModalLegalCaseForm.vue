@@ -115,15 +115,15 @@ export default {
     },
     cancelLegalForm: async function(){
       if( this.legalCaseForm.id ){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
       }
       this.$bvModal.hide('bv-modal-legal-case-form');
       this.clearLegalCaseForm();
     },
     setNewLegalCase: async function(){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         const userID = this.legalCaseUserId;
         const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
@@ -147,10 +147,10 @@ export default {
 
         this.$parent.showLegalCases(userID);
         this.$bvModal.hide('bv-modal-legal-case-form');
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
     },
     setEditedLegalCase: async function(){
-        this.showLoader = true;
+        this.$emit('update:showLoader', true);
         const userID = this.legalCaseUserId;
 
         await repositories.editLegalCase(this.legalCaseForm);
@@ -177,7 +177,7 @@ export default {
         }
 
         this.cancelLegalForm();
-        this.showLoader = false;
+        this.$emit('update:showLoader', false);
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){
