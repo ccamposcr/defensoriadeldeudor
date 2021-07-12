@@ -53,7 +53,7 @@
                       <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
                     </li>
                   </ul>
-                  <span v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
+                  <span class="label-danger" v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
                 </div>
 
 
@@ -67,13 +67,13 @@
                       </b-button>
                     </li>
                   </ul>
-                  <span v-if="legalPaymentDates[legalCase.legalCaseID] && !legalPaymentDates[legalCase.legalCaseID].length">No hay fechas de pago</span>
+                  <span class="label-danger" v-if="legalPaymentDates[legalCase.legalCaseID] && !legalPaymentDates[legalCase.legalCaseID].length">No hay fechas de pago</span>
                 </div>
 
               </li>
             </ul>
           </div>
-          <span v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
+          <span class="label-danger" v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
 
         </li>
       </ul>
@@ -134,7 +134,6 @@ export default {
         locationID: null
       },
       paymentDates:{
-        id: null,
         legalCaseID: null,
         dates: []
       },
@@ -189,7 +188,7 @@ export default {
       this.staticData.locationList = locationListData.response;
 
       this.staticData.locationList.forEach(item => {
-        item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
+        item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
       });
       this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
       
@@ -224,7 +223,7 @@ export default {
       this.showLoader = true;  
       const data = await repositories.getLegalCasesBy('userID', userID);
       data.response.forEach(item => {
-        item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+        item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
       });
       this.$set(this.legalCases, userID, data.response);
       this.showLoader = false;
@@ -262,7 +261,7 @@ export default {
         const inUseResponse = promise.response;
         let isInUse = 0;
         this.showLoader = false;
-         if( inUseResponse.length ){
+        if( inUseResponse.length ){
           isInUse = inUseResponse[0].inUse;
         }
         if(isInUse === '1'){
@@ -275,10 +274,18 @@ export default {
           const response = data.response;
           if( response.length ){
             this.legalCaseForm = response[0];
-            this.legalCaseForm['id'] = legalCaseID;
+            this.legalCaseForm.id = legalCaseID;
             this.editingLegalCase = true;
             this.$bvModal.show('bv-modal-legal-case-form');
           }
+
+          const dataPayments = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
+          const responsePayments = dataPayments.response;
+          if( responsePayments.length ){
+            this.paymentDates.legalCaseID = legalCaseID;
+            this.paymentDates.dates = responsePayments;
+          }
+
           this.showLoader = false;
         }
       }
@@ -322,7 +329,7 @@ export default {
         const response = legalCasedata.response;
         if( response.length ){
           legalCasedata.response.forEach(item => {
-            item['location'] = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+            item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
           });
           this.$set(this.legalCases, params.userID, legalCasedata.response);
         }
@@ -348,7 +355,7 @@ export default {
     deleteUser: async function(userID){
       this.showLoader = true;
       const data = {};
-      data['id'] = userID;
+      data.id = userID;
       await repositories.deleteUser(data);
       this.showAllUsers();
       this.showLoader = false;
@@ -360,7 +367,7 @@ export default {
     removePaymentDate: async function(legalPaymentDateID, legalCaseID){
       this.showLoader = true;
       const data = {};
-      data['id'] = legalPaymentDateID;
+      data.id = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
       this.showLegalPaymentDates(legalCaseID);
       this.showLoader = false;
@@ -385,7 +392,7 @@ export default {
     }
     .list{
       &__user{
-        background-color: #fafafa;
+        background-color: #e6e5e5;
         margin-bottom: 15px;
         padding: 15px;
         p{
@@ -440,6 +447,11 @@ export default {
       &:last-child{
         border-bottom: none;
       }
+    }
+    .payment-dates__date{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
   }
 </style>

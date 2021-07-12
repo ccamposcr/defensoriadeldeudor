@@ -104,23 +104,23 @@ export default {
       const dataClients = await repositories.getAllClients();
       this.clientList = dataClients.response;
       this.clientList.forEach(item => {
-        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
-        item['userID'] = item.id;
+        item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
+        item.userID = item.id;
       });
       this.$set(this.appointmentForm, 'clientList', this.clientList);
 
       const dataUsers = await repositories.getAllUsers();
       this.usersList = dataUsers.response;
       this.usersList.forEach(item => {
-        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
-        item['userID'] = item.id;
+        item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
+        item.userID = item.id;
       });
       this.$set(this.appointmentForm, 'usersList', this.usersList);
     
       this.$emit('update:showLoader', false);
     },
     filter: function(){
-      this.appointmentForm['clientList'] =  this.clientList.filter((client) => {
+      this.appointmentForm.clientList =  this.clientList.filter((client) => {
           return client.personalID.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
                 client.name.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
                 client.lastName1.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
@@ -129,7 +129,7 @@ export default {
     },
     setNewAppointment: async function(){
       this.$emit('update:showLoader', true);
-      this.appointmentForm['madeByUserID'] = loggedINUserID;
+      this.appointmentForm.madeByUserID = loggedINUserID;
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
       const start = this.date.start;

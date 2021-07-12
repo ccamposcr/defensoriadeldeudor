@@ -34,21 +34,24 @@
                   <b-form-group label-for="totalAmount" label="Monto Total">
                     <b-form-input v-model="legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto Total"></b-form-input>
                   </b-form-group>
-                  <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago">
-                    <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
-                  </b-form-group>
 
-                  <b-form-group>
-                    <b-button :disabled="!nextPaymentDay" @click.prevent="addNewPaymentDay" variant="primary">
-                      Agregar fecha
-                    </b-button>
-                  </b-form-group>
+                  <div class="case-form__payments-group">
+                    <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago">
+                      <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
+                    </b-form-group>
+
+                    <b-form-group>
+                      <b-button :disabled="!nextPaymentDay" @click.prevent="addNewPaymentDay" variant="primary">
+                        Agregar fecha
+                      </b-button>
+                    </b-form-group>
+                  </div>
 
                   <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
                       <ul class="case-form__list">
                           <li class="list__date" :key="index" v-for="(item, index) in paymentDates.dates">
-                            <strong>Fecha de pago:</strong> {{ item.date }}
-                            <b-button @click.prevent="removePaymentDate(index)" variant="danger">
+                            <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
+                            <b-button v-if="!editingLegalCase" @click.prevent="removePaymentDate(index)" variant="danger">
                               Eliminar
                             </b-button>
                           </li>
@@ -56,7 +59,7 @@
                   </b-form-group>
                   
                   <b-button :disabled="showLoader" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
-                    Agregar
+                    Crear
                   </b-button>
                   <b-button :disabled="showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
                     Guardar
@@ -128,11 +131,11 @@ export default {
         const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
 
         const legalCaseNote = {};
-        legalCaseNote['legalCaseID'] = data.legalCaseID;
-        legalCaseNote['userID'] = loggedINUserID;
-        legalCaseNote['note'] = this.legalCaseForm['note'];
+        legalCaseNote.legalCaseID = data.legalCaseID;
+        legalCaseNote.userID = loggedINUserID;
+        legalCaseNote.note = this.legalCaseForm.note;
 
-        if( legalCaseNote['note'] ){
+        if( legalCaseNote.note ){
           await repositories.addLegalCaseNote(legalCaseNote);
         }
 
@@ -157,20 +160,22 @@ export default {
         this.$parent.showLegalCases(userID);
 
         const legalCaseNote = {};
-        legalCaseNote['legalCaseID'] = this.legalCaseForm['legalCaseID'];
-        legalCaseNote['userID'] = loggedINUserID;
-        legalCaseNote['note'] = this.legalCaseForm['note'];
+        legalCaseNote.legalCaseID = this.legalCaseForm.legalCaseID;
+        legalCaseNote.userID = loggedINUserID;
+        legalCaseNote.note = this.legalCaseForm.note;
 
-        if( legalCaseNote['note'] ){
+        if( legalCaseNote.note ){
           await repositories.addLegalCaseNote(legalCaseNote);
-          this.$parent.showLegalCaseNotes(legalCaseNote['legalCaseID']);
+          this.$parent.showLegalCaseNotes(legalCaseNote.legalCaseID);
         }
 
         if( this.paymentDates.dates.length ){
-          this.paymentDates.legalCaseID = this.legalCaseForm['legalCaseID'];
+          this.paymentDates.legalCaseID = this.legalCaseForm.legalCaseID;
+          const validArrayDates = this.paymentDates.dates.filter(elm => !elm.id );
+
           const paymentDatesStr = {
             'legalCaseID': this.paymentDates.legalCaseID,
-            'dates': JSON.stringify(this.paymentDates.dates)
+            'dates': JSON.stringify(validArrayDates)
           }
           await repositories.addPaymentDates(paymentDatesStr);
           this.$parent.showLegalPaymentDates(this.paymentDates.legalCaseID);
@@ -197,11 +202,19 @@ export default {
   &__list{
     list-style-type: none;
   }
+  &__payments-group{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .list{
   &__date{
     padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 </style>

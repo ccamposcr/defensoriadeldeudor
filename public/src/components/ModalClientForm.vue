@@ -36,7 +36,7 @@
               </b-form-group>
 
               <b-button :disabled="showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
-                Agregar
+                Crear
               </b-button>
               <b-button :disabled="showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
                 Guardar
