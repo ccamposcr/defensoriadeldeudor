@@ -22,15 +22,28 @@
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
+          <b-form-group label="Agregar Cliente Nuevo">
+            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
+          </b-form-group>
+
+          <b-form-group label-for="internalUser" label="Seleccione el funcionario que recibe la cita">
+            <b-form-select id="internalUser" v-model="appointmentForm.internalUserID" :options="appointmentForm.usersList" value-field="id" text-field="client"></b-form-select>
+          </b-form-group>
+
+          <b-form-group label-for="appointmentType" label="Tipo de Cita">
+            <b-form-select id="appointmentType" v-model="appointmentForm.appointmentTypeID" :options="staticData.appointmentTypeList" value-field="id" text-field="type"></b-form-select>
+          </b-form-group>
+
+          <b-form-group label-for="filter" label="Seleccione el color de la alerta">
+            <b-form-input v-model="appointmentForm.alertColor" type="color" class="form-control" id="filter" placeholder="Color de la alerta"></b-form-input>
+          </b-form-group>
+
           <b-button :disabled="showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
             Agendar
           </b-button>
           <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
 
-          <b-form-group label="En caso de que el cliente no exista, presione el botón Agregar Cliente Nuevo">
-            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
-          </b-form-group>
-
+          
           <div v-if="errors.length">
             <p class="label label-danger">Por favor, corrija el(los) error(es) del formulario</p>
           </div>
@@ -47,7 +60,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
-  props: ["showLoader", "appointmentForm", "editingAppointment", "date"],
+  props: ["showLoader", "appointmentForm", "editingAppointment", "date", "staticData"],
   data () {
     return {
       errors:[],
@@ -65,9 +78,10 @@ export default {
         }
     },
     clearAppointmentForm: function(){
-      this.appointmentForm['filterBy'] = null;
-      this.errors = [],
-      this.appointmentForm['clientList'] = this.clientList;
+      for(const item in this.appointmentForm){
+          this.appointmentForm[item] = null;
+      }
+      this.errors = [];
     },
     cancelAppointmentForm: function(){
       this.$bvModal.hide('bv-modal-appointment-form');
@@ -75,13 +89,22 @@ export default {
     },
     getAllClients: async function(){
       this.$emit('update:showLoader', true);
-      const data = await repositories.getAllClients();
-      this.clientList = data.response;
+      const dataClients = await repositories.getAllClients();
+      this.clientList = dataClients.response;
       this.clientList.forEach(item => {
         item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
         item['userID'] = item.id;
       });
       this.$set(this.appointmentForm, 'clientList', this.clientList);
+
+      const dataUsers = await repositories.getAllUsers();
+      this.usersList = dataUsers.response;
+      this.usersList.forEach(item => {
+        item['client'] = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
+        item['userID'] = item.id;
+      });
+      this.$set(this.appointmentForm, 'usersList', this.usersList);
+    
       this.$emit('update:showLoader', false);
     },
     filter: function(){
@@ -94,6 +117,7 @@ export default {
     },
     setNewAppointment: async function(){
       this.$emit('update:showLoader', true);
+      this.appointmentForm['madeByUserID'] = loggedINUserID;
       await repositories.addNewAppointment(this.appointmentForm);
       this.cancelAppointmentForm();
       const start = this.date.start;

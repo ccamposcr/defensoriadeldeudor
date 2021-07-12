@@ -174,6 +174,7 @@ export default {
       return global.checkAccessList(action);
     },
     getStaticDataFromDB: async function(){
+      this.showLoader = true;
 
       const judicialStatusListData = await repositories.getJudicialStatusList();
       this.staticData.judicialStatusList = judicialStatusListData.response;
@@ -191,6 +192,8 @@ export default {
         item['location'] = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
       });
       this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
+      
+      this.showLoader = false;
     },
     showAllClients: async function(){
       this.showLoader = true;

@@ -53,6 +53,14 @@ class Generic extends CI_Controller
         echo json_encode($response);
     }
 
+    function getAppointmentTypeList(){
+        $response = array(
+            'response' => $this->generic_model->getAppointmentTypeList()
+        );
+
+        echo json_encode($response);
+    }
+
     function setRolePrivilegeAccess(){
         $data = $this->input->post('data');
 

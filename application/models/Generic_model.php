@@ -32,6 +32,12 @@ class Generic_model extends CI_Model
         return $results;
     }
 
+    function getAppointmentTypeList(){
+        $query = $this->db->get('appointmenttypelist');
+        $results = $query->result();
+        return $results;
+    }
+
     function setRolePrivilegeAccess($data){
         $this->db->empty_table('roleprivilegeaccess');
         $this->db->query('ALTER TABLE roleprivilegeaccess AUTO_INCREMENT 1');
@@ -42,8 +48,6 @@ class Generic_model extends CI_Model
     }
 
     function getRolePrivilegeAccess(){
-        //$this->db->join('rolelist', 'rolelist.id = roleprivilegeaccess.roleID', 'left');
-        //$this->db->join('accesslist', 'accesslist.id = roleprivilegeaccess.accessID', 'left');
         $query = $this->db->get('roleprivilegeaccess');
         $results = $query->result();
         return $results;
@@ -51,8 +55,6 @@ class Generic_model extends CI_Model
 
     function getPrivilegeAccessByRole($data){
         $this->db->where('roleprivilegeaccess.' . $data['searchBy'], $data['value']);
-        //$this->db->join('rolelist', 'rolelist.id = roleprivilegeaccess.roleID', 'left');
-        //$this->db->join('accesslist', 'accesslist.id = roleprivilegeaccess.accessID', 'left');
         $query = $this->db->get('roleprivilegeaccess');
         $results = $query->result();
         return $results;

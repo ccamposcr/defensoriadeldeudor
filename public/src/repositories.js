@@ -56,6 +56,17 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
+    getAppointmentTypeList: async function(){
+        try {
+            const url = 'generic/getAppointmentTypeList';
+            const response = await fetch(url);
+            const data = await response.json();
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
     getAllClients: async function(){
         try {
             const url = 'clientes/getAllClients';

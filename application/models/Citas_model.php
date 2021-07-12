@@ -7,7 +7,7 @@ class Citas_model extends CI_Model
     }
 
     function getAppointmentsByDateRange($data){
-        $this->db->select('userappointment.id appointmentID, userappointment.userID, userappointment.date, user.name userName, user.lastName1, user.lastName2');
+        $this->db->select('userappointment.id appointmentID, userappointment.userID, userappointment.internalUserID, userappointment.madeByUserID, userappointment.alertColor, userappointment.date, user.name userName, user.lastName1, user.lastName2');
         $this->db->from('userappointment');
         $this->db->where('userappointment.' . $data['searchBy'] . '>=', $data['start']);
         $this->db->where('userappointment.' . $data['searchBy'] . '<=', $data['end']);

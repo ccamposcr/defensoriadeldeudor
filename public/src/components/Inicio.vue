@@ -153,7 +153,7 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form :show-loader.sync="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date"></modal-appointment-form>
+    <modal-appointment-form :show-loader.sync="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
 
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
@@ -186,16 +186,27 @@
         appointmentForm: {
           date: null,
           userID: null,
+          internalUserID: null,
+          madeByUserID: null,
           filterBy: null,
-          clientList: []
+          clientList: [],
+          usersList: [],
+          alertColor: null,
+          appointmentTypeID: null
         },
         editingAppointment: false,
         date:{
           start: null,
           end: null
         },
-        showLoader: false
+        showLoader: false,
+        staticData:{
+          appointmentTypeList: []
+        }
       }
+    },
+    created(){
+      this.getStaticDataFromDB();
     },
     computed: {
       cal () {
@@ -217,6 +228,14 @@
     methods: {
       checkAccessList: function(action){
         return global.checkAccessList(action);
+      },
+      getStaticDataFromDB: async function(){
+        this.showLoader = true;
+
+        const appointmentTypeListData = await repositories.getAppointmentTypeList();
+        this.staticData.appointmentTypeList = appointmentTypeListData.response;
+
+        this.showLoader = false;
       },
       setToday: function() {
         this.value = '';
@@ -244,7 +263,7 @@
             item['name'] = 'Cobro -> N.Exp: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
             item['details'] = 'Siguiente pago: '+ item.start +'<br/>Número de expediente: ' + item.internalCode + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             item['href'] = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
-            item['color'] = 'orange';
+            item['color'] = 'red';
             item['type'] = 'notification';
           });
         }
@@ -258,7 +277,7 @@
             item['name'] = 'Cita -> ' + item.userName + ' ' + item.lastName1;
             item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             item['start'] = item.date;
-            item['color'] = 'green';
+            item['color'] = item.alertColor;
             item['type'] = 'appointment';
           });
         }

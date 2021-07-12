@@ -15,8 +15,12 @@ class Citas extends CI_Controller
 
     function addAppointment(){
         $data = array(
-            'userID' => $this->input->post('userID'), 
-            'date' => $this->input->post('date')
+            'userID' => $this->input->post('userID'),
+            'internalUserID' => $this->input->post('internalUserID'), 
+            'madeByUserID' => $this->input->post('madeByUserID'),
+            'alertColor' => $this->input->post('alertColor'),
+            'date' => $this->input->post('date'),
+            'appointmentTypeID' => $this->input->post('appointmentTypeID')
         );
         
         $this->citas_model->addAppointment($data);
