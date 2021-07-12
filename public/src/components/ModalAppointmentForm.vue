@@ -92,6 +92,7 @@ export default {
       for(const item in this.appointmentForm){
           this.appointmentForm[item] = null;
       }
+      this.appointmentForm.alertColor = '#28a745';
       this.errors = [];
     },
     cancelAppointmentForm: function(){

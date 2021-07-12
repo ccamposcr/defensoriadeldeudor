@@ -191,7 +191,7 @@
           filterBy: null,
           clientList: [],
           usersList: [],
-          alertColor: null,
+          alertColor: '#28a745',
           appointmentTypeID: null
         },
         editingAppointment: false,
