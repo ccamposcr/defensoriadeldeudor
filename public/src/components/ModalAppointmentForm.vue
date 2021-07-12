@@ -15,18 +15,22 @@
           <b-form-group>
             <div><strong>Fecha y Hora de la Cita:</strong> {{appointmentForm.date}}</div>
           </b-form-group>
-          <b-form-group label-for="filter" label="Filtrar cliente por">
-            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Filtre por Cédula, o el Nombre, o el Apellido"></b-form-input>
-          </b-form-group>
+
           <b-form-group label-for="client" label="Seleccione el cliente">
             <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
+            <strong>Filtre la lista de clientes para una búsqueda más rápida</strong>
           </b-form-group>
 
-          <b-form-group label="Agregar Cliente Nuevo">
+          <b-form-group label-for="filter" label="Filtrar lista clientes">
+            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Ingrese la Cédula, o el Nombre, o el Apellido"></b-form-input>
+          </b-form-group>
+          
+
+          <b-form-group label="Ó agregue un Cliente Nuevo">
             <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
           </b-form-group>
 
-          <b-form-group label-for="internalUser" label="Seleccione el funcionario que recibe la cita">
+          <b-form-group label-for="internalUser" label="Asigne el funcionario que atiende la cita">
             <b-form-select id="internalUser" v-model="appointmentForm.internalUserID" :options="appointmentForm.usersList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
@@ -72,6 +76,9 @@ export default {
         this.errors = [];
         if(!this.appointmentForm.userID){
             this.errors.push("Seleccione un cliente");
+        }
+        if(!this.appointmentForm.internalUserID){
+            this.errors.push("Seleccione un funcionario");
         }
         if(!this.errors.length){
             callback();

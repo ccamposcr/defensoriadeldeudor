@@ -260,10 +260,10 @@
 
         if( responseLegalCases.length ){
           responseLegalCases.forEach(item => {
-            item['name'] = 'Cobro -> N.Exp: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
-            item['details'] = 'Siguiente pago: '+ item.start +'<br/>Número de expediente: ' + item.internalCode + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
+            item['name'] = 'Cobro -> N.: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
+            item['details'] = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') +'<br/><strong>Número de expediente:</strong> ' + item.internalCode + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             item['href'] = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
-            item['color'] = 'red';
+            item['color'] = 'orange';
             item['type'] = 'notification';
           });
         }
@@ -274,10 +274,11 @@
 
         if( responseAppointments.length ){
           responseAppointments.forEach(item => {
-            item['name'] = 'Cita -> ' + item.clientUserName + ' ' + item.clientLastName1;
-            item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.clientUserName + ' ' + item.clientLastName1 + ' ' + item.clientLastName2
-            + '<br/>Funcionario que recibe la cita: ' + item.internalUserUserName + ' ' + item.internalUserLastName1 + ' ' + item.internalUserLastName2
-            + '<br/>Hecha por: ' + item.madeByUserUserName + ' ' + item.madeByUserLastName1 + ' ' + item.madeByUserLastName2;
+            item['name'] = 'Cita -> ' + (item.type ? item.type + ' -> ' : '') + item.clientUserName + ' ' + item.clientLastName1;
+            item['details'] = '<strong>Cita:</strong> '+ item.date + '<br/><strong>Cliente:</strong> ' + item.clientUserName + ' ' + item.clientLastName1 + ' ' + item.clientLastName2
+            + (item.internalUserUserName ? '<br/><strong>Funcionario asignado:</strong> ' + item.internalUserUserName + ' ' + item.internalUserLastName1 + ' ' + item.internalUserLastName2 : '')
+            + '<br/><strong>Hecha por:</strong> ' + item.madeByUserUserName + ' ' + item.madeByUserLastName1 + ' ' + item.madeByUserLastName2
+            + (item.type ? '<br/><strong>Tipo de Cita:</strong> ' + item.type : '');
             item['start'] = item.date;
             item['color'] = item.alertColor;
             item['type'] = 'appointment';
