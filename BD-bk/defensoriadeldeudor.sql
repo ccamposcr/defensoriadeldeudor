@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 10, 2021 at 02:47 AM
+-- Generation Time: Jul 12, 2021 at 08:18 AM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 7.3.28
 
@@ -46,7 +46,8 @@ INSERT INTO `accesslist` (`id`, `action`) VALUES
 (7, 'crear usuarios'),
 (8, 'administrar'),
 (9, 'editar usuarios'),
-(10, 'eliminar usuarios');
+(10, 'eliminar usuarios'),
+(11, 'agendar tipo cita');
 
 -- --------------------------------------------------------
 
@@ -68,6 +69,26 @@ INSERT INTO `administrativestatuslist` (`id`, `administrativeStatus`) VALUES
 (2, 'Cancelado'),
 (3, 'Al día'),
 (4, 'Al día (pendiente)');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointmenttypelist`
+--
+
+CREATE TABLE `appointmenttypelist` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `appointmenttypelist`
+--
+
+INSERT INTO `appointmenttypelist` (`id`, `type`) VALUES
+(1, 'Cobro'),
+(2, 'Remate'),
+(3, 'Audiencias');
 
 -- --------------------------------------------------------
 
@@ -119,8 +140,8 @@ CREATE TABLE `legalcase` (
   `administrativeStatusID` int(11) NOT NULL,
   `locationID` int(11) NOT NULL,
   `dateCreated` timestamp NOT NULL DEFAULT current_timestamp(),
-  `nextNotification` date NOT NULL,
-  `inUse` tinyint(1) NOT NULL
+  `inUse` tinyint(1) NOT NULL,
+  `totalAmount` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -137,12 +158,18 @@ CREATE TABLE `legalcasenoteshistory` (
   `userID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `legalcasenoteshistory`
+-- Table structure for table `paymentdates`
 --
 
-INSERT INTO `legalcasenoteshistory` (`id`, `note`, `date`, `legalCaseID`, `userID`) VALUES
-(1, 'nueva nota', '2021-07-10 00:45:27', 1, 28);
+CREATE TABLE `paymentdates` (
+  `id` int(11) NOT NULL,
+  `legalCaseID` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `status` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -191,7 +218,8 @@ INSERT INTO `roleprivilegeaccess` (`id`, `accessID`, `roleID`) VALUES
 (7, 7, 1),
 (8, 8, 1),
 (9, 9, 1),
-(10, 10, 1);
+(10, 10, 1),
+(11, 11, 1);
 
 -- --------------------------------------------------------
 
@@ -257,8 +285,12 @@ INSERT INTO `user` (`id`, `personalID`, `name`, `lastName1`, `lastName2`, `statu
 CREATE TABLE `userappointment` (
   `id` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
+  `internalUserID` int(11) NOT NULL,
+  `madeByUserID` int(11) NOT NULL,
   `dateCreated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `date` datetime NOT NULL
+  `date` datetime NOT NULL,
+  `alertColor` varchar(50) NOT NULL,
+  `appointmentTypeID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -278,6 +310,12 @@ ALTER TABLE `administrativestatuslist`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `appointmenttypelist`
+--
+ALTER TABLE `appointmenttypelist`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `judicialstatuslist`
 --
 ALTER TABLE `judicialstatuslist`
@@ -293,6 +331,12 @@ ALTER TABLE `legalcase`
 -- Indexes for table `legalcasenoteshistory`
 --
 ALTER TABLE `legalcasenoteshistory`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `paymentdates`
+--
+ALTER TABLE `paymentdates`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -333,13 +377,19 @@ ALTER TABLE `userappointment`
 -- AUTO_INCREMENT for table `accesslist`
 --
 ALTER TABLE `accesslist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `administrativestatuslist`
 --
 ALTER TABLE `administrativestatuslist`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `appointmenttypelist`
+--
+ALTER TABLE `appointmenttypelist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `judicialstatuslist`
@@ -357,7 +407,13 @@ ALTER TABLE `legalcase`
 -- AUTO_INCREMENT for table `legalcasenoteshistory`
 --
 ALTER TABLE `legalcasenoteshistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `paymentdates`
+--
+ALTER TABLE `paymentdates`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `rolelist`
@@ -369,7 +425,7 @@ ALTER TABLE `rolelist`
 -- AUTO_INCREMENT for table `roleprivilegeaccess`
 --
 ALTER TABLE `roleprivilegeaccess`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `subjectlist`
@@ -381,7 +437,7 @@ ALTER TABLE `subjectlist`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `userappointment`
