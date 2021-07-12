@@ -274,8 +274,10 @@
 
         if( responseAppointments.length ){
           responseAppointments.forEach(item => {
-            item['name'] = 'Cita -> ' + item.userName + ' ' + item.lastName1;
-            item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
+            item['name'] = 'Cita -> ' + item.clientUserName + ' ' + item.clientLastName1;
+            item['details'] = 'Cita: '+ item.date + '<br/>Cliente: ' + item.clientUserName + ' ' + item.clientLastName1 + ' ' + item.clientLastName2
+            + '<br/>Funcionario que recibe la cita: ' + item.internalUserUserName + ' ' + item.internalUserLastName1 + ' ' + item.internalUserLastName2
+            + '<br/>Hecha por: ' + item.madeByUserUserName + ' ' + item.madeByUserLastName1 + ' ' + item.madeByUserLastName2;
             item['start'] = item.date;
             item['color'] = item.alertColor;
             item['type'] = 'appointment';
