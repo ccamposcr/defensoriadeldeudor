@@ -34,7 +34,7 @@
             <b-form-select id="internalUser" v-model="appointmentForm.internalUserID" :options="appointmentForm.usersList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
-          <b-form-group label-for="appointmentType" label="Tipo de Cita">
+          <b-form-group v-if="checkAccessList('agendar tipo cita')" label-for="appointmentType" label="Tipo de Cita">
             <b-form-select id="appointmentType" v-model="appointmentForm.appointmentTypeID" :options="staticData.appointmentTypeList" value-field="id" text-field="type"></b-form-select>
           </b-form-group>
 
@@ -61,6 +61,7 @@
 
 <script>
 import repositories from '../repositories';
+ import global from '../global';
 
 export default {
   name: 'ModalAppointmentForm',
@@ -72,6 +73,9 @@ export default {
     }
   },
   methods: {
+    checkAccessList: function(action){
+        return global.checkAccessList(action);
+    },
     checkForm: function(callback){
         this.errors = [];
         if(!this.appointmentForm.userID){
