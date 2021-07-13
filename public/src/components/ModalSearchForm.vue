@@ -21,8 +21,8 @@
                         >
                         <b-form-radio value="personalID">Cédula</b-form-radio>
                         <b-form-radio value="name">Nombre</b-form-radio>
-                        <b-form-radio value="lastName1" >Primer apellido</b-form-radio>
-                        <b-form-radio value="lastName2">Segundo apellido</b-form-radio>
+                        <b-form-radio value="code" >Código interno</b-form-radio>
+                        <b-form-radio value="internalCode">Número de expediente</b-form-radio>
                         </b-form-radio-group>
                     </b-form-group>
 
@@ -32,11 +32,11 @@
                     <b-form-group v-show="searchClientForm.searchBy == 'name'" label-for="name2" label="Buscar por nombre">
                         <b-form-input v-model="searchClientForm.name" type="text" class="form-control" id="name2" placeholder="Nombre"></b-form-input>
                     </b-form-group>
-                    <b-form-group v-show="searchClientForm.searchBy == 'lastName1'" label-for="lastName1_2" label="Buscar por primer apellido">
-                        <b-form-input v-model="searchClientForm.lastName1" type="text" class="form-control" id="lastName1_2" placeholder="Primer Apellido"></b-form-input>
+                    <b-form-group v-show="searchClientForm.searchBy == 'code'" label-for="code" label="Buscar por Código">
+                        <b-form-input v-model="searchClientForm.code" type="text" class="form-control" id="code" placeholder="Código"></b-form-input>
                     </b-form-group>
-                    <b-form-group v-show="searchClientForm.searchBy == 'lastName2'" label-for="lastName2_2" label="Buscar por segundo apellido">
-                        <b-form-input v-model="searchClientForm.lastName2" type="text" class="form-control" id="lastName2_2" placeholder="Segundo Apellido"></b-form-input>
+                    <b-form-group v-show="searchClientForm.searchBy == 'internalCode'" label-for="internalCode" label="Buscar por número de expediente">
+                        <b-form-input v-model="searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de Expediente"></b-form-input>
                     </b-form-group>
                     <b-button :disabled="showLoader" v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
                         Buscar
@@ -59,7 +59,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalSearchForm',
-  props: ["showLoader", "searchClientForm", "users"],
+  props: ["showLoader", "searchClientForm", "users", "locationStaticData", "legalCases"],
   data () {
     return {
         errors:[]
@@ -74,25 +74,54 @@ export default {
         if(this.searchClientForm.searchBy == 'name' && !this.searchClientForm.name){
             this.errors.push("Ingrese un nombre válido");
         }
-        if(this.searchClientForm.searchBy == 'lastName1' && !this.searchClientForm.lastName1){
-            this.errors.push("Ingrese el primer apellido válido");
+        if(this.searchClientForm.searchBy == 'code' && !this.searchClientForm.code){
+            this.errors.push("Ingrese un código válido");
         }
-        if(this.searchClientForm.searchBy == 'lastName2' && !this.searchClientForm.lastName2){
-            this.errors.push("Ingrese el segundo apellido válido");
+        if(this.searchClientForm.searchBy == 'internalCode' && !this.searchClientForm.internalCode){
+            this.errors.push("Ingrese un número de expediente válido");
         }
         if(!this.errors.length){
             callback();
         }
     },
+    clearSearchForm: function(){
+      for(const item in this.searchClientForm){
+          this.searchClientForm[item] = null;
+      }
+      this.searchClientForm.searchBy = 'personalID';
+      this.errors = [];
+    },
     cancelSearchForm: function(){
         this.$bvModal.hide('bv-modal-search-form');
+        this.clearSearchForm();
     },
     showSearchResults: async function(){
         this.$emit('update:showLoader', true);
         let data = null;
-        data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
-        this.$emit('update:users', data.response);
-   
+        if( this.searchClientForm.searchBy == 'code' || this.searchClientForm.searchBy == 'internalCode' ){
+            data = await repositories.getClientByLegalCase(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
+            const clientResponse = data.response;
+            if(clientResponse.length){
+                this.$emit('update:users', clientResponse);
+
+                const legalCaseID = clientResponse[0].legalCaseID;
+                const userID = clientResponse[0].id;
+                const legalCasedata = await repositories.getLegalCasesBy('id', legalCaseID);
+                const legalCaseResponse = legalCasedata.response;
+
+                if( legalCaseResponse.length ){
+                    legalCaseResponse.forEach(item => {
+                        item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
+                    });
+                    this.legalCases[userID] = legalCaseResponse;
+                    this.$emit('update:legalCases', this.legalCases);
+                }
+            }
+        }else{
+            data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
+            this.$emit('update:users', data.response);
+        }
+        
         this.cancelSearchForm();
         this.$emit('update:showLoader', false);
       }

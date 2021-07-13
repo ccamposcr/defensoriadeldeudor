@@ -16,6 +16,9 @@
                   <b-form-group label-for="internalCode" label="Número de expediente">
                     <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente" :disabled="editingLegalCase"></b-form-input>
                   </b-form-group>
+                  <b-form-group label-for="code" label="Código Interno">
+                    <b-form-input v-model="legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno" :disabled="editingLegalCase"></b-form-input>
+                  </b-form-group>
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
                     <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
                   </b-form-group>
@@ -94,6 +97,9 @@ export default {
         this.errors = [];
         if(!this.legalCaseForm.internalCode){
             this.errors.push("Ingrese el número del expediente");
+        }
+        if(!this.legalCaseForm.code){
+            this.errors.push("Ingrese el código interno");
         }
         if(!this.legalCaseForm.subjectID){
             this.errors.push("Seleccione la naturaleza del expediente");

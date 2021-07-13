@@ -24,11 +24,11 @@
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
           </div>
-
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
                 <p v-if="legalCase.internalCode"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
+                <p v-if="legalCase.code"><strong>Código interno:</strong> {{ legalCase.code }}</p>
                 <p v-if="legalCase.subject"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
                 <p v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
                 <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
@@ -80,7 +80,7 @@
     </div>
 
     <modal-client-form :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-    <modal-search-form :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users"></modal-search-form>
+    <modal-search-form :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users" :location-static-data="locationStaticData" :legal-cases.sync="legalCases"></modal-search-form>
     <modal-legal-case-form :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
@@ -131,7 +131,8 @@ export default {
         note: null,
         totalAmount: null,
         legalCaseID: null,
-        locationID: null
+        locationID: null,
+        code: null
       },
       paymentDates:{
         legalCaseID: null,
@@ -140,8 +141,8 @@ export default {
       searchClientForm:{
         personalID: null,
         name: null,
-        lastName1: null,
-        lastName2: null,
+        code: null,
+        internalCode: null,
         searchBy: 'personalID'
       },
       updatePasswordForm:{
@@ -326,12 +327,12 @@ export default {
       if(params.legalCaseID){
         this.showLoader = true;
         const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
-        const response = legalCasedata.response;
-        if( response.length ){
-          legalCasedata.response.forEach(item => {
+        const legalCaseResponse = legalCasedata.response;
+        if( legalCaseResponse.length ){
+          legalCaseResponse.forEach(item => {
             item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
           });
-          this.$set(this.legalCases, params.userID, legalCasedata.response);
+          this.$set(this.legalCases, params.userID, legalCaseResponse);
         }
         this.showLoader = false;
       }
@@ -425,6 +426,10 @@ export default {
 
         &:nth-child(odd){
           border-right: 1px solid gray;
+        }
+
+        &:last-child{
+          border-right: none;
         }
       }
       &__notes,

@@ -132,6 +132,21 @@ class Clientes extends CI_Controller
         echo json_encode($response);
     }
 
+    function getClientByLegalCase(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->clientes_model->getClientByLegalCase($data)
+        );
+
+        echo json_encode($response);
+    }
+
     function deleteUser(){
         $data = array(
             'status' => '0'

@@ -21,7 +21,8 @@ class CasosLegales extends CI_Controller
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
             'totalAmount' => $this->input->post('totalAmount'),
-            'locationID' => $this->input->post('locationID')
+            'locationID' => $this->input->post('locationID'),
+            'code' => $this->input->post('code')
         );
 
         $legalCaseID = $this->casosLegales_model->addLegalCase($data);
@@ -81,7 +82,8 @@ class CasosLegales extends CI_Controller
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'),
             'totalAmount' => $this->input->post('totalAmount'),
-            'locationID' => $this->input->post('locationID')
+            'locationID' => $this->input->post('locationID'),
+            'code' => $this->input->post('code')
         );
         
         $id = $this->input->post('id');

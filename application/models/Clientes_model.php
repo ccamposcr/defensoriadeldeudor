@@ -56,6 +56,15 @@ class Clientes_model extends CI_Model
         return $results;
     }
 
+    function getClientByLegalCase($data){
+        $this->db->select('user.id, user.personalID, user.name, user.lastName1, user.lastName2, user.status, user.phone, user.email, user.address, user.roleID, legalcase.id legalCaseID');
+        $this->db->where('legalcase.' . $data['searchBy'], $data['value']);
+        $this->db->join('legalcase', 'user.id = legalcase.userID', 'left');
+        $query = $this->db->get('user');
+        $results = $query->result();
+        return $results;
+    }
+
     function updateUser($id, $data){
         $this->db->where('id', $id);
         $results = $this->db->update('user', $data);
