@@ -121,6 +121,7 @@ export default {
         this.paymentDates.dates = [];
         this.paymentDates.legalCaseID = null;
         this.legalCaseForm.totalAmount = 0;
+        this.legalCaseForm.inUse = '0';
         this.errors = [];
     },
     onCloseLegalForm: async function(){
@@ -166,6 +167,9 @@ export default {
         const userID = this.legalCaseUserId;
 
         await repositories.editLegalCase(this.legalCaseForm);
+
+        await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
+        
         this.$parent.showLegalCases(userID);
 
         const legalCaseNote = {};

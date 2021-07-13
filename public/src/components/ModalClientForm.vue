@@ -144,6 +144,8 @@ export default {
         this.$emit('update:showLoader', true);
         await repositories.editClient(this.clientForm);
 
+        await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
+
         this.showClientByPersonalID(this.clientForm.personalID);
         this.closeClientForm();
         this.$emit('update:showLoader', false);
@@ -154,6 +156,7 @@ export default {
         }
         this.clientForm.roleID = '0';
         this.clientForm.status = '1';
+        this.clientForm.inUse = '0'
         this.errors = [];
     },
     onCloseClientForm: async function(){

@@ -131,7 +131,8 @@ export default {
         phone3: null,
         email2: null,
         email3: null,
-        job: null
+        job: null,
+        inUse: '0'
       },
       legalCaseForm:{
         id: null,
@@ -144,7 +145,8 @@ export default {
         totalAmount: 0,
         legalCaseID: null,
         locationID: null,
-        code: null
+        code: null,
+        inUse: '0'
       },
       paymentDates:{
         legalCaseID: null,
