@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-client-form" hide-footer novalidate="true" @hide="cancelClientForm">
+        <b-modal id="bv-modal-client-form" hide-footer novalidate="true" @hide="onCloseClientForm">
         <template #modal-title>
           Cliente
         </template>
@@ -56,7 +56,7 @@
               <b-button :disabled="showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
                 Guardar
               </b-button>
-              <b-button @click.prevent="cancelClientForm" variant="danger">Cancelar</b-button>
+              <b-button @click.prevent="closeClientForm" variant="danger">Cancelar</b-button>
           </b-form>
 
           <div v-if="errors.length">
@@ -133,7 +133,7 @@ export default {
         const data = await repositories.addNewClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.cancelClientForm();
+        this.closeClientForm();
 
         this.$emit('update:showLoader', false);
         if( this.URLparams.appointmentDate ){
@@ -145,7 +145,7 @@ export default {
         await repositories.editClient(this.clientForm);
 
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.cancelClientForm();
+        this.closeClientForm();
         this.$emit('update:showLoader', false);
     },
     clearClientForm: function(){
@@ -156,17 +156,19 @@ export default {
         this.clientForm.status = '1';
         this.errors = [];
     },
-    cancelClientForm: async function(){
+    onCloseClientForm: async function(){
       if( this.clientForm.id ){
         this.$emit('update:showLoader', true);
         await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
         this.$emit('update:showLoader', false);
       }
-      this.$bvModal.hide('bv-modal-client-form');
       this.clearClientForm();
       if( this.URLparams.appointmentDate ){
         this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate);
       }
+    },
+    closeClientForm: function(){
+      this.$bvModal.hide('bv-modal-client-form');
     },
     checkIfClientAlreadyExists: async function(){
       this.$emit('update:showLoader', true);
@@ -174,7 +176,7 @@ export default {
       const response = data.response;
       if( response.length ){
         this.showClientByPersonalID(this.clientForm.personalID);
-        this.$bvModal.hide('bv-modal-client-form');
+        this.closeClientForm();
       }
       this.$emit('update:showLoader', false);
     }

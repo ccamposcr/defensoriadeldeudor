@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-update-password-form" hide-footer novalidate="true" @hide="cancelUpdatePasswordForm">
+        <b-modal id="bv-modal-update-password-form" hide-footer novalidate="true" @hide="onCloseUpdatePasswordForm">
             <template #modal-title>
             Cambiar Contraseña
             </template>
@@ -21,7 +21,7 @@
                     <b-button :disabled="showLoader" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
                         Actualizar
                     </b-button>
-                    <b-button @click.prevent="cancelUpdatePasswordForm" variant="danger">Cancelar</b-button>
+                    <b-button @click.prevent="closeUpdatePasswordForm" variant="danger">Cancelar</b-button>
                 </b-form>
 
                 <div v-if="errors.length">
@@ -64,14 +64,16 @@ export default {
         }
         this.errors = [];
     },
-    cancelUpdatePasswordForm: function(){
+    closeUpdatePasswordForm: function(){
         this.$bvModal.hide('bv-modal-update-password-form');
+    },
+    onCloseUpdatePasswordForm: function(){
         this.clearUpdatePasswordForm();
     },
     updatePassword: async function(){
         this.$emit('update:showLoader', true);
         await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
-        this.cancelUpdatePasswordForm();
+        this.closeUpdatePasswordForm();
         this.$emit('update:showLoader', false);
       }
   }

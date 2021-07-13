@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-legal-case-form" hide-footer novalidate="true" @hide="cancelLegalForm">
+        <b-modal id="bv-modal-legal-case-form" hide-footer novalidate="true" @hide="onCloseLegalForm">
             <template #modal-title>
             Caso Legal
             </template>
@@ -67,7 +67,7 @@
                   <b-button :disabled="showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
                     Guardar
                   </b-button>
-                  <b-button @click.prevent="cancelLegalForm" variant="danger">Cancelar</b-button>
+                  <b-button @click.prevent="closeLegalForm" variant="danger">Cancelar</b-button>
               </b-form>
 
               <div v-if="errors.length">
@@ -122,14 +122,16 @@ export default {
         this.paymentDates.legalCaseID = null;
         this.errors = [];
     },
-    cancelLegalForm: async function(){
+    onCloseLegalForm: async function(){
       if( this.legalCaseForm.id ){
         this.$emit('update:showLoader', true);
         await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
         this.$emit('update:showLoader', false);
       }
-      this.$bvModal.hide('bv-modal-legal-case-form');
       this.clearLegalCaseForm();
+    },
+    closeLegalForm: async function(){
+      this.$bvModal.hide('bv-modal-legal-case-form');
     },
     setNewLegalCase: async function(){
         this.$emit('update:showLoader', true);
@@ -155,7 +157,7 @@ export default {
         }
 
         this.$parent.showLegalCases(userID);
-        this.$bvModal.hide('bv-modal-legal-case-form');
+        this.closeLegalForm();
         this.$emit('update:showLoader', false);
     },
     setEditedLegalCase: async function(){
@@ -187,7 +189,7 @@ export default {
           this.$parent.showLegalPaymentDates(this.paymentDates.legalCaseID);
         }
 
-        this.cancelLegalForm();
+        this.closeLegalForm();
         this.$emit('update:showLoader', false);
     },
     addNewPaymentDay: function(){

@@ -40,7 +40,7 @@ class CasosLegales_model extends CI_Model
     }
 
     function getLegalCasesBy($data){
-        $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.subjectID, legalcase.userID, legalcase.judicialStatusID, legalcase.administrativeStatusID, legalcase.locationID, legalcase.totalAmount, legalcase.code, subjectlist.subject, judicialstatuslist.judicialStatus, administrativestatuslist.administrativeStatus, user.name, user.lastName1, user.lastName2');
+        $this->db->select('legalcase.id legalCaseID, legalcase.internalCode, legalcase.subjectID, legalcase.userID, legalcase.judicialStatusID, legalcase.administrativeStatusID, legalcase.locationID, legalcase.totalAmount, legalcase.code, legalcase.inUse, subjectlist.subject, judicialstatuslist.judicialStatus, administrativestatuslist.administrativeStatus, user.name, user.lastName1, user.lastName2');
         $this->db->from('legalcase');
         $this->db->where('legalcase.' . $data['searchBy'], $data['value']);
         $this->db->join('judicialstatuslist', 'judicialstatuslist.id = legalcase.judicialStatusID', 'left');

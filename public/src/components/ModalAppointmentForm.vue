@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="cancelAppointmentForm" @show="getAllClients">
+    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="onCloseAppointmentForm" @show="getAllClients">
     <template #modal-title>
       Citas
     </template>
@@ -45,7 +45,7 @@
           <b-button :disabled="showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
             Agendar
           </b-button>
-          <b-button @click.prevent="cancelAppointmentForm" variant="danger">Cancelar</b-button>
+          <b-button @click.prevent="closeAppointmentForm" variant="danger">Cancelar</b-button>
 
           
           <div v-if="errors.length">
@@ -95,8 +95,10 @@ export default {
       this.appointmentForm.alertColor = '#28a745';
       this.errors = [];
     },
-    cancelAppointmentForm: function(){
+    closeAppointmentForm: function(){
       this.$bvModal.hide('bv-modal-appointment-form');
+    },
+    onCloseAppointmentForm: function(){
       this.clearAppointmentForm();
     },
     getAllClients: async function(){
@@ -131,7 +133,7 @@ export default {
       this.$emit('update:showLoader', true);
       this.appointmentForm.madeByUserID = loggedINUserID;
       await repositories.addNewAppointment(this.appointmentForm);
-      this.cancelAppointmentForm();
+      this.closeAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
       this.$parent.fetchEvents({start, end});

@@ -23,11 +23,13 @@
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">
-              Ver Casos
-            </b-button>
+            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">Ver Casos</b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
+
+            <b-form-group v-if="user.inUse == '1' && checkAccessList('administrar')" label="Cliente bloqueado -> *Precaución puede estar siendo editado por algún usuario">
+              <b-button @click.prevent="unblockUser(user.id)" variant="danger">Desbloquear</b-button>
+            </b-form-group>
           </div>
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
@@ -41,12 +43,12 @@
                 <p v-if="legalCase.totalAmount"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                  <b-button :disabled="showLoader" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">
-                    Ver notas
-                  </b-button>
-                  <b-button :disabled="showLoader" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">
-                    Ver fechas de pago
-                  </b-button>
+                  <b-button :disabled="showLoader" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                  <b-button :disabled="showLoader" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
+
+                  <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
+                    <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
+                  </b-form-group>
                 </div>
 
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
@@ -381,6 +383,27 @@ export default {
       data.id = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
       this.showLegalPaymentDates(legalCaseID);
+      this.showLoader = false;
+    },
+    unblockUser: async function(userID){
+      this.showLoader = true;
+      await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
+      const data = await repositories.getClientBy('id', userID);
+      const response = data.response;
+      if( response.length ){
+        this.users = response;
+      }
+      this.showLoader = false;
+    },
+    unblockLegalCase: async function(legalCaseID, userID){
+      this.showLoader = true;
+      await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
+      //this.legalCaseUserId = userID;
+      const data = await repositories.getLegalCasesBy('id', legalCaseID);
+      const response = data.response;
+      if( response.length ){
+        this.$set(this.legalCases, userID, response);
+      }
       this.showLoader = false;
     }
   }

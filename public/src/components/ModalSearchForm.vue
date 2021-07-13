@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="bv-modal-search-form" hide-footer novalidate="true" @hide="cancelSearchForm">
+        <b-modal id="bv-modal-search-form" hide-footer novalidate="true" @hide="onCloseSearchForm">
             <template #modal-title>
             Buscar
             </template>
@@ -41,7 +41,7 @@
                     <b-button :disabled="showLoader" v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
                         Buscar
                     </b-button>
-                    <b-button @click.prevent="cancelSearchForm" variant="danger">Cancelar</b-button>
+                    <b-button @click.prevent="closeSearchForm" variant="danger">Cancelar</b-button>
                 </b-form>
 
                 <div v-if="errors.length">
@@ -91,8 +91,10 @@ export default {
       this.searchClientForm.searchBy = 'personalID';
       this.errors = [];
     },
-    cancelSearchForm: function(){
+    closeSearchForm: function(){
         this.$bvModal.hide('bv-modal-search-form');
+    },
+    onCloseSearchForm: function(){
         this.clearSearchForm();
     },
     showSearchResults: async function(){
@@ -122,7 +124,7 @@ export default {
             this.$emit('update:users', data.response);
         }
         
-        this.cancelSearchForm();
+        this.closeSearchForm();
         this.$emit('update:showLoader', false);
       }
   }
