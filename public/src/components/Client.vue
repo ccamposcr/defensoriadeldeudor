@@ -141,7 +141,7 @@ export default {
         judicialStatusID: null,
         administrativeStatusID: null,
         note: null,
-        totalAmount: null,
+        totalAmount: 0,
         legalCaseID: null,
         locationID: null,
         code: null

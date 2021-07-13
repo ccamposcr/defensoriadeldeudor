@@ -120,6 +120,7 @@ export default {
         }
         this.paymentDates.dates = [];
         this.paymentDates.legalCaseID = null;
+        this.legalCaseForm.totalAmount = 0;
         this.errors = [];
     },
     onCloseLegalForm: async function(){
