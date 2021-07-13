@@ -29,7 +29,7 @@ class Clientes_model extends CI_Model
     }
 
     function getAllClients(){
-        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID');
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID, phone2, phone3, email2, email3, job');
         $this->db->order_by('name ASC');
         $this->db->where('roleID', '0');
         $query = $this->db->get('user');
@@ -49,7 +49,7 @@ class Clientes_model extends CI_Model
     }
 
     function getClientBy($data){
-        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID');
+        $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID, phone2, phone3, email2, email3, job');
         $this->db->where($data['searchBy'], $data['value']);
         $query = $this->db->get('user');
         $results = $query->result();
@@ -57,7 +57,7 @@ class Clientes_model extends CI_Model
     }
 
     function getClientByLegalCase($data){
-        $this->db->select('user.id, user.personalID, user.name, user.lastName1, user.lastName2, user.status, user.phone, user.email, user.address, user.roleID, legalcase.id legalCaseID');
+        $this->db->select('user.id, user.personalID, user.name, user.lastName1, user.lastName2, user.status, user.phone, user.email, user.address, user.roleID, legalcase.id legalCaseID, , user.phone2, user.phone3, user.email2, user.email3, user.job');
         $this->db->where('legalcase.' . $data['searchBy'], $data['value']);
         $this->db->join('legalcase', 'user.id = legalcase.userID', 'left');
         $query = $this->db->get('user');

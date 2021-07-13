@@ -37,7 +37,12 @@ class Clientes extends CI_Controller
             'phone' => $this->input->post('phone'), 
             'email' => $this->input->post('email'), 
             'address' => $this->input->post('address'),
-            'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '0'
+            'roleID' => $this->input->post('roleID') != null ? $this->input->post('roleID') : '0',
+            'phone2' => $this->input->post('phone2'),
+            'phone3' => $this->input->post('phone3'),
+            'email2' => $this->input->post('email2'),
+            'email3' => $this->input->post('email3'),
+            'job' => $this->input->post('job')
         );
 
         $clientID = $this->clientes_model->addClient($data);
@@ -61,7 +66,12 @@ class Clientes extends CI_Controller
             'phone' => $this->input->post('phone'), 
             'email' => $this->input->post('email'), 
             'address' => $this->input->post('address'),
-            'roleID' => $this->input->post('roleID')
+            'roleID' => $this->input->post('roleID'),
+            'phone2' => $this->input->post('phone2'),
+            'phone3' => $this->input->post('phone3'),
+            'email2' => $this->input->post('email2'),
+            'email3' => $this->input->post('email3'),
+            'job' => $this->input->post('job')
         );
         
         $id = $this->input->post('id');

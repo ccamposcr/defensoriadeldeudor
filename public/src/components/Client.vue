@@ -12,7 +12,12 @@
           <p v-if="user.personalID"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
           <p v-if="user.name"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
           <p v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
+          <p v-if="user.phone2" ><strong>Tel&eacute;fono 2:</strong> {{ user.phone2 }}</p>
+          <p v-if="user.phone3" ><strong>Tel&eacute;fono 3:</strong> {{ user.phone3 }}</p>
           <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
+          <p v-if="user.email2"><strong>Email 2:</strong> {{ user.email2 }}</p>
+          <p v-if="user.email3"><strong>Email 3:</strong> {{ user.email3 }}</p>
+          <p v-if="user.job"><strong>Ocupación:</strong> {{ user.job }}</p>
           <p v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
           <p v-if="user.role"><strong>Rol:</strong> {{ user.role }}</p>
           <div class="user__options">
@@ -119,7 +124,12 @@ export default {
         email: null,
         address: null,
         roleID:'0',
-        status: '1'
+        status: '1',
+        phone2: null,
+        phone3: null,
+        email2: null,
+        email3: null,
+        job: null
       },
       legalCaseForm:{
         id: null,

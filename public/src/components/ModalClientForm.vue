@@ -25,11 +25,26 @@
               <b-form-group label-for="lastName2" label="Segundo Apellido">
                 <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
               </b-form-group>
-              <b-form-group label-for="phone" label="Teléfono" v-mask="'####-####'">
+              <b-form-group label-for="phone" label="Teléfono principal" v-mask="'####-####'">
                 <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
               </b-form-group>
-              <b-form-group label-for="email" label="Email">
+              <b-form-group label-for="phone2" label="Teléfono 2 (opcional)" v-mask="'####-####'">
+                <b-form-input v-model="clientForm.phone2" type="text" class="form-control" id="phone2" placeholder="Teléfono 2"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="phone3" label="Teléfono 3 (opcional)" v-mask="'####-####'">
+                <b-form-input v-model="clientForm.phone3" type="text" class="form-control" id="phone3" placeholder="Teléfono 3"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="email" label="Email principal">
                 <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="email2" label="Email 2 (opcional)">
+                <b-form-input v-model="clientForm.email2" type="email" class="form-control" id="email2" placeholder="Email 2"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="email3" label="Email 3 (opcional)">
+                <b-form-input v-model="clientForm.email3" type="email" class="form-control" id="email3" placeholder="Email 3"></b-form-input>
+              </b-form-group>
+              <b-form-group label-for="job" label="Ocupación (opcional)">
+                <b-form-input v-model="clientForm.job" type="text" class="form-control" id="job" placeholder="Ocupación"></b-form-input>
               </b-form-group>
               <b-form-group label-for="address" label="Dirección">
                 <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
@@ -87,8 +102,14 @@ export default {
         if(!this.clientForm.phone){
             this.errors.push("Ingrese un teléfono válido");
         }
-        if(!this.clientForm.email && !this.validEmail(this.clientForm.email)){
+        if(!this.clientForm.email || !this.validEmail(this.clientForm.email)){
             this.errors.push("Ingrese un email válido");
+        }
+        if(this.clientForm.email2 && !this.validEmail(this.clientForm.email2)){
+            this.errors.push("Ingrese un email 2 válido");
+        }
+        if(this.clientForm.email3 && !this.validEmail(this.clientForm.email3)){
+            this.errors.push("Ingrese un email 3 válido");
         }
         if(!this.clientForm.address){
             this.errors.push("Ingrese una dirección válida");
