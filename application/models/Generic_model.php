@@ -59,6 +59,26 @@ class Generic_model extends CI_Model
         $results = $query->result();
         return $results;
     }
+
+    function addAdministrativeStatus($data){       
+        $results = $this->db->insert('administrativestatuslist', $data);
+        return $results;
+    }
+
+    function addAppointmentType($data){       
+        $results = $this->db->insert('appointmenttypelist', $data);
+        return $results;
+    }
+
+    function addJudicialStatus($data){       
+        $results = $this->db->insert('judicialstatuslist', $data);
+        return $results;
+    }
+
+    function addSubject($data){       
+        $results = $this->db->insert('subjectlist', $data);
+        return $results;
+    }
 }
 
 ?>

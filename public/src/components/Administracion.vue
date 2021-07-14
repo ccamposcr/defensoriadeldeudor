@@ -1,8 +1,9 @@
 <template>
-  <div class="administration">
+<div class="administration">
+    <div class="administration__box">
         <b-form class="rol-form">
             <b-form-group>
-                <h5>Permisos Roles</h5>
+                <h5 class="box__title">Permisos Roles</h5>
             </b-form-group>
             <b-form-group>
                 <b-alert v-show="showSuccessMsg" variant="success" show>Permisos guardados!</b-alert>
@@ -21,7 +22,7 @@
                         label="Accesos del Rol"
                         value-field="id"
                         text-field="action"
-                        v-model="administracionForm[item.id]"
+                        v-model="administrationForm[item.id]"
                     >
                         <b-form-checkbox class="group__role" :data-role="item.id" :data-access="access.id" v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
                     </b-form-checkbox-group>
@@ -29,10 +30,69 @@
 
             </div>
 
-        <b-button :disabled="showLoader" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
-            Guardar
-        </b-button>
-    </b-form>
+            <b-button :disabled="showLoader" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
+                Guardar permisos
+            </b-button>
+        </b-form>
+    </div>
+
+    <div class="administration__box">
+        <h5 class="box__title">Estado Administrativo</h5>
+        <ul v-for="item in staticData.administrativeStatusList" :key="item.id">
+            <li>{{item.administrativeStatus}}</li>
+        </ul>
+        <b-form class="form">
+            <b-form-group label-for="administrativeStatus" label="">
+                <b-form-input  v-model="administration.administrativeStatus" type="text" class="form-control" id="administrativeStatus" placeholder="Ingrese un valor"></b-form-input>
+            </b-form-group>
+        
+            <b-button @click.prevent="addAdministrativeStatus" type="submit" variant="primary">Agregar Estado Administrativo</b-button>
+        </b-form>
+    </div>
+
+    <div class="administration__box">
+        <h5 class="box__title">Tipos de Citas</h5>
+        <ul v-for="item in staticData.appointmentTypeList" :key="item.id">
+            <li>{{item.type}}</li>
+        </ul>
+        <b-form class="form">
+            <b-form-group label-for="appointmentType" label="">
+                <b-form-input  v-model="administration.type" type="text" class="form-control" id="appointmentType" placeholder="Ingrese un valor"></b-form-input>
+            </b-form-group>
+        
+            <b-button @click.prevent="addAppointmentType" type="submit" variant="primary">Agregar Tipo de Cita</b-button>
+        </b-form>
+    </div>
+
+    <div class="administration__box">
+        <h5 class="box__title">Estado Judicial</h5>
+        <ul v-for="item in staticData.judicialStatusList" :key="item.id">
+            <li>{{item.judicialStatus}}</li>
+        </ul>
+        <b-form class="form">
+            <b-form-group label-for="judicialStatus" label="">
+                <b-form-input  v-model="administration.judicialStatus" type="text" class="form-control" id="judicialStatus" placeholder="Ingrese un valor"></b-form-input>
+            </b-form-group>
+        
+            <b-button @click.prevent="addJudicialStatus" type="submit" variant="primary">Agregar Estado Judicial</b-button>
+        </b-form>
+    </div>
+
+    <div class="administration__box">
+        <h5 class="box__title">Naturaleza de expediente</h5>
+        <ul v-for="item in staticData.subjectList" :key="item.id">
+            <li>{{item.subject}}</li>
+        </ul>
+        <b-form class="form">
+            <b-form-group label-for="subject" label="">
+                <b-form-input  v-model="administration.subject" type="text" class="form-control" id="subject" placeholder="Ingrese un valor"></b-form-input>
+            </b-form-group>
+        
+            <b-button @click.prevent="addSubject" type="submit" variant="primary">Agregar Naturaleza de expediente</b-button>
+        </b-form>
+    </div>
+
+
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
     </div>
@@ -50,14 +110,24 @@ import repositories from '../repositories';
         return{
             staticData:{
                 roleList: [],
-                accessList: []
+                accessList: [],
+                administrativeStatusList: [],
+                appointmentTypeList: [],
+                judicialStatusList: [],
+                subjectList: []
             },
-            administracionForm: [],
+            administrationForm: [],
             roleprivilegeaccess: {
                 data : []
             },
             showSuccessMsg: false,
-            showLoader: false
+            showLoader: false,
+            administration: {
+                administrativeStatus: null,
+                type: null,
+                judicialStatus: null,
+                subject: null
+            }
         }
     },
     created () {
@@ -68,8 +138,8 @@ import repositories from '../repositories';
             this.showLoader = true;
             this.roleprivilegeaccess.data = [];
 
-            for (const roleValue in this.administracionForm) {
-                this.administracionForm[roleValue].forEach((accessValue) => {
+            for (const roleValue in this.administrationForm) {
+                this.administrationForm[roleValue].forEach((accessValue) => {
                     this.roleprivilegeaccess.data.push({
                         'roleID': roleValue,
                         'accessID': accessValue
@@ -83,6 +153,7 @@ import repositories from '../repositories';
         },
         getStaticDataFromDB: async function(){
             this.showLoader = true;
+
             const roleListData = await repositories.getRoleList();
             this.staticData.roleList = roleListData.response;
 
@@ -91,8 +162,78 @@ import repositories from '../repositories';
 
             const roleprivilegeaccessData = await repositories.getRolePrivilegeAccess();
             const response = roleprivilegeaccessData.response;
+            this.administrationForm = response;
 
-            this.administracionForm = response;
+            await this.renderAdministrativeStatus();
+
+            await this.renderAppointmentTypeList();
+
+            await this.renderJudicialStatus();
+
+            await this.renderSubjectList();            
+
+            this.showLoader = false;
+
+        },
+        renderAdministrativeStatus: async function(){
+            const administrativeStatusListData = await repositories.getAdministrativeStatusList();
+            this.staticData.administrativeStatusList = administrativeStatusListData.response;
+        },
+        renderAppointmentTypeList: async function(){
+            const appointmentTypeListData = await repositories.getAppointmentTypeList();
+            this.staticData.appointmentTypeList = appointmentTypeListData.response;
+        },
+        renderJudicialStatus: async function(){
+            const judicialStatusListData = await repositories.getJudicialStatusList();
+            this.staticData.judicialStatusList = judicialStatusListData.response;
+        },
+        renderSubjectList: async function(){
+            const subjectListData = await repositories.getSubjectList();
+            this.staticData.subjectList = subjectListData.response;
+        },
+        addAdministrativeStatus: async function(){
+            this.showLoader = true;
+
+            if(this.administration.administrativeStatus){
+                await repositories.addAdministrativeStatus({'administrativeStatus': this.administration.administrativeStatus});
+                await this.renderAdministrativeStatus();
+                this.administration.administrativeStatus = null;
+            }
+            
+
+            this.showLoader = false;
+        },
+        addAppointmentType: async function(){
+            this.showLoader = true;
+
+            if(this.administration.type){
+                await repositories.addAppointmentType({'type': this.administration.type});
+                await this.renderAppointmentTypeList();
+                this.administration.type = null;
+            }
+
+            this.showLoader = false;
+        },
+        addJudicialStatus: async function(){
+            this.showLoader = true;
+
+            if(this.administration.judicialStatus){
+                await repositories.addJudicialStatus({'judicialStatus': this.administration.judicialStatus});
+                await this.renderJudicialStatus();
+                this.administration.judicialStatus = null;
+            }
+
+            this.showLoader = false;
+        },
+        addSubject: async function(){
+            this.showLoader = true;
+
+            if(this.administration.subject){
+                await repositories.addSubject({'subject': this.administration.subject});
+                await this.renderSubjectList();
+                this.administration.subject = null;
+            }
+            
             this.showLoader = false;
         }
     }
@@ -104,6 +245,25 @@ import repositories from '../repositories';
     .group{
         &__role{
             margin-bottom: 10px;
+        }
+    }
+
+    &__box{
+        padding-bottom: 50px;
+        border-bottom: 1px solid;
+        margin-bottom: 50px;
+
+        &:last-child{
+            border-bottom: none;
+        }
+
+        .form{
+            margin-top: 30px;
+        }
+    }
+    .box{
+        &__title{
+            margin-bottom: 30px;
         }
     }
 }

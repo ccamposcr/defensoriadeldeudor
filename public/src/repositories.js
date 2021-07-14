@@ -621,6 +621,130 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
+    },
+    getAdministrativeStatusList:  async function(){
+        try {
+            const url = 'generic/getAdministrativeStatusList';
+            const response = await fetch(url);
+            const data = await response.json();
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    getAppointmentTypeList:  async function(){
+        try {
+            const url = 'generic/getAppointmentTypeList';
+            const response = await fetch(url);
+            const data = await response.json();
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    getJudicialStatusList:  async function(){
+        try {
+            const url = 'generic/getJudicialStatusList';
+            const response = await fetch(url);
+            const data = await response.json();
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    getSubjectList:  async function(){
+        try {
+            const url = 'generic/getSubjectList';
+            const response = await fetch(url);
+            const data = await response.json();
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    addAdministrativeStatus: async function(params){
+        try {
+            const url = 'generic/addAdministrativeStatus';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    addAppointmentType: async function(params){
+        try {
+            const url = 'generic/addAppointmentType';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    addJudicialStatus: async function(params){
+        try {
+            const url = 'generic/addJudicialStatus';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    addSubject: async function(params){
+        try {
+            const url = 'generic/addSubject';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
     }
 }
   

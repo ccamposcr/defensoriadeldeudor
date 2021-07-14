@@ -128,6 +128,66 @@ class Generic extends CI_Controller
         echo json_encode($response);
         
     }
+
+    function addAdministrativeStatus(){
+        $data = array(
+            'administrativeStatus' => $this->input->post('administrativeStatus')
+        );
+
+        $this->generic_model->addAdministrativeStatus($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
+    function addAppointmentType(){
+        $data = array(
+            'type' => $this->input->post('type')
+        );
+
+        $this->generic_model->addAppointmentType($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
+    function addJudicialStatus(){
+        $data = array(
+            'judicialStatus' => $this->input->post('judicialStatus')
+        );
+
+        $this->generic_model->addJudicialStatus($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
+    function addSubject(){
+        $data = array(
+            'subject' => $this->input->post('subject')
+        );
+
+        $this->generic_model->addSubject($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
     
 }
 
