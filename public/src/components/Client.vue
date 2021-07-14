@@ -9,17 +9,17 @@
     <div v-show="users.length">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in users">
-          <p v-if="user.personalID"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
-          <p v-if="user.name"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
-          <p v-if="user.phone" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
-          <p v-if="user.phone2" ><strong>Tel&eacute;fono 2:</strong> {{ user.phone2 }}</p>
-          <p v-if="user.phone3" ><strong>Tel&eacute;fono 3:</strong> {{ user.phone3 }}</p>
-          <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
-          <p v-if="user.email2"><strong>Email 2:</strong> {{ user.email2 }}</p>
-          <p v-if="user.email3"><strong>Email 3:</strong> {{ user.email3 }}</p>
-          <p v-if="user.job"><strong>Ocupación:</strong> {{ user.job }}</p>
-          <p v-if="user.address"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
-          <p v-if="user.role"><strong>Rol:</strong> {{ user.role }}</p>
+          <p v-if="user.personalID && user.personalID != null"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
+          <p v-if="user.name && user.name != null"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
+          <p v-if="user.phone && user.phone != null" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
+          <p v-if="user.phone2 && user.phone2 != null" ><strong>Tel&eacute;fono 2:</strong> {{ user.phone2 }}</p>
+          <p v-if="user.phone3 && user.phone3 != null" ><strong>Tel&eacute;fono 3:</strong> {{ user.phone3 }}</p>
+          <p v-if="user.email && user.email != null"><strong>Email:</strong> {{ user.email }}</p>
+          <p v-if="user.email2 && user.email2 != null"><strong>Email 2:</strong> {{ user.email2 }}</p>
+          <p v-if="user.email3 && user.email3 != null"><strong>Email 3:</strong> {{ user.email3 }}</p>
+          <p v-if="user.job && user.job != null"><strong>Ocupación:</strong> {{ user.job }}</p>
+          <p v-if="user.address && user.address != null"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
+          <p v-if="user.role && user.role != null"><strong>Rol:</strong> {{ user.role }}</p>
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
@@ -31,16 +31,19 @@
               <b-button @click.prevent="unblockUser(user.id)" variant="danger">Desbloquear</b-button>
             </b-form-group>
           </div>
+
+
+          <!-- LEGAL CASES -->
           <div v-if="legalCases[user.id]">
             <ul class="user__legal-cases">
               <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
-                <p v-if="legalCase.internalCode"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
-                <p v-if="legalCase.code"><strong>Código interno:</strong> {{ legalCase.code }}</p>
-                <p v-if="legalCase.subject"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
-                <p v-if="legalCase.judicialStatus"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
-                <p v-if="legalCase.administrativeStatus"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
-                <p v-if="legalCase.location"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-                <p v-if="legalCase.totalAmount"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
+                <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
+                <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
+                <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
+                <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
+                <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
+                <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
+                <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
                   <b-button :disabled="showLoader" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
@@ -81,6 +84,8 @@
             </ul>
           </div>
           <span class="label-danger" v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
+          <!-- END LEGAL CASES -->
+
 
         </li>
       </ul>
@@ -236,12 +241,17 @@ export default {
     },
     showLegalCases: async function(userID){      
       this.showLoader = true;  
-      const data = await repositories.getLegalCasesBy('userID', userID);
-      data.response.forEach(item => {
-        item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
-      });
-      this.$set(this.legalCases, userID, data.response);
+      const legalCasedata = await repositories.getLegalCasesBy('userID', userID);
+      const legalCaseResponse = legalCasedata.response;
+      const locationFormatted = this.buildLocation(legalCaseResponse);
+      this.$set(this.legalCases, userID, locationFormatted);
       this.showLoader = false;
+    },
+    buildLocation: function(data){
+      data.forEach(item => {
+        item.location = item.locationID != '999' ? (item.name ? item.name : '') + ' ' + (item.lastName1 ? item.lastName1 : '') + ' ' + (item.lastName2 ? item.lastName2 : '') : this.locationStaticData['999'];
+      });
+      return data;
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
@@ -343,10 +353,8 @@ export default {
         const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
         const legalCaseResponse = legalCasedata.response;
         if( legalCaseResponse.length ){
-          legalCaseResponse.forEach(item => {
-            item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
-          });
-          this.$set(this.legalCases, params.userID, legalCaseResponse);
+          const locationFormatted = this.buildLocation(legalCaseResponse);
+          this.$set(this.legalCases, params.userID, locationFormatted);
         }
         this.showLoader = false;
       }
@@ -400,7 +408,6 @@ export default {
     unblockLegalCase: async function(legalCaseID, userID){
       this.showLoader = true;
       await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
-      //this.legalCaseUserId = userID;
       const data = await repositories.getLegalCasesBy('id', legalCaseID);
       const response = data.response;
       if( response.length ){

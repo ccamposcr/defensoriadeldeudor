@@ -14,10 +14,10 @@
               <b-form class="legal__case-form">
                   <input type="hidden" v-model="legalCaseForm.id">
                   <b-form-group label-for="internalCode" label="Número de expediente">
-                    <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente" :disabled="editingLegalCase"></b-form-input>
+                    <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="code" label="Código Interno">
-                    <b-form-input v-model="legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno" :disabled="editingLegalCase"></b-form-input>
+                    <b-form-input v-model="legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
                     <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
