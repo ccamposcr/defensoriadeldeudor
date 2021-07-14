@@ -10,6 +10,13 @@ import VueTheMask from 'vue-the-mask'
 Vue.use(BootstrapVue);
 Vue.use(VueTheMask);
 
+const moment = require('moment')
+require('moment/locale/es')
+ 
+Vue.use(require('vue-moment'), {
+    moment
+})
+
 new Vue({
   vuetify,
   router,

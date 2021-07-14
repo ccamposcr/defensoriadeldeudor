@@ -39,6 +39,8 @@
                   </b-form-group>
 
                   <div class="case-form__payments-group">
+                    <h5>Fechas de pagos manuales</h5>
+                    <p>Seleccione una fecha y presione el botón de "Agregar fecha", haga lo mismo con la cantidad de fechas que necesite ingresar. </p>
                     <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago (opcional)">
                       <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
                     </b-form-group>
@@ -46,6 +48,19 @@
                     <b-form-group>
                       <b-button :disabled="!nextPaymentDay" @click.prevent="addNewPaymentDay" variant="primary">
                         Agregar fecha
+                      </b-button>
+                    </b-form-group>
+                  </div>
+
+                  <div class="case-form__payments-group">
+                    <h5>Generar fechas de pagos recurrentes</h5>
+                    <p>Seleccione solamente una fecha en el campo anterior, luego ingrese la cantidad de meses recurrentes y presion el botón "Generar fechas" para generar pagos recurrentes el mismo día durante X cantidad de meses.</p>
+                    <b-form-group label="Cantidad de meses recurrentes">
+                      <b-form-input v-model="numberMonths" min="1" max="48" type="number" class="form-control" id="numberMonths" placeholder="Ingrese la cantidad de meses a generar"></b-form-input>
+                    </b-form-group>
+                    <b-form-group>
+                      <b-button :disabled="!nextPaymentDay || nextPaymentDay == null || numberMonths <= 0" @click.prevent="generateRecurringPayments" variant="primary">
+                        Generar fechas
                       </b-button>
                     </b-form-group>
                   </div>
@@ -82,6 +97,7 @@
 
 <script>
 import repositories from '../repositories';
+import moment from 'moment';
 
 export default {
   name: 'ModalLegalCaseForm',
@@ -89,7 +105,8 @@ export default {
   data () {
     return {
       errors:[],
-      nextPaymentDay: null
+      nextPaymentDay: null,
+      numberMonths: 0
     }
   },
   methods: {
@@ -129,6 +146,7 @@ export default {
         this.legalCaseForm.totalAmount = 0;
         this.legalCaseForm.inUse = '0';
         this.errors = [];
+        this.numberMonths = 0;
     },
     onCloseLegalForm: async function(){
       if( this.legalCaseForm.id ){
@@ -211,6 +229,16 @@ export default {
     },
     removePaymentDate: function(index){
       this.paymentDates.dates.splice(index, 1);
+    },
+    generateRecurringPayments: function(){
+      this.paymentDates.dates = [];
+      if(this.nextPaymentDay && this.numberMonths > 0){
+        let datePointer = this.nextPaymentDay;
+        for( let i = 0; i < this.numberMonths; i++ ){
+          this.paymentDates.dates.push({'date': datePointer});
+          datePointer = moment(datePointer + 'T00:00:00').add(1, 'week').format("YYYY-MM-DD");
+        }
+      }
     }
   }
 }
@@ -220,11 +248,6 @@ export default {
 .case-form{
   &__list{
     list-style-type: none;
-  }
-  &__payments-group{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 }
 
