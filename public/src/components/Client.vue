@@ -243,8 +243,8 @@ export default {
       this.showLoader = true;  
       const legalCasedata = await repositories.getLegalCasesBy('userID', userID);
       const legalCaseResponse = legalCasedata.response;
-      const locationFormatted = this.buildLocation(legalCaseResponse);
-      this.$set(this.legalCases, userID, locationFormatted);
+      const legalCasesLocationFormatted = this.buildLocation(legalCaseResponse);
+      this.$set(this.legalCases, userID, legalCasesLocationFormatted);
       this.showLoader = false;
     },
     buildLocation: function(data){
@@ -353,8 +353,8 @@ export default {
         const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
         const legalCaseResponse = legalCasedata.response;
         if( legalCaseResponse.length ){
-          const locationFormatted = this.buildLocation(legalCaseResponse);
-          this.$set(this.legalCases, params.userID, locationFormatted);
+          const legalCasesLocationFormatted = this.buildLocation(legalCaseResponse);
+          this.$set(this.legalCases, params.userID, legalCasesLocationFormatted);
         }
         this.showLoader = false;
       }

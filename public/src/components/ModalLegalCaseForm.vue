@@ -34,8 +34,8 @@
                   <b-form-group label-for="note" label="Nueva nota">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
-                  <b-form-group label-for="totalAmount" label="Monto Total">
-                    <b-form-input v-model="legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto Total"></b-form-input>
+                  <b-form-group label-for="totalAmount" label="Monto del caso">
+                    <b-form-input v-model="legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del caso"></b-form-input>
                   </b-form-group>
 
                   <div class="case-form__payments-group">

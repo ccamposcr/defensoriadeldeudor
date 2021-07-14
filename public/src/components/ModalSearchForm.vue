@@ -112,10 +112,10 @@ export default {
                 const legalCaseResponse = legalCasedata.response;
 
                 if( legalCaseResponse.length ){
-                    legalCaseResponse.forEach(item => {
-                        item.location = item.locationID != '999' ? item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2 : this.locationStaticData['999'];
-                    });
-                    this.legalCases[userID] = legalCaseResponse;
+                    
+                    const legalCasesLocationFormatted = this.$parent.buildLocation(legalCaseResponse);
+
+                    this.legalCases[userID] = legalCasesLocationFormatted;
                     this.$emit('update:legalCases', this.legalCases);
                 }
             }
