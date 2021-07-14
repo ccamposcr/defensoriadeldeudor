@@ -164,7 +164,7 @@ export default {
           await repositories.addPaymentDates(paymentDatesStr);
         }
 
-        this.$parent.renderLegalCases(userID);
+        this.$parent.renderLegalCases('userID', userID, userID); 
         this.closeLegalForm();
         this.$emit('update:showLoader', false);
     },
@@ -176,7 +176,7 @@ export default {
 
         await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
         
-        this.$parent.renderLegalCases(userID);
+        this.$parent.renderLegalCases('userID', userID, userID);
 
         const legalCaseNote = {};
         legalCaseNote.legalCaseID = this.legalCaseForm.legalCaseID;
