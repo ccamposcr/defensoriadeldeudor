@@ -31,7 +31,7 @@
                   <b-form-group label-for="location" label="Ubicación del expediente">
                     <b-form-select id="location" v-model="legalCaseForm.locationID" :options="staticData.locationList" value-field="id" text-field="location"></b-form-select>
                   </b-form-group>
-                  <b-form-group label-for="note" label="Nueva nota">
+                  <b-form-group label-for="note" label="Nueva nota (opcional)">
                     <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
                   <b-form-group label-for="totalAmount" label="Monto del caso">
@@ -39,7 +39,7 @@
                   </b-form-group>
 
                   <div class="case-form__payments-group">
-                    <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago">
+                    <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago (opcional)">
                       <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
                     </b-form-group>
 
@@ -109,6 +109,12 @@ export default {
         }
         if(!this.legalCaseForm.administrativeStatusID){
             this.errors.push("Seleccione el estado administrativo");
+        }
+        if(!this.legalCaseForm.locationID){
+            this.errors.push("Seleccione la ubicación del expediente");
+        }
+        if(!this.legalCaseForm.totalAmount){
+            this.errors.push("Ingrese un monto del caso");
         }
         if(!this.errors.length){
             callback();

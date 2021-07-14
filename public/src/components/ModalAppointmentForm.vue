@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="onCloseAppointmentForm" @show="getAllClients">
+    <b-modal id="bv-modal-appointment-form" hide-footer novalidate="true" @hide="onCloseAppointmentForm" @show="fillAppointmentForm">
     <template #modal-title>
       Citas
     </template>
@@ -101,23 +101,23 @@ export default {
     onCloseAppointmentForm: function(){
       this.clearAppointmentForm();
     },
-    getAllClients: async function(){
+    fillAppointmentForm: async function(){
       this.$emit('update:showLoader', true);
       const dataClients = await repositories.getAllClients();
       this.clientList = dataClients.response;
 
-      const clientsFormatted = this.buildCientName(this.clientList);
+      const clientsFormatted = this.buildUserClientName(this.clientList);
       this.$set(this.appointmentForm, 'clientList', clientsFormatted);
 
       const dataUsers = await repositories.getAllUsers();
       this.usersList = dataUsers.response;
 
-      const usersFormatted = this.buildCientName(this.usersList);
+      const usersFormatted = this.buildUserClientName(this.usersList);
       this.$set(this.appointmentForm, 'usersList', usersFormatted);
     
       this.$emit('update:showLoader', false);
     },
-    buildCientName: function(data){
+    buildUserClientName: function(data){
       data.forEach(item => {
         item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
         item.userID = item.id;

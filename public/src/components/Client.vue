@@ -132,11 +132,11 @@ export default {
         address: null,
         roleID:'0',
         status: '1',
-        phone2: null,
-        phone3: null,
-        email2: null,
-        email3: null,
-        job: null,
+        phone2: '',
+        phone3: '',
+        email2: '',
+        email3: '',
+        job: '',
         inUse: '0'
       },
       legalCaseForm:{

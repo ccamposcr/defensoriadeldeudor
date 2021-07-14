@@ -122,17 +122,16 @@ export default {
       var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     },
-    showClientByPersonalID: async function(personalID){
-      this.$emit('update:showLoader', true);
-      const data = await repositories.getClientBy('PersonalID', personalID);
-      this.$emit('update:users', data.response);
-      this.$emit('update:showLoader', false);
+    renderClientByPersonalID: async function(personalID){
+
+      await this.$parent.renderClientBy('getClientBy', 'PersonalID', personalID);
+
     },
     setNewClient: async function(){
         this.$emit('update:showLoader', true);
         const data = await repositories.addNewClient(this.clientForm);
 
-        this.showClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.clientForm.personalID);
         this.closeClientForm();
 
         this.$emit('update:showLoader', false);
@@ -146,7 +145,7 @@ export default {
 
         await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
 
-        this.showClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.clientForm.personalID);
         this.closeClientForm();
         this.$emit('update:showLoader', false);
     },
@@ -157,6 +156,11 @@ export default {
         this.clientForm.roleID = '0';
         this.clientForm.status = '1';
         this.clientForm.inUse = '0'
+        this.clientForm.phone2 = '';
+        this.clientForm.phone3 = '';
+        this.clientForm.email2 = '';
+        this.clientForm.email3 = '';
+        this.clientForm.job = '';
         this.errors = [];
     },
     onCloseClientForm: async function(){
@@ -178,7 +182,7 @@ export default {
       const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
       const response = data.response;
       if( response.length ){
-        this.showClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.clientForm.personalID);
         this.closeClientForm();
       }
       this.$emit('update:showLoader', false);
