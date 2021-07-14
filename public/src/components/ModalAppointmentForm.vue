@@ -105,21 +105,24 @@ export default {
       this.$emit('update:showLoader', true);
       const dataClients = await repositories.getAllClients();
       this.clientList = dataClients.response;
-      this.clientList.forEach(item => {
-        item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
-        item.userID = item.id;
-      });
-      this.$set(this.appointmentForm, 'clientList', this.clientList);
+
+      const clientsFormatted = this.buildCientName(this.clientList);
+      this.$set(this.appointmentForm, 'clientList', clientsFormatted);
 
       const dataUsers = await repositories.getAllUsers();
       this.usersList = dataUsers.response;
-      this.usersList.forEach(item => {
+
+      const usersFormatted = this.buildCientName(this.usersList);
+      this.$set(this.appointmentForm, 'usersList', usersFormatted);
+    
+      this.$emit('update:showLoader', false);
+    },
+    buildCientName: function(data){
+      data.forEach(item => {
         item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
         item.userID = item.id;
       });
-      this.$set(this.appointmentForm, 'usersList', this.usersList);
-    
-      this.$emit('update:showLoader', false);
+      return data;
     },
     filter: function(){
       this.appointmentForm.clientList =  this.clientList.filter((client) => {
