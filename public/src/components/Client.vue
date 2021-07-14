@@ -2,7 +2,7 @@
   <div class="client">
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="primary" :disabled="showLoader" v-if="!systemUsersInterface" @click="showAllClients">
+    <b-button variant="primary" :disabled="showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
       Ver todos los Clientes
     </b-button>
 
@@ -23,7 +23,7 @@
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="showLegalCases(user.id)" variant="primary">Ver Casos</b-button>
+            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="renderLegalCases('userID', user.id, user.id)" variant="primary">Ver Casos</b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
 
@@ -46,8 +46,8 @@
                 <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                  <b-button :disabled="showLoader" @click="showLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
-                  <b-button :disabled="showLoader" @click="showLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
+                  <b-button :disabled="showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                  <b-button :disabled="showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
 
                   <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
                     <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
@@ -214,20 +214,36 @@ export default {
       
       this.showLoader = false;
     },
-    showAllClients: async function(){
+    renderAllClients: async function(){
       this.showLoader = true;
+
       this.resetClientVars();
 
       const data = await repositories.getAllClients();
       this.users = data.response;
+
       this.showLoader = false;
     },
-    showAllUsers: async function(){
+    renderAllUsers: async function(){
       this.showLoader = true;
-      this.resetClientVars();
 
+      this.resetClientVars();
       const data = await repositories.getAllUsers();
       this.users = data.response;
+
+      this.showLoader = false;
+    },
+    renderClientBy: async function(service, searchBy, value, returnProp){
+      this.showLoader = true;
+
+      const data = await repositories[service](searchBy, value);
+      const response = data.response;
+      this.users = response;
+      
+      if(returnProp && response.length){
+        return response[0][returnProp];
+      }
+
       this.showLoader = false;
     },
     showSearchClientModal: function(){
@@ -239,12 +255,41 @@ export default {
         this.$bvModal.show('bv-modal-client-form');
       }
     },
-    showLegalCases: async function(userID){      
-      this.showLoader = true;  
-      const legalCasedata = await repositories.getLegalCasesBy('userID', userID);
-      const legalCaseResponse = legalCasedata.response;
-      const legalCasesLocationFormatted = this.buildLocation(legalCaseResponse);
-      this.$set(this.legalCases, userID, legalCasesLocationFormatted);
+    renderLegalCases: async function(searchBy, value, userID){      
+      this.showLoader = true;
+
+      const data = await repositories.getLegalCasesBy(searchBy, value);
+      const response = data.response;
+
+      const dataFormatted = this.buildLocation(response);
+      this.$set(this.legalCases, userID, dataFormatted);
+
+      this.showLoader = false;
+    },
+    isClientInUse: async function(id){
+      this.showLoader = true;
+
+      const data = await repositories.isClientInUse({'id': id});
+      const response = data.response;
+      let isInUse = 0;
+      
+      if( response.length ){
+        isInUse = response[0].inUse;
+      }
+
+      this.showLoader = false;
+
+      return isInUse;
+    },
+    fillClientForm: async function(id){
+      this.showLoader = true;
+
+      const data = await repositories.getClientBy('id', id);
+      const response = data.response;
+      if( response.length ){
+        this.clientForm = response[0];
+      }
+
       this.showLoader = false;
     },
     buildLocation: function(data){
@@ -255,33 +300,27 @@ export default {
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
-        this.showLoader = true;
-        const promise = await repositories.isClientInUse({'id': id});
-        const inUseResponse = promise.response;
-        let isInUse = 0;
-        this.showLoader = false;
-        if( inUseResponse.length ){
-          isInUse = inUseResponse[0].inUse;
-        }
+
+        let isInUse = await this.isClientInUse(id);
+
         if(isInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
-          this.showLoader = true;
+
           await repositories.updateClientIsInUse({'id': id, 'inUse': 1});
-          const data = await repositories.getClientBy('id', id);
-          const response = data.response;
-          if( response.length ){
-            this.clientForm = response[0];
-            this.editingUser = true;
-            this.$bvModal.show('bv-modal-client-form');
-          }
-          this.showLoader = false;
+
+          await this.fillClientForm(id);
+        
+          this.editingUser = true;
+          this.$bvModal.show('bv-modal-client-form');
+          
         }
       }
     },
     fillLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
         this.showLoader = true;
+
         const promise = await repositories.isLegalCaseInUse({'id': legalCaseID});
         const inUseResponse = promise.response;
         let isInUse = 0;
@@ -315,16 +354,20 @@ export default {
         }
       }
     },
-    showLegalCaseNotes: async function(legalCaseID){
+    renderLegalCaseNotes: async function(legalCaseID){
       this.showLoader = true;
+
       const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
       this.$set(this.legalCaseNotes, legalCaseID, data.response);
+
       this.showLoader = false;
     },
-    showLegalPaymentDates: async function(legalCaseID){
+    renderLegalPaymentDates: async function(legalCaseID){
       this.showLoader = true;
+
       const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
       this.$set(this.legalPaymentDates, legalCaseID, data.response);
+
       this.showLoader = false;
     },
     resetClientVars: function(){
@@ -340,23 +383,14 @@ export default {
     },
     loadDataFromURLParams: async function(params){
       if(params.userID){
-        this.showLoader = true;
-        const clientData = await repositories.getClientBy('id', params.userID);
-        const response = clientData.response;
-        if( response.length ){
-          this.users = response;
-        }
-        this.showLoader = false;
+
+        await this.renderClientBy('getClientBy', 'id', params.userID);
+
       }
       if(params.legalCaseID){
-        this.showLoader = true;
-        const legalCasedata = await repositories.getLegalCasesBy('id', params.legalCaseID);
-        const legalCaseResponse = legalCasedata.response;
-        if( legalCaseResponse.length ){
-          const legalCasesLocationFormatted = this.buildLocation(legalCaseResponse);
-          this.$set(this.legalCases, params.userID, legalCasesLocationFormatted);
-        }
-        this.showLoader = false;
+
+        await this.renderLegalCases('id', params.legalCaseID, params.userID);
+
       }
       if(params.showNewClientForm){
         if( this.checkAccessList('agregar cliente') ){
@@ -369,7 +403,7 @@ export default {
       if(params.showSystemUsers){
         if( this.checkAccessList('administrar') ){
           this.systemUsersInterface = true;
-          this.showAllUsers();
+          await this.renderAllUsers();
         }else{
           window.location.href = base_url + 'denied';
         }
@@ -377,10 +411,12 @@ export default {
     },
     deleteUser: async function(userID){
       this.showLoader = true;
+
       const data = {};
       data.id = userID;
       await repositories.deleteUser(data);
-      this.showAllUsers();
+      await this.renderAllUsers();
+
       this.showLoader = false;
     },
     updatePassword: async function(userID){
@@ -389,31 +425,25 @@ export default {
     },
     removePaymentDate: async function(legalPaymentDateID, legalCaseID){
       this.showLoader = true;
+
       const data = {};
       data.id = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
-      this.showLegalPaymentDates(legalCaseID);
+      this.renderLegalPaymentDates(legalCaseID);
+
       this.showLoader = false;
     },
     unblockUser: async function(userID){
-      this.showLoader = true;
+
       await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
-      const data = await repositories.getClientBy('id', userID);
-      const response = data.response;
-      if( response.length ){
-        this.users = response;
-      }
-      this.showLoader = false;
+      await this.renderClientBy('getClientBy', 'id', userID);
+
     },
     unblockLegalCase: async function(legalCaseID, userID){
-      this.showLoader = true;
+
       await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
-      const data = await repositories.getLegalCasesBy('id', legalCaseID);
-      const response = data.response;
-      if( response.length ){
-        this.$set(this.legalCases, userID, response);
-      }
-      this.showLoader = false;
+      await this.renderLegalCases('id', legalCaseID, userID);
+
     }
   }
 }

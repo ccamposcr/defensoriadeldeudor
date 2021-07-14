@@ -98,10 +98,15 @@ export default {
         this.clearSearchForm();
     },
     showSearchResults: async function(){
-        this.$emit('update:showLoader', true);
+        //this.$emit('update:showLoader', true);
+
         let data = null;
         if( this.searchClientForm.searchBy == 'code' || this.searchClientForm.searchBy == 'internalCode' ){
-            data = await repositories.getClientByLegalCase(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
+
+            const legalCaseID = await this.$parent.renderClientBy('getClientByLegalCase', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy], 'legalCaseID');
+            console.log(legalCaseID);
+            console.log('CCO');
+           /* data = await repositories.getClientByLegalCase(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
             const clientResponse = data.response;
             if(clientResponse.length){
                 this.$emit('update:users', clientResponse);
@@ -118,14 +123,14 @@ export default {
                     this.legalCases[userID] = legalCasesLocationFormatted;
                     this.$emit('update:legalCases', this.legalCases);
                 }
-            }
+            }*/
         }else{
-            data = await repositories.getClientBy(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
-            this.$emit('update:users', data.response);
+            await this.$parent.renderClientBy('getClientBy', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
         }
         
         this.closeSearchForm();
-        this.$emit('update:showLoader', false);
+
+        //this.$emit('update:showLoader', false);
       }
   }
 }
