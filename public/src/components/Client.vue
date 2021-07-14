@@ -45,7 +45,7 @@
                 <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
                 <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto Total:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
-                  <b-button v-if="checkAccessList('editar caso')" @click="fillLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
+                  <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
                   <b-button :disabled="showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
                   <b-button :disabled="showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
 
@@ -281,6 +281,12 @@ export default {
 
       return isInUse;
     },
+    buildLocation: function(data){
+      data.forEach(item => {
+        item.location = item.locationID != '999' ? (item.name ? item.name : '') + ' ' + (item.lastName1 ? item.lastName1 : '') + ' ' + (item.lastName2 ? item.lastName2 : '') : this.locationStaticData['999'];
+      });
+      return data;
+    },
     fillClientForm: async function(id){
       this.showLoader = true;
 
@@ -291,12 +297,6 @@ export default {
       }
 
       this.showLoader = false;
-    },
-    buildLocation: function(data){
-      data.forEach(item => {
-        item.location = item.locationID != '999' ? (item.name ? item.name : '') + ' ' + (item.lastName1 ? item.lastName1 : '') + ' ' + (item.lastName2 ? item.lastName2 : '') : this.locationStaticData['999'];
-      });
-      return data;
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
@@ -313,44 +313,70 @@ export default {
         
           this.editingUser = true;
           this.$bvModal.show('bv-modal-client-form');
-          
+
         }
       }
     },
-    fillLegalCaseForm: async function(legalCaseID, userID){
-      if( this.checkAccessList('editar caso') ){
-        this.showLoader = true;
+    isLegalCaseInUse: async function(id){
+      this.showLoader = true;
 
-        const promise = await repositories.isLegalCaseInUse({'id': legalCaseID});
-        const inUseResponse = promise.response;
-        let isInUse = 0;
-        this.showLoader = false;
-        if( inUseResponse.length ){
-          isInUse = inUseResponse[0].inUse;
-        }
+      const data = await repositories.isLegalCaseInUse({'id': id});
+      const response = data.response;
+      let isInUse = 0;
+      
+      if( response.length ){
+        isInUse = response[0].inUse;
+      }
+
+      this.showLoader = false;
+
+      return isInUse;
+    },
+    fillLegalCaseForm: async function(id, userID){
+      this.showLoader = true;
+
+      this.legalCaseUserId = userID;
+      
+      const data = await repositories.getLegalCasesBy('id', id);
+      const response = data.response;
+
+      if( response.length ){
+        this.legalCaseForm = response[0];
+        this.legalCaseForm.id = id;
+      }
+
+      this.showLoader = false;
+    },
+    fillPaymentDatesOnForm: async function(id){
+      this.showLoader = true;
+
+      const data = await repositories.getLegalPaymentDatesBy('legalCaseID', id);
+      const response = data.response;
+      if( response.length ){
+        this.paymentDates.legalCaseID = id;
+        this.paymentDates.dates = response;
+      }
+
+      this.showLoader = false;
+    },
+    fillEditLegalCaseForm: async function(legalCaseID, userID){
+      if( this.checkAccessList('editar caso') ){
+  
+        let isInUse = await this.isLegalCaseInUse(legalCaseID);
+
         if(isInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
-          this.showLoader = true;
+          
           await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 1});
-          this.legalCaseUserId = userID;
-          const data = await repositories.getLegalCasesBy('id', legalCaseID);
-          const response = data.response;
-          if( response.length ){
-            this.legalCaseForm = response[0];
-            this.legalCaseForm.id = legalCaseID;
-            this.editingLegalCase = true;
-            this.$bvModal.show('bv-modal-legal-case-form');
-          }
 
-          const dataPayments = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
-          const responsePayments = dataPayments.response;
-          if( responsePayments.length ){
-            this.paymentDates.legalCaseID = legalCaseID;
-            this.paymentDates.dates = responsePayments;
-          }
+          await this.fillLegalCaseForm(legalCaseID, userID);
+          
+          await this.fillPaymentDatesOnForm(legalCaseID);
 
-          this.showLoader = false;
+          this.editingLegalCase = true;
+          this.$bvModal.show('bv-modal-legal-case-form');
+          
         }
       }
     },
@@ -429,7 +455,7 @@ export default {
       const data = {};
       data.id = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
-      this.renderLegalPaymentDates(legalCaseID);
+      await this.renderLegalPaymentDates(legalCaseID);
 
       this.showLoader = false;
     },
