@@ -233,18 +233,18 @@ export default {
 
       this.showLoader = false;
     },
-    renderClientBy: async function(service, searchBy, value, returnProp){
+    renderClientBy: async function(service, searchBy, value, returnResponse){
       this.showLoader = true;
 
       const data = await repositories[service](searchBy, value);
       const response = data.response;
       this.users = response;
-      
-      if(returnProp && response.length){
-        return response[0][returnProp];
-      }
 
       this.showLoader = false;
+      
+      if(returnResponse && response.length){
+        return response[0];
+      }
     },
     showSearchClientModal: function(){
       this.$bvModal.show('bv-modal-search-form');
@@ -255,7 +255,7 @@ export default {
         this.$bvModal.show('bv-modal-client-form');
       }
     },
-    renderLegalCases: async function(searchBy, value, userID){      
+    renderLegalCases: async function(searchBy, value, userID, returnResponse){      
       this.showLoader = true;
 
       const data = await repositories.getLegalCasesBy(searchBy, value);
@@ -265,6 +265,10 @@ export default {
       this.$set(this.legalCases, userID, dataFormatted);
 
       this.showLoader = false;
+
+      if(returnResponse && response.length){
+        return response;
+      }
     },
     isClientInUse: async function(id){
       this.showLoader = true;
@@ -505,7 +509,7 @@ export default {
         padding: 0;
         display: flex;
         flex-wrap: wrap;
-        background-color: #e4e4e4;
+        background-color: #fbfbfb;
         margin-top: 30px;
       }
       &__name{
@@ -535,7 +539,7 @@ export default {
         list-style-type: none;
         padding: 0;
         margin-top: 30px;
-        background-color: #fafafa;
+        background-color: #e6e5e5;
       }
     }
     .case{

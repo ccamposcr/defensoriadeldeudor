@@ -98,40 +98,23 @@ export default {
         this.clearSearchForm();
     },
     showSearchResults: async function(){
-        //this.$emit('update:showLoader', true);
 
-        let data = null;
         if( this.searchClientForm.searchBy == 'code' || this.searchClientForm.searchBy == 'internalCode' ){
 
-            const legalCaseID = await this.$parent.renderClientBy('getClientByLegalCase', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy], 'legalCaseID');
-            console.log(legalCaseID);
-            console.log('CCO');
-           /* data = await repositories.getClientByLegalCase(this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
-            const clientResponse = data.response;
-            if(clientResponse.length){
-                this.$emit('update:users', clientResponse);
+            const response = await this.$parent.renderClientBy('getClientByLegalCase', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy], true);
+            if( response ){
+                const legalCaseID = response.legalCaseID;
+                const userID = response.id;
 
-                const legalCaseID = clientResponse[0].legalCaseID;
-                const userID = clientResponse[0].id;
-                const legalCasedata = await repositories.getLegalCasesBy('id', legalCaseID);
-                const legalCaseResponse = legalCasedata.response;
-
-                if( legalCaseResponse.length ){
-                    
-                    const legalCasesLocationFormatted = this.$parent.buildLocation(legalCaseResponse);
-
-                    this.legalCases[userID] = legalCasesLocationFormatted;
-                    this.$emit('update:legalCases', this.legalCases);
-                }
-            }*/
+                await this.$parent.renderLegalCases('id', legalCaseID, userID);
+            }
+            
         }else{
             await this.$parent.renderClientBy('getClientBy', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
         }
         
         this.closeSearchForm();
-
-        //this.$emit('update:showLoader', false);
-      }
+    }
   }
 }
 </script>
