@@ -54,6 +54,7 @@
                   </b-form-group>
                 </div>
 
+              <!-- LEGAL NOTES -->
                 <div v-if="legalCaseNotes[legalCase.legalCaseID]">
                   
                   <ul class="legal-cases__notes">
@@ -65,8 +66,9 @@
                   </ul>
                   <span class="label-danger" v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
                 </div>
+                <!-- LEGAL NOTES END -->
 
-
+                <!-- LEGAL PAYMENT DATES -->
                 <div v-if="legalPaymentDates[legalCase.legalCaseID]">
                   
                   <ul class="legal-cases__payment-dates">
@@ -79,6 +81,7 @@
                   </ul>
                   <span class="label-danger" v-if="legalPaymentDates[legalCase.legalCaseID] && !legalPaymentDates[legalCase.legalCaseID].length">No hay fechas de pago</span>
                 </div>
+                <!-- END LEGAL PAYMENT DATES -->
 
               </li>
             </ul>
