@@ -98,19 +98,25 @@ export default {
         this.clearSearchForm();
     },
     showSearchResults: async function(){
+        const callback = async (response) => {
+       
+            if( response.length ){
+                const dataResponse = response[0];
+                const legalCaseID = dataResponse.legalCaseID;
+                const userID = dataResponse.id;
+
+                //searchBy, value, userID, callback
+                await this.$emit('renderLegalCases', {searchBy:'id', value:legalCaseID, userID:userID});
+            }
+        }
 
         if( this.searchClientForm.searchBy == 'code' || this.searchClientForm.searchBy == 'internalCode' ){
-
-            const response = await this.$parent.renderClientBy('getClientByLegalCase', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy], true);
-            if( response ){
-                const legalCaseID = response.legalCaseID;
-                const userID = response.id;
-
-                await this.$parent.renderLegalCases('id', legalCaseID, userID);
-            }
+            //service, searchBy, value, callback
+            await this.$emit('renderClientBy', {service:'getClientByLegalCase', searchBy:this.searchClientForm.searchBy, value:this.searchClientForm[this.searchClientForm.searchBy], callback: callback});
             
         }else{
-            await this.$parent.renderClientBy('getClientBy', this.searchClientForm.searchBy, this.searchClientForm[this.searchClientForm.searchBy]);
+            //service, searchBy, value, callback
+            await this.$emit('renderClientBy', {service:'getClientBy', searchBy:this.searchClientForm.searchBy, value:this.searchClientForm[this.searchClientForm.searchBy]});
         }
         
         this.closeSearchForm();

@@ -139,7 +139,7 @@ export default {
       this.closeAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
-      await this.$parent.fetchEvents({start, end});
+      await this.$emit('fetchEvents', {start, end});
       this.$emit('update:showLoader', false);
     }
   }

@@ -123,8 +123,8 @@ export default {
       return re.test(email);
     },
     renderClientByPersonalID: async function(personalID){
-
-      await this.$parent.renderClientBy('getClientBy', 'PersonalID', personalID);
+      //service, searchBy, value, callback
+      await this.$emit('renderClientBy', {service:'getClientBy', searchBy:'PersonalID', value:personalID});
 
     },
     setNewClient: async function(){

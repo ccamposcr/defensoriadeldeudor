@@ -153,7 +153,7 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form :show-loader.sync="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
+    <modal-appointment-form @fetchEvents="fetchEvents" :show-loader.sync="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
 
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>

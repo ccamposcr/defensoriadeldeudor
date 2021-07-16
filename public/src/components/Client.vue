@@ -23,7 +23,7 @@
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="renderLegalCases('userID', user.id, user.id)" variant="primary">Ver Casos</b-button>
+            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Casos</b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
 
@@ -91,9 +91,9 @@
       </ul>
     </div>
 
-    <modal-client-form :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-    <modal-search-form :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users" :location-static-data="locationStaticData" :legal-cases.sync="legalCases"></modal-search-form>
-    <modal-legal-case-form :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
+    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users" :location-static-data="locationStaticData" :legal-cases.sync="legalCases"></modal-search-form>
+    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
@@ -233,7 +233,7 @@ export default {
 
       this.showLoader = false;
     },
-    renderClientBy: async function(service, searchBy, value, returnResponse){
+    renderClientBy: async function({service, searchBy, value, callback}){
       this.showLoader = true;
 
       const data = await repositories[service](searchBy, value);
@@ -242,8 +242,8 @@ export default {
 
       this.showLoader = false;
       
-      if(returnResponse && response.length){
-        return response[0];
+      if(callback && response.length){
+        callback(response);
       }
     },
     showSearchClientModal: function(){
@@ -255,7 +255,7 @@ export default {
         this.$bvModal.show('bv-modal-client-form');
       }
     },
-    renderLegalCases: async function(searchBy, value, userID, returnResponse){      
+    renderLegalCases: async function({searchBy, value, userID, callback}){      
       this.showLoader = true;
 
       const data = await repositories.getLegalCasesBy(searchBy, value);
@@ -266,8 +266,8 @@ export default {
 
       this.showLoader = false;
 
-      if(returnResponse && response.length){
-        return response;
+      if(callback && response.length){
+        callback(response);
       }
     },
     isClientInUse: async function(id){
@@ -413,13 +413,13 @@ export default {
     },
     loadDataFromURLParams: async function(params){
       if(params.userID){
-
-        await this.renderClientBy('getClientBy', 'id', params.userID);
+        //service, searchBy, value, callback
+        await this.renderClientBy({service:'getClientBy', searchBy:'id', value:params.userID});
 
       }
       if(params.legalCaseID){
-
-        await this.renderLegalCases('id', params.legalCaseID, params.userID);
+        //searchBy, value, userID, callback
+        await this.renderLegalCases({searchBy:'id', value:params.legalCaseID, userID:params.userID});
 
       }
       if(params.showNewClientForm){
@@ -466,13 +466,15 @@ export default {
     unblockUser: async function(userID){
 
       await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
-      await this.renderClientBy('getClientBy', 'id', userID);
+      //service, searchBy, value, callback
+      await this.renderClientBy({service:'getClientBy', searchBy:'id', value:userID});
 
     },
     unblockLegalCase: async function(legalCaseID, userID){
 
       await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
-      await this.renderLegalCases('id', legalCaseID, userID);
+      //searchBy, value, userID, callback
+      await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
 
     }
   }
