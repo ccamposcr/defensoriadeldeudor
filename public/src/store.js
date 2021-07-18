@@ -14,11 +14,13 @@ export default new Vuex.Store({
             administrativeStatusList: [],
             locationList: [],
         },
-        locationStaticData: {'999': 'Archivo'}
+        locationStaticData: {'999': 'Archivo'},
+        isClientInUse: 0
     },
     getters: {
         users: state => state.users,
-        legalCases: state => userID => state.legalCases[userID]
+        legalCases: state => userID => state.legalCases[userID],
+        isClientInUse: state => state.isClientInUse
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -45,10 +47,11 @@ export default new Vuex.Store({
             state.users = data;
         },
         setLegalCasesBy(state, {data, userID}){
-            //console.log(state);
-            //console.log(response);
-            //console.log(userID);
             Vue.set(state.legalCases, userID, data);
+        },
+        setIsClientInUse(state, data)
+        {
+            state.isClientInUse = data;
         }
         /*setStudents(state, students) {
             state.students = students;
@@ -172,6 +175,21 @@ export default new Vuex.Store({
                 if(callback && response.length){
                     callback(response);
                 }
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getIsClientInUse(context, {id}){
+            try {
+                const data = await repositories.isClientInUse({'id': id});
+                const response = data.response;
+                let isInUse = 0;
+                
+                if( response.length ){
+                    isInUse = response[0].inUse;
+                }
+                context.commit('setIsClientInUse', isInUse);
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);

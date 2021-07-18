@@ -190,10 +190,10 @@ export default {
     getStaticDataFromDB: async function(){
       this.showLoader = true;
 
-      this.$store.dispatch('getJudicialStatusList');
-      this.$store.dispatch('getSubjectList');
-      this.$store.dispatch('getAdministrativeStatusList');
-      this.$store.dispatch('getLocationListData');
+      await this.$store.dispatch('getJudicialStatusList');
+      await this.$store.dispatch('getSubjectList');
+      await this.$store.dispatch('getAdministrativeStatusList');
+      await this.$store.dispatch('getLocationListData');
       
       this.showLoader = false;
     },
@@ -202,7 +202,7 @@ export default {
 
       this.resetClientVars();
 
-      this.$store.dispatch('getAllClients');
+      await this.$store.dispatch('getAllClients');
 
       this.showLoader = false;
     },
@@ -211,14 +211,14 @@ export default {
 
       this.resetClientVars();
 
-      this.$store.dispatch('getAllUsers');
+      await this.$store.dispatch('getAllUsers');
 
       this.showLoader = false;
     },
     renderClientBy: async function({service, searchBy, value, callback}){
       this.showLoader = true;
 
-      this.$store.dispatch('getClientBy', {service, searchBy, value, callback});
+      await this.$store.dispatch('getClientBy', {service, searchBy, value, callback});
 
       this.showLoader = false;
       
@@ -235,24 +235,17 @@ export default {
     renderLegalCases: async function({searchBy, value, userID, callback}){      
       this.showLoader = true;
 
-      this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
+      await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
 
       this.showLoader = false;
     },
     isClientInUse: async function(id){
       this.showLoader = true;
 
-      const data = await repositories.isClientInUse({'id': id});
-      const response = data.response;
-      let isInUse = 0;
-      
-      if( response.length ){
-        isInUse = response[0].inUse;
-      }
+      await this.$store.dispatch('getIsClientInUse', {id});
 
       this.showLoader = false;
 
-      return isInUse;
     },
     fillClientForm: async function(id){
       this.showLoader = true;
@@ -267,10 +260,8 @@ export default {
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
-
-        let isInUse = await this.isClientInUse(id);
-
-        if(isInUse === '1'){
+        await this.isClientInUse(id);
+        if(this.$store.getters.isClientInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
 
