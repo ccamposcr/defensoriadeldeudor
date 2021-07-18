@@ -48,7 +48,7 @@ export default new Vuex.Store({
             //console.log(state);
             //console.log(response);
             //console.log(userID);
-            state.legalCases[userID] = data;
+            Vue.set(state.legalCases, userID, data);
         }
         /*setStudents(state, students) {
             state.students = students;
