@@ -94,7 +94,7 @@
       </ul>
     </div>
 
-    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser"></modal-client-form>
+    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :editing-user="editingUser"></modal-client-form>
     <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm"></modal-search-form>
     <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
@@ -111,31 +111,12 @@ import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import ModalUpdatePasswordForm from './ModalUpdatePasswordForm.vue';
 import repositories from '../repositories';
 import global from '../global';
-import store from "../store.js";
 
 export default {
   name: 'Client',
   components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
   data () {
     return {
-      clientForm:{
-        id:null,
-        personalID:null,
-        name: null,
-        lastName1: null,
-        lastName2: null,
-        phone: null,
-        email: null,
-        address: null,
-        roleID:'0',
-        status: '1',
-        phone2: '',
-        phone3: '',
-        email2: '',
-        email3: '',
-        job: '',
-        inUse: '0'
-      },
       legalCaseForm:{
         id: null,
         internalCode: null,
@@ -250,11 +231,7 @@ export default {
     fillClientForm: async function(id){
       this.showLoader = true;
 
-      const data = await repositories.getClientBy('id', id);
-      const response = data.response;
-      if( response.length ){
-        this.clientForm = response[0];
-      }
+      await this.$store.dispatch('fillClientForm', {id})
 
       this.showLoader = false;
     },

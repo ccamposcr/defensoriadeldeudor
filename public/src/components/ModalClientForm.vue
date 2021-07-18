@@ -12,42 +12,42 @@
               </ul>
           </div>
           <b-form class="client__new-form">
-              <input type="hidden" v-model="clientForm.id">
+              <input type="hidden" v-model="$store.getters.clientForm.id">
               <b-form-group label-for="personalID" label="Cédula">
-                <b-form-input @blur="checkIfClientAlreadyExists"  v-model="clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
+                <b-form-input @blur="checkIfClientAlreadyExists"  v-model="$store.getters.clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
               </b-form-group>
               <b-form-group label-for="name" label="Nombre">
-                <b-form-input v-model="clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
               </b-form-group>
               <b-form-group label-for="lastName1" label="Primer Apellido">
-                <b-form-input v-model="clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.lastName1" type="text" class="form-control" id="lastName1" placeholder="Primer Apellido"></b-form-input>
               </b-form-group>
               <b-form-group label-for="lastName2" label="Segundo Apellido">
-                <b-form-input v-model="clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.lastName2" type="text" class="form-control" id="lastName1" placeholder="Segundo Apellido"></b-form-input>
               </b-form-group>
               <b-form-group label-for="phone" label="Teléfono principal" v-mask="'####-####'">
-                <b-form-input v-model="clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.phone" type="text" class="form-control" id="phone" placeholder="Teléfono"></b-form-input>
               </b-form-group>
               <b-form-group label-for="phone2" label="Teléfono 2 (opcional)" v-mask="'####-####'">
-                <b-form-input v-model="clientForm.phone2" type="text" class="form-control" id="phone2" placeholder="Teléfono 2"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.phone2" type="text" class="form-control" id="phone2" placeholder="Teléfono 2"></b-form-input>
               </b-form-group>
               <b-form-group label-for="phone3" label="Teléfono 3 (opcional)" v-mask="'####-####'">
-                <b-form-input v-model="clientForm.phone3" type="text" class="form-control" id="phone3" placeholder="Teléfono 3"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.phone3" type="text" class="form-control" id="phone3" placeholder="Teléfono 3"></b-form-input>
               </b-form-group>
               <b-form-group label-for="email" label="Email principal">
-                <b-form-input v-model="clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
               </b-form-group>
               <b-form-group label-for="email2" label="Email 2 (opcional)">
-                <b-form-input v-model="clientForm.email2" type="email" class="form-control" id="email2" placeholder="Email 2"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.email2" type="email" class="form-control" id="email2" placeholder="Email 2"></b-form-input>
               </b-form-group>
               <b-form-group label-for="email3" label="Email 3 (opcional)">
-                <b-form-input v-model="clientForm.email3" type="email" class="form-control" id="email3" placeholder="Email 3"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.email3" type="email" class="form-control" id="email3" placeholder="Email 3"></b-form-input>
               </b-form-group>
               <b-form-group label-for="job" label="Ocupación (opcional)">
-                <b-form-input v-model="clientForm.job" type="text" class="form-control" id="job" placeholder="Ocupación"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.job" type="text" class="form-control" id="job" placeholder="Ocupación"></b-form-input>
               </b-form-group>
               <b-form-group label-for="address" label="Dirección">
-                <b-form-input v-model="clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
+                <b-form-input v-model="$store.getters.clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
               <b-button :disabled="showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
@@ -74,7 +74,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["showLoader", "clientForm", "editingUser"],
+  props: ["showLoader", "editingUser"],
   data () {
     return {
       errors:[],
@@ -87,31 +87,31 @@ export default {
   methods: {
     checkForm: function(callback){
         this.errors = [];
-        if(!this.clientForm.personalID){
+        if(!this.$store.getters.clientForm.personalID){
             this.errors.push("Ingrese una identificación válida");
         }
-        if(!this.clientForm.name){
+        if(!this.$store.getters.clientForm.name){
             this.errors.push("Ingrese un nombre válido");
         }
-        if(!this.clientForm.lastName1){
+        if(!this.$store.getters.clientForm.lastName1){
             this.errors.push("Ingrese un primer apellido válido");
         }
-        if(!this.clientForm.lastName2){
+        if(!this.$store.getters.clientForm.lastName2){
             this.errors.push("Ingrese un segundo apellido válido");
         }
-        if(!this.clientForm.phone){
+        if(!this.$store.getters.clientForm.phone){
             this.errors.push("Ingrese un teléfono válido");
         }
-        if(!this.clientForm.email || !this.validEmail(this.clientForm.email)){
+        if(!this.$store.getters.clientForm.email || !this.validEmail(this.$store.getters.clientForm.email)){
             this.errors.push("Ingrese un email válido");
         }
-        if(this.clientForm.email2 && !this.validEmail(this.clientForm.email2)){
+        if(this.$store.getters.clientForm.email2 && !this.validEmail(this.$store.getters.clientForm.email2)){
             this.errors.push("Ingrese un email 2 válido");
         }
-        if(this.clientForm.email3 && !this.validEmail(this.clientForm.email3)){
+        if(this.$store.getters.clientForm.email3 && !this.validEmail(this.$store.getters.clientForm.email3)){
             this.errors.push("Ingrese un email 3 válido");
         }
-        if(!this.clientForm.address){
+        if(!this.$store.getters.clientForm.address){
             this.errors.push("Ingrese una dirección válida");
         }
         if(!this.errors.length){
@@ -129,9 +129,9 @@ export default {
     },
     setNewClient: async function(){
         this.$emit('update:showLoader', true);
-        const data = await repositories.addNewClient(this.clientForm);
+        const data = await repositories.addNewClient(this.$store.getters.clientForm);
 
-        this.renderClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
 
         this.$emit('update:showLoader', false);
@@ -141,32 +141,40 @@ export default {
     },
     setEditedClient: async function(){
         this.$emit('update:showLoader', true);
-        await repositories.editClient(this.clientForm);
+        await repositories.editClient(this.$store.getters.clientForm);
 
-        await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
+        await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
 
-        this.renderClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
         this.$emit('update:showLoader', false);
     },
     clearClientForm: function(){
-        for(const item in this.clientForm){
-            this.clientForm[item] = null;
-        }
-        this.clientForm.roleID = '0';
-        this.clientForm.status = '1';
-        this.clientForm.inUse = '0'
-        this.clientForm.phone2 = '';
-        this.clientForm.phone3 = '';
-        this.clientForm.email2 = '';
-        this.clientForm.email3 = '';
-        this.clientForm.job = '';
+        const data = {
+          id: '',
+          personalID: '',
+          name: '',
+          lastName1: '',
+          lastName2: '',
+          phone: '',
+          phone2: '',
+          phone3: '',
+          email: '',
+          email2:'',
+          email3: '',
+          job: '',
+          address: '',
+          roleID: '0',
+          status: '1',
+          inUse: '0'
+        };
+        this.$store.commit('setClientForm', data);
         this.errors = [];
     },
     onCloseClientForm: async function(){
-      if( this.clientForm.id ){
+      if( this.$store.getters.clientForm.id ){
         this.$emit('update:showLoader', true);
-        await repositories.updateClientIsInUse({'id': this.clientForm.id, 'inUse': 0});
+        await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
         this.$emit('update:showLoader', false);
       }
       this.clearClientForm();
@@ -179,10 +187,10 @@ export default {
     },
     checkIfClientAlreadyExists: async function(){
       this.$emit('update:showLoader', true);
-      const data = await repositories.getClientBy('personalID', this.clientForm.personalID);
+      const data = await repositories.getClientBy('personalID', this.$store.getters.clientForm.personalID);
       const response = data.response;
       if( response.length ){
-        this.renderClientByPersonalID(this.clientForm.personalID);
+        this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
       }
       this.$emit('update:showLoader', false);

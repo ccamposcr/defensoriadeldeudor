@@ -15,12 +15,31 @@ export default new Vuex.Store({
             locationList: [],
         },
         locationStaticData: {'999': 'Archivo'},
-        isClientInUse: 0
+        isClientInUse: 0,
+        clientForm:{
+            id:null,
+            personalID:null,
+            name: null,
+            lastName1: null,
+            lastName2: null,
+            phone: null,
+            email: null,
+            address: null,
+            roleID:'0',
+            status: '1',
+            phone2: '',
+            phone3: '',
+            email2: '',
+            email3: '',
+            job: '',
+            inUse: '0'
+        }
     },
     getters: {
         users: state => state.users,
         legalCases: state => userID => state.legalCases[userID],
-        isClientInUse: state => state.isClientInUse
+        isClientInUse: state => state.isClientInUse,
+        clientForm: state => state.clientForm
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -49,9 +68,11 @@ export default new Vuex.Store({
         setLegalCasesBy(state, {data, userID}){
             Vue.set(state.legalCases, userID, data);
         },
-        setIsClientInUse(state, data)
-        {
+        setIsClientInUse(state, data){
             state.isClientInUse = data;
+        },
+        setClientForm(state, data){
+            state.clientForm = data;
         }
         /*setStudents(state, students) {
             state.students = students;
@@ -169,7 +190,6 @@ export default new Vuex.Store({
                 response.forEach(item => {
                     item.location = item.locationID != '999' ? (item.name ? item.name : '') + ' ' + (item.lastName1 ? item.lastName1 : '') + ' ' + (item.lastName2 ? item.lastName2 : '') : context.state.locationStaticData['999'];
                 });
-
                 context.commit('setLegalCasesBy', {data:response, userID});
 
                 if(callback && response.length){
@@ -190,6 +210,18 @@ export default new Vuex.Store({
                     isInUse = response[0].inUse;
                 }
                 context.commit('setIsClientInUse', isInUse);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async fillClientForm(context, {id}){
+            try {
+                const data = await repositories.getClientBy('id', id);
+                const response = data.response;
+                if( response.length ){
+                    context.commit('setClientForm', response[0]);
+                }
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
