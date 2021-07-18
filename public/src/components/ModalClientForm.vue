@@ -74,7 +74,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["showLoader", "clientForm", "editingUser", "users"],
+  props: ["showLoader", "clientForm", "editingUser"],
   data () {
     return {
       errors:[],

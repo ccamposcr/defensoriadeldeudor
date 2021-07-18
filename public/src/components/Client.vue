@@ -6,9 +6,9 @@
       Ver todos los Clientes
     </b-button>
 
-    <div v-show="users.length">
+    <div v-show="$store.getters.users">
       <ul class="client__list">
-        <li class="list__user" v-bind:key="user.id" v-for="user in users">
+        <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
           <p v-if="user.personalID && user.personalID != null"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
           <p v-if="user.name && user.name != null"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
           <p v-if="user.phone && user.phone != null" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
@@ -34,9 +34,9 @@
 
 
           <!-- LEGAL CASES -->
-          <div v-if="legalCases[user.id]">
+          <div v-if="$store.getters.legalCases(user.id)">
             <ul class="user__legal-cases">
-              <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in legalCases[user.id]">
+              <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in $store.getters.legalCases(user.id)">
                 <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
                 <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
                 <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
@@ -86,7 +86,7 @@
               </li>
             </ul>
           </div>
-          <span class="label-danger" v-if="legalCases[user.id] && !legalCases[user.id].length">No hay casos</span>
+          <span class="label-danger" v-if="$store.getters.legalCases(user.id) && !$store.getters.legalCases(user.id).length">No hay casos</span>
           <!-- END LEGAL CASES -->
 
 
@@ -94,9 +94,9 @@
       </ul>
     </div>
 
-    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser" :users.sync="users"></modal-client-form>
-    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm" :users.sync="users" :location-static-data="locationStaticData" :legal-cases.sync="legalCases"></modal-search-form>
-    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :static-data="staticData" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :client-form="clientForm" :editing-user="editingUser"></modal-client-form>
+    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm"></modal-search-form>
+    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
     <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
@@ -111,19 +111,13 @@ import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import ModalUpdatePasswordForm from './ModalUpdatePasswordForm.vue';
 import repositories from '../repositories';
 import global from '../global';
+import store from "../store.js";
 
 export default {
   name: 'Client',
   components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
   data () {
     return {
-      staticData:{
-        judicialStatusList: [],
-        subjectList: [],
-        administrativeStatusList: [],
-        locationList: []
-      },
-      users: [],
       clientForm:{
         id:null,
         personalID:null,
@@ -171,14 +165,12 @@ export default {
         password: null,
         confirmPassword: null
       },
-      legalCases: [],
       editingLegalCase: false,
       legalCaseUserId: null,
       today: '',
       editingUser: false,
       legalCaseNotes: [],
       legalPaymentDates: [],
-      locationStaticData: {'999': 'Archivo'},
       systemUsersInterface: false,
       updatePasswordUserId: null,
       showLoader: false
@@ -198,22 +190,10 @@ export default {
     getStaticDataFromDB: async function(){
       this.showLoader = true;
 
-      const judicialStatusListData = await repositories.getJudicialStatusList();
-      this.staticData.judicialStatusList = judicialStatusListData.response;
-
-      const subjectListData = await repositories.getSubjectList();
-      this.staticData.subjectList = subjectListData.response;
-      
-      const administrativeStatusListData = await repositories.getAdministrativeStatusList();
-      this.staticData.administrativeStatusList = administrativeStatusListData.response;
-
-      const locationListData = await repositories.getClientBy('roleID !=', '0');
-      this.staticData.locationList = locationListData.response;
-
-      this.staticData.locationList.forEach(item => {
-        item.location = item.name + ' ' + item.lastName1 + ' ' + item.lastName2;  
-      });
-      this.staticData.locationList.push({'location': this.locationStaticData['999'], 'id': '999'});
+      this.$store.dispatch('getJudicialStatusList');
+      this.$store.dispatch('getSubjectList');
+      this.$store.dispatch('getAdministrativeStatusList');
+      this.$store.dispatch('getLocationListData');
       
       this.showLoader = false;
     },
@@ -222,8 +202,7 @@ export default {
 
       this.resetClientVars();
 
-      const data = await repositories.getAllClients();
-      this.users = data.response;
+      this.$store.dispatch('getAllClients');
 
       this.showLoader = false;
     },
@@ -231,23 +210,18 @@ export default {
       this.showLoader = true;
 
       this.resetClientVars();
-      const data = await repositories.getAllUsers();
-      this.users = data.response;
+
+      this.$store.dispatch('getAllUsers');
 
       this.showLoader = false;
     },
     renderClientBy: async function({service, searchBy, value, callback}){
       this.showLoader = true;
 
-      const data = await repositories[service](searchBy, value);
-      const response = data.response;
-      this.users = response;
+      this.$store.dispatch('getClientBy', {service, searchBy, value, callback});
 
       this.showLoader = false;
       
-      if(callback && response.length){
-        callback(response);
-      }
     },
     showSearchClientModal: function(){
       this.$bvModal.show('bv-modal-search-form');
@@ -261,17 +235,9 @@ export default {
     renderLegalCases: async function({searchBy, value, userID, callback}){      
       this.showLoader = true;
 
-      const data = await repositories.getLegalCasesBy(searchBy, value);
-      const response = data.response;
-
-      const dataFormatted = this.buildLocation(response);
-      this.$set(this.legalCases, userID, dataFormatted);
+      this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
 
       this.showLoader = false;
-
-      if(callback && response.length){
-        callback(response);
-      }
     },
     isClientInUse: async function(id){
       this.showLoader = true;
@@ -287,12 +253,6 @@ export default {
       this.showLoader = false;
 
       return isInUse;
-    },
-    buildLocation: function(data){
-      data.forEach(item => {
-        item.location = item.locationID != '999' ? (item.name ? item.name : '') + ' ' + (item.lastName1 ? item.lastName1 : '') + ' ' + (item.lastName2 ? item.lastName2 : '') : this.locationStaticData['999'];
-      });
-      return data;
     },
     fillClientForm: async function(id){
       this.showLoader = true;
@@ -404,8 +364,8 @@ export default {
       this.showLoader = false;
     },
     resetClientVars: function(){
-      this.legalCases = [];
-      this.legalCaseNotes = [];
+      //this.legalCases = [];
+      //this.legalCaseNotes = [];
     },
     showLegalCaseForm: async function(userID){
       if( this.checkAccessList('agregar caso') ){

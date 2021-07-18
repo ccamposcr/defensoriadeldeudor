@@ -59,7 +59,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalSearchForm',
-  props: ["showLoader", "searchClientForm", "users", "locationStaticData", "legalCases"],
+  props: ["showLoader", "searchClientForm", "locationStaticData", "legalCases"],
   data () {
     return {
         errors:[]
