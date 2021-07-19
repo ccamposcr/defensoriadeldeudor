@@ -14,6 +14,7 @@ export default new Vuex.Store({
             subjectList: [],
             administrativeStatusList: [],
             locationList: [],
+            appointmentTypeList: []
         },
         locationStaticData: {'999': 'Archivo'},
         isClientInUse: 0,
@@ -57,7 +58,21 @@ export default new Vuex.Store({
         },
         legalCaseNotes: [],
         legalPaymentDates: [],
-        currentUserIdUpdatePassword: ''
+        currentUserIdUpdatePassword: '',
+        legalCasePaymentDates: [],
+        appointmentsDates: [],
+        events: [],
+        appointmentForm: {
+            date: '',
+            userID: '',
+            internalUserID: '',
+            madeByUserID: '',
+            filterBy: '',
+            clientList: [],
+            usersList: [],
+            alertColor: '#28a745',
+            appointmentTypeID: ''
+        }
     },
     getters: {
         users: state => state.users,
@@ -71,7 +86,12 @@ export default new Vuex.Store({
         legalCaseNotes: state => legalCaseID => state.legalCaseNotes[legalCaseID],
         legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID],
         currentUserIdUpdatePassword: state => state.currentUserIdUpdatePassword,
-        showLoader: state => state.showLoader
+        showLoader: state => state.showLoader,
+        legalCasePaymentDates: state => state.legalCasePaymentDates,
+        appointmentsDates: state => state.appointmentsDates,
+        events: state => state.events,
+        staticData: state => state.staticData,
+        appointmentForm: state => state.appointmentForm
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -90,6 +110,9 @@ export default new Vuex.Store({
         },
         setLocationList(state, data){
             state.staticData.locationList = data;
+        },
+        setAppointmentTypeList(state, data){
+            state.staticData.appointmentTypeList = data;
         },
         setClients(state, data){
             state.users = data;
@@ -138,7 +161,22 @@ export default new Vuex.Store({
         },
         setShowLoader(state, data){
             state.showLoader = data;
-        }
+        },
+        setLegalCasePaymentDates(state, data){
+            state.legalCasePaymentDates = data;
+        },
+        setAppointmentsDates(state, data){
+            state.appointmentsDates = data;
+        },
+        setEvents(state, data){
+            state.events = data;
+        },
+        setAppointmentForm(state, data){
+            state.appointmentForm = data;
+        },
+        setAppointmentFormBy(state, {data, by}){
+            Vue.set(state.appointmentForm, by, data);
+        },
         /*setStudents(state, students) {
             state.students = students;
         },
@@ -372,6 +410,35 @@ export default new Vuex.Store({
                 const data = await repositories.getLegalPaymentDatesBy(searchBy, legalCaseID);
                 const response = data.response;
                 context.commit('setLegalPaymentDatesBy', {data:response, legalCaseID});
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        }, async getAppointmentTypeList(context){
+            try {
+                const data = await repositories.getAppointmentTypeList();
+                const response = data.response;
+                context.commit('setAppointmentTypeList', response);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getPaymentDatesByDateRange(context, {startDate, endDate}){
+            try {
+                const data = await repositories.getPaymentDatesByDateRange(startDate, endDate);
+                const response = data.response;
+                context.commit('setLegalCasePaymentDates', response);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getAppointmentsByDateRange(context, {searchBy, startDate, endDate}){
+            try {
+                const data = await repositories.getAppointmentsByDateRange(searchBy, startDate, endDate);
+                const response = data.response;
+                context.commit('setAppointmentsDates', response);
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);

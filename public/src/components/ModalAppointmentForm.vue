@@ -13,33 +13,33 @@
       </div>
       <b-form class="appointment__new-form">
           <b-form-group>
-            <div><strong>Fecha y Hora de la Cita:</strong> {{appointmentForm.date}}</div>
+            <div><strong>Fecha y Hora de la Cita:</strong> {{$store.getters.appointmentForm.date}}</div>
           </b-form-group>
 
           <b-form-group label-for="client" label="Seleccione el cliente">
-            <b-form-select id="client" v-model="appointmentForm.userID" :options="appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
+            <b-form-select id="client" v-model="$store.getters.appointmentForm.userID" :options="$store.getters.appointmentForm.clientList" value-field="id" text-field="client"></b-form-select>
             <strong>Filtre la lista de clientes para una búsqueda más rápida</strong>
           </b-form-group>
 
           <b-form-group label-for="filter" label="Filtrar lista clientes">
-            <b-form-input @keyup="filter" v-model="appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Ingrese la Cédula, o el Nombre, o el Apellido"></b-form-input>
+            <b-form-input @keyup="filter" v-model="$store.getters.appointmentForm.filterBy" type="text" class="form-control" id="filter" placeholder="Ingrese la Cédula, o el Nombre, o el Apellido"></b-form-input>
           </b-form-group>
           
 
           <b-form-group label="Ó agregue un Cliente Nuevo">
-            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
+            <b-button @click="$router.push('/clientes?showNewClientForm=true&appointmentDate='+$store.getters.appointmentForm.date)" variant="success">Agregar Cliente Nuevo</b-button>
           </b-form-group>
 
           <b-form-group label-for="internalUser" label="Asigne el funcionario que atiende la cita">
-            <b-form-select id="internalUser" v-model="appointmentForm.internalUserID" :options="appointmentForm.usersList" value-field="id" text-field="client"></b-form-select>
+            <b-form-select id="internalUser" v-model="$store.getters.appointmentForm.internalUserID" :options="$store.getters.appointmentForm.usersList" value-field="id" text-field="client"></b-form-select>
           </b-form-group>
 
           <b-form-group v-if="checkAccessList('agendar tipo cita')" label-for="appointmentType" label="Tipo de Cita">
-            <b-form-select id="appointmentType" v-model="appointmentForm.appointmentTypeID" :options="staticData.appointmentTypeList" value-field="id" text-field="type"></b-form-select>
+            <b-form-select id="appointmentType" v-model="$store.getters.appointmentForm.appointmentTypeID" :options="$store.getters.staticData.appointmentTypeList" value-field="id" text-field="type"></b-form-select>
           </b-form-group>
 
           <b-form-group label-for="filter" label="Seleccione el color de la alerta">
-            <b-form-input v-model="appointmentForm.alertColor" type="color" class="form-control" id="filter" placeholder="Color de la alerta"></b-form-input>
+            <b-form-input v-model="$store.getters.appointmentForm.alertColor" type="color" class="form-control" id="filter" placeholder="Color de la alerta"></b-form-input>
           </b-form-group>
 
           <b-button :disabled="$store.getters.showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
@@ -65,7 +65,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
-  props: ["appointmentForm", "editingAppointment", "date", "staticData"],
+  props: ["editingAppointment", "date"],
   data () {
     return {
       errors:[],
@@ -78,10 +78,10 @@ export default {
     },
     checkForm: function(callback){
         this.errors = [];
-        if(!this.appointmentForm.userID){
+        if(!this.$store.getters.appointmentForm.userID){
             this.errors.push("Seleccione un cliente");
         }
-        if(!this.appointmentForm.internalUserID){
+        if(!this.$store.getters.appointmentForm.internalUserID){
             this.errors.push("Seleccione un funcionario");
         }
         if(!this.errors.length){
@@ -89,10 +89,18 @@ export default {
         }
     },
     clearAppointmentForm: function(){
-      for(const item in this.appointmentForm){
-          this.appointmentForm[item] = null;
-      }
-      this.appointmentForm.alertColor = '#28a745';
+      const data = {
+          date: '',
+          userID: '',
+          internalUserID: '',
+          madeByUserID: '',
+          filterBy: '',
+          clientList: [],
+          usersList: [],
+          alertColor: '#28a745',
+          appointmentTypeID: ''
+      };
+      this.$store.commit('setAppointmentForm', data);
       this.errors = [];
     },
     closeAppointmentForm: function(){
@@ -107,13 +115,15 @@ export default {
       this.clientList = dataClients.response;
 
       const clientsFormatted = this.buildUserClientName(this.clientList);
-      this.$set(this.appointmentForm, 'clientList', clientsFormatted);
+      //this.$set(this.appointmentForm, 'clientList', clientsFormatted);
+      this.$store.commit('setAppointmentFormBy', {data:clientsFormatted, by:'clientList'});
 
       const dataUsers = await repositories.getAllUsers();
       this.usersList = dataUsers.response;
 
       const usersFormatted = this.buildUserClientName(this.usersList);
-      this.$set(this.appointmentForm, 'usersList', usersFormatted);
+      //this.$set(this.appointmentForm, 'usersList', usersFormatted);
+      this.$store.commit('setAppointmentFormBy', {data:usersFormatted, by:'usersList'});
     
       this.$store.commit('setShowLoader', false);
     },
@@ -125,17 +135,19 @@ export default {
       return data;
     },
     filter: function(){
-      this.appointmentForm.clientList =  this.clientList.filter((client) => {
-          return client.personalID.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
-                client.name.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
-                client.lastName1.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase()) ||
-                client.lastName2.toLowerCase().includes(this.appointmentForm.filterBy.toLowerCase());
+      this.$store.getters.appointmentForm.clientList =  this.clientList.filter((client) => {
+          return client.personalID.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
+                client.name.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
+                client.lastName1.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
+                client.lastName2.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase());
       });
     },
     setNewAppointment: async function(){
       this.$store.commit('setShowLoader', true);
-      this.appointmentForm.madeByUserID = loggedINUserID;
-      await repositories.addNewAppointment(this.appointmentForm);
+      //TODO
+      //this.appointmentForm.madeByUserID = loggedINUserID;
+      this.$store.commit('setAppointmentFormBy', {data:loggedINUserID, by:'madeByUserID'});
+      await repositories.addNewAppointment(this.$store.getters.appointmentForm);
       this.closeAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;

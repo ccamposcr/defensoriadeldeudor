@@ -20,16 +20,16 @@
                     <b-form-input v-model="$store.getters.legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
-                    <b-form-select id="subject" v-model="$store.getters.legalCaseForm.subjectID" :options="$store.state.staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
+                    <b-form-select id="subject" v-model="$store.getters.legalCaseForm.subjectID" :options="$store.getters.staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="judicialStatus" label="Estado Judicial">
-                    <b-form-select id="judicialStatus" v-model="$store.getters.legalCaseForm.judicialStatusID" :options="$store.state.staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
+                    <b-form-select id="judicialStatus" v-model="$store.getters.legalCaseForm.judicialStatusID" :options="$store.getters.staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
-                    <b-form-select id="administrativeStatus" v-model="$store.getters.legalCaseForm.administrativeStatusID" :options="$store.state.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
+                    <b-form-select id="administrativeStatus" v-model="$store.getters.legalCaseForm.administrativeStatusID" :options="$store.getters.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="location" label="Ubicación del expediente">
-                    <b-form-select id="location" v-model="$store.getters.legalCaseForm.locationID" :options="$store.state.staticData.locationList" value-field="id" text-field="location"></b-form-select>
+                    <b-form-select id="location" v-model="$store.getters.legalCaseForm.locationID" :options="$store.getters.staticData.locationList" value-field="id" text-field="location"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="note" label="Nueva nota (opcional)">
                     <b-form-textarea id="note" v-model="$store.getters.legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>

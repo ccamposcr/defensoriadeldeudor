@@ -81,7 +81,7 @@
         <v-sheet height="800">
           <v-calendar
             ref="calendar"
-            :events="events"
+            :events="$store.getters.events"
             color="primary"
             :type="type"
             v-model="value"
@@ -153,7 +153,7 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form @fetchEvents="fetchEvents" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
+    <modal-appointment-form @fetchEvents="fetchEvents" :editing-appointment="editingAppointment" :date="date"></modal-appointment-form>
 
   </div>
 </template>
@@ -170,7 +170,6 @@
       return{
         value: '',
         today: '',
-        events: [],
         selectedOpen: false,
         selectedElement: null,
         selectedEvent: {},
@@ -180,24 +179,10 @@
           week: 'Semana'
         },
         ready: false,
-        appointmentForm: {
-          date: null,
-          userID: null,
-          internalUserID: null,
-          madeByUserID: null,
-          filterBy: null,
-          clientList: [],
-          usersList: [],
-          alertColor: '#28a745',
-          appointmentTypeID: null
-        },
         editingAppointment: false,
         date:{
           start: null,
           end: null
-        },
-        staticData:{
-          appointmentTypeList: []
         }
       }
     },
@@ -228,8 +213,7 @@
       getStaticDataFromDB: async function(){
         this.$store.commit('setShowLoader', true);
 
-        const appointmentTypeListData = await repositories.getAppointmentTypeList();
-        this.staticData.appointmentTypeList = appointmentTypeListData.response;
+        await this.$store.dispatch('getAppointmentTypeList');
 
         this.$store.commit('setShowLoader', false);
       },
@@ -250,12 +234,10 @@
         const startDate = this.date.start.date;
         const endDate = this.date.end.date;
 
-        const dataLegalCases = await repositories.getPaymentDatesByDateRange(startDate, endDate);
+        await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
 
-        const responseLegalCases = dataLegalCases.response;
-
-        if( responseLegalCases.length ){
-          responseLegalCases.forEach(item => {
+        if( this.$store.getters.legalCasePaymentDates.length ){
+          this.$store.getters.legalCasePaymentDates.forEach(item => {
             item.name = 'Cobro -> N.: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
             item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') +'<br/><strong>Número de expediente:</strong> ' + item.internalCode + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             item.href = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
@@ -264,12 +246,10 @@
           });
         }
 
-        const dataAppointments = await repositories.getAppointmentsByDateRange('date', startDate, endDate);
+        await this.$store.dispatch('getAppointmentsByDateRange', {searchBy: 'date', startDate, endDate});
 
-        const responseAppointments = dataAppointments.response;
-
-        if( responseAppointments.length ){
-          responseAppointments.forEach(item => {
+        if( this.$store.getters.appointmentsDates.length ){
+          this.$store.getters.appointmentsDates.forEach(item => {
             item.name = 'Cita -> ' + (item.type ? item.type + ' -> ' : '') + item.clientUserName + ' ' + item.clientLastName1;
             item.details = '<strong>Cita:</strong> '+ item.date + '<br/><strong>Cliente:</strong> ' + item.clientUserName + ' ' + item.clientLastName1 + ' ' + item.clientLastName2
             + (item.internalUserUserName ? '<br/><strong>Funcionario asignado:</strong> ' + item.internalUserUserName + ' ' + item.internalUserLastName1 + ' ' + item.internalUserLastName2 : '')
@@ -281,9 +261,11 @@
           });
         }
 
-        const response = responseLegalCases.concat(responseAppointments);
+        const paymentsArray = this.$store.getters.legalCasePaymentDates;
+        const appointmentsArray = this.$store.getters.appointmentsDates;
 
-        this.events = response;
+        const events = paymentsArray.concat(appointmentsArray);
+        this.$store.commit('setEvents', events);
 
         this.$store.commit('setShowLoader', false);
         
@@ -319,7 +301,9 @@
       },
       showAppointmentModal: function({ date, hour }){
         if( this.checkAccessList('agendar cita') ){
-          this.$set(this.appointmentForm, 'date', date + ' ' + hour +':00');
+          const data = date + ' ' + hour +':00';
+          this.$store.commit('setAppointmentFormBy', {data:data, by:'date'});
+          //this.$set(this.appointmentForm, 'date', );
           this.$bvModal.show('bv-modal-appointment-form');
         }
       },
@@ -334,11 +318,13 @@
       },
       loadDataFromURLParams: async function(params){
         if(this.checkAccessList('agendar cita') && params.appointmentDate){
-          this.$set(this.appointmentForm, 'date', params.appointmentDate);
+          this.$store.commit('setAppointmentFormBy', {data:params.appointmentDate, by:'date'});
+          //this.$set(this.appointmentForm, 'date', params.appointmentDate);
           this.$bvModal.show('bv-modal-appointment-form');
         }
         if(this.checkAccessList('agendar cita') && params.clientID){
-          this.$set(this.appointmentForm, 'userID', params.clientID);
+          this.$store.commit('setAppointmentFormBy', {data:params.clientID, by:'userID'});
+          //this.$set(this.appointmentForm, 'userID', params.clientID);
         }
       },
       sync: function(){
