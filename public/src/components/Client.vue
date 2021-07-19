@@ -95,7 +95,7 @@
     </div>
 
     <modal-client-form @renderClientBy="renderClientBy" :editing-user="editingUser"></modal-client-form>
-    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :search-client-form="searchClientForm"></modal-search-form>
+    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy"></modal-search-form>
     <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
     <modal-update-password-form :update-password-form="updatePasswordForm"></modal-update-password-form>
 
@@ -115,13 +115,6 @@ export default {
   components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
   data () {
     return {
-      searchClientForm:{
-        personalID: null,
-        name: null,
-        code: null,
-        internalCode: null,
-        searchBy: 'personalID'
-      },
       updatePasswordForm:{
         password: null,
         confirmPassword: null

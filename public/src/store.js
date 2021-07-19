@@ -73,7 +73,14 @@ export default new Vuex.Store({
             alertColor: '#28a745',
             appointmentTypeID: ''
         },
-        appointmentOriginalClientList: []
+        appointmentOriginalClientList: [],
+        searchClientForm:{
+            personalID: '',
+            name: '',
+            code: '',
+            internalCode: '',
+            searchBy: 'personalID'
+        }
     },
     getters: {
         users: state => state.users,
@@ -93,7 +100,8 @@ export default new Vuex.Store({
         events: state => state.events,
         staticData: state => state.staticData,
         appointmentForm: state => state.appointmentForm,
-        appointmentOriginalClientList: state => state.appointmentOriginalClientList
+        appointmentOriginalClientList: state => state.appointmentOriginalClientList,
+        searchClientForm: state => state.searchClientForm
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -181,6 +189,9 @@ export default new Vuex.Store({
         },
         setAppointmentOriginalClientList(state, data){
             state.appointmentOriginalClientList = data;
+        },
+        setSearchClientForm(state, data){
+            state.searchClientForm = data;
         }
         /*setStudents(state, students) {
             state.students = students;
