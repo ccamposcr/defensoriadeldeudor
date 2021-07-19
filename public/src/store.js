@@ -49,13 +49,14 @@ export default new Vuex.Store({
             code: '',
             inUse: '0'
         },
-        currentLegalCaseUserId: 0,
+        currentLegalCaseUserId: '',
         paymentDates:{
             legalCaseID: '',
             dates: []
         },
         legalCaseNotes: [],
-        legalPaymentDates: []
+        legalPaymentDates: [],
+        currentUserIdUpdatePassword: ''
     },
     getters: {
         users: state => state.users,
@@ -67,7 +68,8 @@ export default new Vuex.Store({
         currentLegalCaseUserId: state => state.currentLegalCaseUserId,
         paymentDates: state => state.paymentDates,
         legalCaseNotes: state => legalCaseID => state.legalCaseNotes[legalCaseID],
-        legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID]
+        legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID],
+        currentUserIdUpdatePassword: state => state.currentUserIdUpdatePassword
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -128,6 +130,9 @@ export default new Vuex.Store({
         },
         setLegalPaymentDates(state, data){
             state.legalPaymentDates = data;
+        },
+        setCurrentUserIdUpdatePassword(state, data){
+            state.currentUserIdUpdatePassword = data;
         }
         /*setStudents(state, students) {
             state.students = students;
@@ -361,7 +366,6 @@ export default new Vuex.Store({
             try {
                 const data = await repositories.getLegalPaymentDatesBy(searchBy, legalCaseID);
                 const response = data.response;
-                //this.$set(this.legalPaymentDates, legalCaseID, data.response);
                 context.commit('setLegalPaymentDatesBy', {data:response, legalCaseID});
             }catch (error) {
                 //context.commit('showError', error);

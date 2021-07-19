@@ -97,7 +97,7 @@
     <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :editing-user="editingUser"></modal-client-form>
     <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm"></modal-search-form>
     <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
-    <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
+    <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
     </div>
@@ -132,7 +132,6 @@ export default {
       today: '',
       editingUser: false,
       systemUsersInterface: false,
-      updatePasswordUserId: null,
       showLoader: false
     }
   },
@@ -284,20 +283,12 @@ export default {
     renderLegalPaymentDates: async function(legalCaseID){
       this.showLoader = true;
 
-      //const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
-      //this.$set(this.legalPaymentDates, legalCaseID, data.response);
-
       await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
 
       this.showLoader = false;
     },
     resetClientVars: function(){
-      const tmpData = {
-          legalCaseID: '',
-          dates: []
-      }
-      //TODO
-      //this.$store.commit('setPaymentDates', tmpData);
+      this.$store.commit('setLegalPaymentDates', []);
       this.$store.commit('setLegalCaseNotes', []);
       this.$store.commit('setLegalCases', []);
     },
@@ -305,7 +296,6 @@ export default {
       if( this.checkAccessList('agregar caso') ){
         this.editingLegalCase = false;
         this.$store.commit('setCurrentLegalCaseUserId', userID);
-        //this.legalCaseUserId = userID;
         this.$bvModal.show('bv-modal-legal-case-form');
       }
     },
@@ -340,15 +330,13 @@ export default {
     deleteUser: async function(userID){
       this.showLoader = true;
 
-      const data = {};
-      data.id = userID;
-      await repositories.deleteUser(data);
+      await repositories.deleteUser({id:userID});
       await this.renderAllUsers();
 
       this.showLoader = false;
     },
     updatePassword: async function(userID){
-      this.updatePasswordUserId = userID;
+      this.$store.commit('setCurrentUserIdUpdatePassword', userID);
       this.$bvModal.show('bv-modal-update-password-form');
     },
     removePaymentDate: async function(legalPaymentDateID, legalCaseID){
@@ -363,14 +351,16 @@ export default {
     },
     unblockUser: async function(userID){
 
-      await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
+      await this.$store.dispatch('updateClientIsInUse', {id: userID, inUse: 0});
+      //await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
       //service, searchBy, value, callback
       await this.renderClientBy({service:'getClientBy', searchBy:'id', value:userID});
 
     },
     unblockLegalCase: async function(legalCaseID, userID){
 
-      await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
+      await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
+      //await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
       //searchBy, value, userID, callback
       await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
 

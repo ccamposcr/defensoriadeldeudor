@@ -39,7 +39,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
-  props: ["showLoader", "updatePasswordForm", "updatePasswordUserId"],
+  props: ["showLoader", "updatePasswordForm"],
   data () {
     return {
         errors:[]
@@ -72,7 +72,7 @@ export default {
     },
     updatePassword: async function(){
         this.$emit('update:showLoader', true);
-        await repositories.updatePassword(this.updatePasswordUserId, this.updatePasswordForm);
+        await repositories.updatePassword(this.$store.getters.currentUserIdUpdatePassword, this.updatePasswordForm);
         this.closeUpdatePasswordForm();
         this.$emit('update:showLoader', false);
       }
