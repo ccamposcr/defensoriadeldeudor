@@ -126,6 +126,7 @@ export default {
     setNewAppointment: async function(){
       this.$store.commit('setShowLoader', true);
       this.$store.commit('setAppointmentFormBy', {data:loggedINUserID, by:'madeByUserID'});
+      //OK
       await repositories.addNewAppointment(this.$store.getters.appointmentForm);
       this.closeAppointmentForm();
       const start = this.date.start;

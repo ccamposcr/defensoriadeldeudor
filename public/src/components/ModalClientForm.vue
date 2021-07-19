@@ -129,6 +129,7 @@ export default {
     },
     setNewClient: async function(){
         this.$store.commit('setShowLoader', true);
+        //OK
         const data = await repositories.addNewClient(this.$store.getters.clientForm);
 
         this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
@@ -141,9 +142,10 @@ export default {
     },
     setEditedClient: async function(){
         this.$store.commit('setShowLoader', true);
+        //OK
         await repositories.editClient(this.$store.getters.clientForm);
 
-        await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
+        await this.$store.dispatch('updateClientIsInUse', {id: this.$store.getters.clientForm.id, inUse: 0});
 
         this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
@@ -174,7 +176,9 @@ export default {
     onCloseClientForm: async function(){
       if( this.$store.getters.clientForm.id ){
         this.$store.commit('setShowLoader', true);
-        await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
+
+        await this.$store.dispatch('updateClientIsInUse', {id: this.$store.getters.clientForm.id, inUse: 0});
+        
         this.$store.commit('setShowLoader', false);
       }
       this.clearClientForm();
@@ -187,6 +191,7 @@ export default {
     },
     checkIfClientAlreadyExists: async function(){
       this.$store.commit('setShowLoader', true);
+      //OK
       const data = await repositories.getClientBy('personalID', this.$store.getters.clientForm.personalID);
       const response = data.response;
       if( response.length ){

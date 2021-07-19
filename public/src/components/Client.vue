@@ -326,7 +326,7 @@ export default {
     },
     deleteUser: async function(userID){
       this.$store.commit('setShowLoader', true);
-
+      //OK
       await repositories.deleteUser({id:userID});
       await this.renderAllUsers();
 
@@ -341,6 +341,7 @@ export default {
 
       const data = {};
       data.id = legalPaymentDateID;
+      //OK
       await repositories.deletePaymentDate(data);
       await this.renderLegalPaymentDates(legalCaseID);
 

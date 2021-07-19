@@ -308,6 +308,7 @@
       },
       cancelAppointment: async function(appointmentID){
         this.$store.commit('setShowLoader', true);
+        //OK
         await repositories.cancelAppointment({id:appointmentID});
         const start = this.date.start;
         const end = this.date.end;

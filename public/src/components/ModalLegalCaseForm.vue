@@ -164,7 +164,9 @@ export default {
     onCloseLegalForm: async function(){
       if( this.$store.getters.legalCaseForm.id ){
         this.$store.commit('setShowLoader', true);
-        await repositories.updateLegalCaseIsInUse({'id': this.$store.getters.legalCaseForm.id, 'inUse': 0});
+
+        await this.$store.dispatch('updateLegalCaseIsInUse', {id: this.$store.getters.legalCaseForm.id, inUse: 0});
+
         this.$store.commit('setShowLoader', false);
       }
       this.clearLegalCaseForm();
@@ -175,6 +177,7 @@ export default {
     setNewLegalCase: async function(){
         this.$store.commit('setShowLoader', true);
         const userID = this.$store.getters.currentLegalCaseUserId;
+        //OK
         const data = await repositories.addNewLegalCase(userID, this.$store.getters.legalCaseForm);
 
         const legalCaseNote = {};
@@ -183,6 +186,7 @@ export default {
         legalCaseNote.note = this.$store.getters.legalCaseForm.note;
 
         if( legalCaseNote.note ){
+          //Ok
           await repositories.addLegalCaseNote(legalCaseNote);
         }
 
@@ -198,6 +202,7 @@ export default {
             'legalCaseID': this.$store.getters.paymentDates.legalCaseID,
             'dates': JSON.stringify(this.$store.getters.paymentDates.dates)
           }
+          //OK
           await repositories.addPaymentDates(paymentDatesStr);
         }
 
@@ -211,9 +216,10 @@ export default {
         this.$store.commit('setShowLoader', true);
         const userID = this.$store.getters.currentLegalCaseUserId;
 
+        //OK
         await repositories.editLegalCase(this.$store.getters.legalCaseForm);
 
-        await repositories.updateLegalCaseIsInUse({'id': this.$store.getters.legalCaseForm.id, 'inUse': 0});
+        await this.$store.dispatch('updateLegalCaseIsInUse', {id: this.$store.getters.legalCaseForm.id, inUse: 0});
 
         //searchBy, value, userID, callback
         await this.$emit('renderLegalCases', {searchBy:'userID', value:userID, userID:userID});
@@ -225,6 +231,7 @@ export default {
         legalCaseNote.note = this.$store.getters.legalCaseForm.note;
 
         if( legalCaseNote.note ){
+          //OK
           await repositories.addLegalCaseNote(legalCaseNote);
           await this.$emit('renderLegalCaseNotes', legalCaseNote.legalCaseID);
         }
@@ -243,6 +250,8 @@ export default {
             'legalCaseID': this.$store.getters.paymentDates.legalCaseID,
             'dates': JSON.stringify(validArrayDates)
           }
+
+          //OK
           await repositories.addPaymentDates(paymentDatesStr);
           await this.$emit('renderLegalPaymentDates', this.$store.getters.paymentDates.legalCaseID);
         }
