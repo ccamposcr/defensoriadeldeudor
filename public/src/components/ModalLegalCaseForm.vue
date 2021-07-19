@@ -12,30 +12,30 @@
                   </ul>
               </div>
               <b-form class="legal__case-form">
-                  <input type="hidden" v-model="legalCaseForm.id">
+                  <input type="hidden" v-model="$store.getters.legalCaseForm.id">
                   <b-form-group label-for="internalCode" label="Número de expediente">
-                    <b-form-input v-model="legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente"></b-form-input>
+                    <b-form-input v-model="$store.getters.legalCaseForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="code" label="Código Interno">
-                    <b-form-input v-model="legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno"></b-form-input>
+                    <b-form-input v-model="$store.getters.legalCaseForm.code" type="text" class="form-control" id="code" placeholder="Código interno"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="subject" label="Naturaleza de expediente">
-                    <b-form-select id="subject" v-model="legalCaseForm.subjectID" :options="$store.state.staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
+                    <b-form-select id="subject" v-model="$store.getters.legalCaseForm.subjectID" :options="$store.state.staticData.subjectList" value-field="id" text-field="subject"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="judicialStatus" label="Estado Judicial">
-                    <b-form-select id="judicialStatus" v-model="legalCaseForm.judicialStatusID" :options="$store.state.staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
+                    <b-form-select id="judicialStatus" v-model="$store.getters.legalCaseForm.judicialStatusID" :options="$store.state.staticData.judicialStatusList" value-field="id" text-field="judicialStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
-                    <b-form-select id="administrativeStatus" v-model="legalCaseForm.administrativeStatusID" :options="$store.state.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
+                    <b-form-select id="administrativeStatus" v-model="$store.getters.legalCaseForm.administrativeStatusID" :options="$store.state.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="location" label="Ubicación del expediente">
-                    <b-form-select id="location" v-model="legalCaseForm.locationID" :options="$store.state.staticData.locationList" value-field="id" text-field="location"></b-form-select>
+                    <b-form-select id="location" v-model="$store.getters.legalCaseForm.locationID" :options="$store.state.staticData.locationList" value-field="id" text-field="location"></b-form-select>
                   </b-form-group>
                   <b-form-group label-for="note" label="Nueva nota (opcional)">
-                    <b-form-textarea id="note" v-model="legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
+                    <b-form-textarea id="note" v-model="$store.getters.legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
                   <b-form-group label-for="totalAmount" label="Monto del caso">
-                    <b-form-input v-model="legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del caso"></b-form-input>
+                    <b-form-input v-model="$store.getters.legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del caso"></b-form-input>
                   </b-form-group>
 
                   <div class="case-form__payments-group">
@@ -65,9 +65,9 @@
                     </b-form-group>
                   </div>
 
-                  <b-form-group label="Listado fechas de pago" v-if="paymentDates.dates.length">
+                  <b-form-group label="Listado fechas de pago" v-if="$store.getters.paymentDates.dates.length">
                       <ul class="case-form__list">
-                          <li class="list__date" :key="index" v-for="(item, index) in paymentDates.dates">
+                          <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDates.dates">
                             <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
                             <b-button v-if="!editingLegalCase" @click.prevent="removePaymentDate(index)" variant="danger">
                               Eliminar
@@ -101,36 +101,37 @@ import moment from 'moment';
 
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["showLoader", "paymentDates", "legalCaseForm", "editingLegalCase", "legalCaseUserId", "today"],
+  props: ["showLoader", "editingLegalCase", "today"],
   data () {
     return {
       errors:[],
       nextPaymentDay: null,
-      numberMonths: 0
+      numberMonths: 0,
+      paymentsArray: []
     }
   },
   methods: {
     checkForm: function(callback){
         this.errors = [];
-        if(!this.legalCaseForm.internalCode){
+        if(!this.$store.getters.legalCaseForm.internalCode){
             this.errors.push("Ingrese el número del expediente");
         }
-        if(!this.legalCaseForm.code){
+        if(!this.$store.getters.legalCaseForm.code){
             this.errors.push("Ingrese el código interno");
         }
-        if(!this.legalCaseForm.subjectID){
+        if(!this.$store.getters.legalCaseForm.subjectID){
             this.errors.push("Seleccione la naturaleza del expediente");
         }
-        if(!this.legalCaseForm.judicialStatusID){
+        if(!this.$store.getters.legalCaseForm.judicialStatusID){
             this.errors.push("Seleccione el estado judicial");
         }
-        if(!this.legalCaseForm.administrativeStatusID){
+        if(!this.$store.getters.legalCaseForm.administrativeStatusID){
             this.errors.push("Seleccione el estado administrativo");
         }
-        if(!this.legalCaseForm.locationID){
+        if(!this.$store.getters.legalCaseForm.locationID){
             this.errors.push("Seleccione la ubicación del expediente");
         }
-        if(!this.legalCaseForm.totalAmount){
+        if(!this.$store.getters.legalCaseForm.totalAmount){
             this.errors.push("Ingrese un monto del caso");
         }
         if(!this.errors.length){
@@ -138,20 +139,39 @@ export default {
         }
     },
     clearLegalCaseForm: function(){
-        for(const item in this.legalCaseForm){
+        /*for(const item in this.legalCaseForm){
             this.legalCaseForm[item] = null;
         }
         this.paymentDates.dates = [];
         this.paymentDates.legalCaseID = null;
         this.legalCaseForm.totalAmount = 0;
-        this.legalCaseForm.inUse = '0';
+        this.legalCaseForm.inUse = '0';*/
+        const data = {
+          id: '',
+          internalCode: '',
+          code: '',
+          subjectID: '',
+          judicialStatusID: '',
+          administrativeStatusID: '',
+          locationID: '',
+          note: '',
+          totalAmount: ''
+        };
+        this.$store.commit('setLegalCaseForm', data);
         this.errors = [];
         this.numberMonths = 0;
+
+        this.paymentsArray = [];
+        const tmpData = {
+            legalCaseID: '',
+            dates: []
+        }
+        this.$store.commit('setPaymentDatesForm', tmpData);
     },
     onCloseLegalForm: async function(){
-      if( this.legalCaseForm.id ){
+      if( this.$store.getters.legalCaseForm.id ){
         this.$emit('update:showLoader', true);
-        await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
+        await repositories.updateLegalCaseIsInUse({'id': this.$store.getters.legalCaseForm.id, 'inUse': 0});
         this.$emit('update:showLoader', false);
       }
       this.clearLegalCaseForm();
@@ -161,23 +181,29 @@ export default {
     },
     setNewLegalCase: async function(){
         this.$emit('update:showLoader', true);
-        const userID = this.legalCaseUserId;
-        const data = await repositories.addNewLegalCase(userID, this.legalCaseForm);
+        const userID = this.$store.getters.currentLegalCaseUserId;
+        const data = await repositories.addNewLegalCase(userID, this.$store.getters.legalCaseForm);
 
         const legalCaseNote = {};
         legalCaseNote.legalCaseID = data.legalCaseID;
         legalCaseNote.userID = loggedINUserID;
-        legalCaseNote.note = this.legalCaseForm.note;
+        legalCaseNote.note = this.$store.getters.legalCaseForm.note;
 
         if( legalCaseNote.note ){
           await repositories.addLegalCaseNote(legalCaseNote);
         }
 
-        if( this.paymentDates.dates.length ){
-          this.paymentDates.legalCaseID = data.legalCaseID;
+        if( this.$store.getters.paymentDates.dates.length ){
+     
+          const tmpData = {
+            legalCaseID: data.legalCaseID,
+            dates: this.$store.getters.paymentDates.dates
+          }
+          this.$store.commit('setPaymentDatesForm', tmpData);
+          //this.paymentDates.legalCaseID = data.legalCaseID;
           const paymentDatesStr = {
-            'legalCaseID': this.paymentDates.legalCaseID,
-            'dates': JSON.stringify(this.paymentDates.dates)
+            'legalCaseID': this.$store.getters.paymentDates.legalCaseID,
+            'dates': JSON.stringify(this.$store.getters.paymentDates.dates)
           }
           await repositories.addPaymentDates(paymentDatesStr);
         }
@@ -190,36 +216,42 @@ export default {
     },
     setEditedLegalCase: async function(){
         this.$emit('update:showLoader', true);
-        const userID = this.legalCaseUserId;
+        const userID = this.$store.getters.currentLegalCaseUserId;
 
-        await repositories.editLegalCase(this.legalCaseForm);
+        await repositories.editLegalCase(this.$store.getters.legalCaseForm);
 
-        await repositories.updateLegalCaseIsInUse({'id': this.legalCaseForm.id, 'inUse': 0});
+        await repositories.updateLegalCaseIsInUse({'id': this.$store.getters.legalCaseForm.id, 'inUse': 0});
 
         //searchBy, value, userID, callback
         await this.$emit('renderLegalCases', {searchBy:'userID', value:userID, userID:userID});
         
 
         const legalCaseNote = {};
-        legalCaseNote.legalCaseID = this.legalCaseForm.legalCaseID;
+        legalCaseNote.legalCaseID = this.$store.getters.legalCaseForm.legalCaseID;
         legalCaseNote.userID = loggedINUserID;
-        legalCaseNote.note = this.legalCaseForm.note;
+        legalCaseNote.note = this.$store.getters.legalCaseForm.note;
 
         if( legalCaseNote.note ){
           await repositories.addLegalCaseNote(legalCaseNote);
           await this.$emit('renderLegalCaseNotes', legalCaseNote.legalCaseID);
         }
 
-        if( this.paymentDates.dates.length ){
-          this.paymentDates.legalCaseID = this.legalCaseForm.legalCaseID;
-          const validArrayDates = this.paymentDates.dates.filter(elm => !elm.id );
+        if( this.$store.getters.paymentDates.dates.length ){
+          //this.paymentDates.legalCaseID = this.$store.getters.legalCaseForm.legalCaseID;
+          const tmpData = {
+            legalCaseID: this.$store.getters.legalCaseForm.legalCaseID,
+            dates: this.$store.getters.paymentDates.dates
+          }
+          this.$store.commit('setPaymentDatesForm', tmpData);
+
+          const validArrayDates = this.$store.getters.paymentDates.dates.filter(elm => !elm.id );
 
           const paymentDatesStr = {
-            'legalCaseID': this.paymentDates.legalCaseID,
+            'legalCaseID': this.$store.getters.paymentDates.legalCaseID,
             'dates': JSON.stringify(validArrayDates)
           }
           await repositories.addPaymentDates(paymentDatesStr);
-          await this.$emit('renderLegalPaymentDates', this.paymentDates.legalCaseID);
+          await this.$emit('renderLegalPaymentDates', this.$store.getters.paymentDates.legalCaseID);
         }
 
         this.closeLegalForm();
@@ -227,21 +259,41 @@ export default {
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){
-        this.paymentDates.dates.push({'date': this.nextPaymentDay});
+        //TODO
+        this.paymentsArray.push({'date': this.nextPaymentDay});
+        //this.paymentDates.dates.push();
+        const tmpData = {
+          legalCaseID: this.$store.getters.paymentDates.legalCaseID,
+          dates: this.paymentsArray
+        }
+        this.$store.commit('setPaymentDatesForm', tmpData);
         this.nextPaymentDay = null;
       }
     },
     removePaymentDate: function(index){
-      this.paymentDates.dates.splice(index, 1);
+      //TODO
+      this.paymentsArray.splice(index, 1);
+      const tmpData = {
+        legalCaseID: this.$store.getters.paymentDates.legalCaseID,
+        dates: this.paymentsArray
+      }
+      this.$store.commit('setPaymentDatesForm', tmpData);
     },
     generateRecurringPayments: function(){
-      this.paymentDates.dates = [];
+      //TODO
+      this.paymentsArray = [];
       if(this.nextPaymentDay && this.numberMonths > 0){
         let datePointer = this.nextPaymentDay;
         for( let i = 0; i < this.numberMonths; i++ ){
-          this.paymentDates.dates.push({'date': datePointer});
+          //TODO
+          this.paymentsArray.push({'date': datePointer});
           datePointer = moment(datePointer + 'T00:00:00').add(1, 'week').format("YYYY-MM-DD");
         }
+        const tmpData = {
+          legalCaseID: this.$store.getters.paymentDates.legalCaseID,
+          dates: this.paymentsArray
+        }
+        this.$store.commit('setPaymentDatesForm', tmpData);
         this.nextPaymentDay = null;
       }
     }

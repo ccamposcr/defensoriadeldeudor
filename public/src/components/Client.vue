@@ -96,7 +96,7 @@
 
     <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :editing-user="editingUser"></modal-client-form>
     <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm"></modal-search-form>
-    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :payment-dates="paymentDates" :legal-case-form="legalCaseForm" :editing-legal-case="editingLegalCase" :legal-case-user-id="legalCaseUserId" :today="today"></modal-legal-case-form>
+    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
     <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm" :update-password-user-id="updatePasswordUserId"></modal-update-password-form>
     <div v-if="showLoader" class="loader">
       <b-spinner large></b-spinner>
@@ -117,24 +117,6 @@ export default {
   components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
   data () {
     return {
-      legalCaseForm:{
-        id: null,
-        internalCode: null,
-        subjectID: null,
-        userID: null,
-        judicialStatusID: null,
-        administrativeStatusID: null,
-        note: null,
-        totalAmount: 0,
-        legalCaseID: null,
-        locationID: null,
-        code: null,
-        inUse: '0'
-      },
-      paymentDates:{
-        legalCaseID: null,
-        dates: []
-      },
       searchClientForm:{
         personalID: null,
         name: null,
@@ -147,7 +129,6 @@ export default {
         confirmPassword: null
       },
       editingLegalCase: false,
-      legalCaseUserId: null,
       today: '',
       editingUser: false,
       legalCaseNotes: [],
@@ -231,7 +212,7 @@ export default {
     fillClientForm: async function(id){
       this.showLoader = true;
 
-      await this.$store.dispatch('fillClientForm', {id})
+      await this.$store.dispatch('fillClientForm', {id});
 
       this.showLoader = false;
     },
@@ -241,8 +222,7 @@ export default {
         if(this.$store.getters.isClientInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
-
-          await repositories.updateClientIsInUse({'id': id, 'inUse': 1});
+          await this.$store.dispatch('updateClientIsInUse', {id: id, inUse: 1});
 
           await this.fillClientForm(id);
         
@@ -255,51 +235,32 @@ export default {
     isLegalCaseInUse: async function(id){
       this.showLoader = true;
 
-      const data = await repositories.isLegalCaseInUse({'id': id});
-      const response = data.response;
-      let isInUse = 0;
-      
-      if( response.length ){
-        isInUse = response[0].inUse;
-      }
+      await this.$store.dispatch('getIsLegalCaseInUse', {id});
 
       this.showLoader = false;
-
-      return isInUse;
     },
     fillLegalCaseForm: async function(id, userID){
       this.showLoader = true;
 
-      this.legalCaseUserId = userID;
-      
-      const data = await repositories.getLegalCasesBy('id', id);
-      const response = data.response;
+      this.$store.commit('setCurrentLegalCaseUserId', userID);
 
-      if( response.length ){
-        this.legalCaseForm = response[0];
-        this.legalCaseForm.id = id;
-      }
+      await this.$store.dispatch('fillLegalCaseForm', {id});
 
       this.showLoader = false;
     },
     fillPaymentDatesOnForm: async function(id){
       this.showLoader = true;
 
-      const data = await repositories.getLegalPaymentDatesBy('legalCaseID', id);
-      const response = data.response;
-      if( response.length ){
-        this.paymentDates.legalCaseID = id;
-        this.paymentDates.dates = response;
-      }
+      await this.$store.dispatch('fillPaymentDatesOnForm', {id});
 
       this.showLoader = false;
     },
     fillEditLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
   
-        let isInUse = await this.isLegalCaseInUse(legalCaseID);
+        await this.isLegalCaseInUse(legalCaseID);
 
-        if(isInUse === '1'){
+        if(this.$store.getters.isLegalCaseInUse === '1'){
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
           
@@ -338,7 +299,8 @@ export default {
     showLegalCaseForm: async function(userID){
       if( this.checkAccessList('agregar caso') ){
         this.editingLegalCase = false;
-        this.legalCaseUserId = userID;
+        this.$store.commit('setCurrentLegalCaseUserId', userID);
+        //this.legalCaseUserId = userID;
         this.$bvModal.show('bv-modal-legal-case-form');
       }
     },

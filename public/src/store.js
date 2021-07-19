@@ -17,14 +17,14 @@ export default new Vuex.Store({
         locationStaticData: {'999': 'Archivo'},
         isClientInUse: 0,
         clientForm:{
-            id:null,
-            personalID:null,
-            name: null,
-            lastName1: null,
-            lastName2: null,
-            phone: null,
-            email: null,
-            address: null,
+            id:'',
+            personalID:'',
+            name: '',
+            lastName1: '',
+            lastName2: '',
+            phone: '',
+            email: '',
+            address: '',
             roleID:'0',
             status: '1',
             phone2: '',
@@ -33,13 +33,37 @@ export default new Vuex.Store({
             email3: '',
             job: '',
             inUse: '0'
+        },
+        isLegalCaseInUse: 0,
+        legalCaseForm:{
+            id: '',
+            internalCode: '',
+            subjectID: '',
+            userID: '',
+            judicialStatusID: '',
+            administrativeStatusID: '',
+            note: '',
+            totalAmount: 0,
+            legalCaseID: '',
+            locationID: '',
+            code: '',
+            inUse: '0'
+        },
+        currentLegalCaseUserId: 0,
+        paymentDates:{
+            legalCaseID: '',
+            dates: []
         }
     },
     getters: {
         users: state => state.users,
         legalCases: state => userID => state.legalCases[userID],
         isClientInUse: state => state.isClientInUse,
-        clientForm: state => state.clientForm
+        clientForm: state => state.clientForm,
+        isLegalCaseInUse: state => state.isLegalCaseInUse,
+        legalCaseForm: state => state.legalCaseForm,
+        currentLegalCaseUserId: state => state.currentLegalCaseUserId,
+        paymentDates: state => state.paymentDates
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -73,7 +97,19 @@ export default new Vuex.Store({
         },
         setClientForm(state, data){
             state.clientForm = data;
-        }
+        },
+        setIsLegalCaseInUse(state, data){
+            state.isLegalCaseInUse = data;
+        },
+        setLegalCaseForm(state, data){
+            state.legalCaseForm = data;
+        },
+        setCurrentLegalCaseUserId(state, data){
+            state.currentLegalCaseUserId = data;
+        },
+        setPaymentDatesForm(state, data){
+            state.paymentDates = data;
+        },
         /*setStudents(state, students) {
             state.students = students;
         },
@@ -221,6 +257,64 @@ export default new Vuex.Store({
                 const response = data.response;
                 if( response.length ){
                     context.commit('setClientForm', response[0]);
+                }
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async updateClientIsInUse(context, {id, inUse}){
+            try {
+                await repositories.updateClientIsInUse({'id': id, 'inUse': inUse});
+                context.commit('setIsClientInUse', inUse);
+                
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getIsLegalCaseInUse(context, {id}){
+            try {
+                const data = await repositories.isLegalCaseInUse({'id': id});
+                const response = data.response;
+                let isInUse = 0;
+                
+                if( response.length ){
+                    isInUse = response[0].inUse;
+                }
+
+                context.commit('setIsLegalCaseInUse', isInUse);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async fillLegalCaseForm(context, {id}){
+            try {
+                const data = await repositories.getLegalCasesBy('id', id);
+                const response = data.response;
+
+                if( response.length ){
+                    response[0].id = id;
+                    context.commit('setLegalCaseForm', response[0]);
+                }
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async fillPaymentDatesOnForm(context, {id}){
+            try {
+                const data = await repositories.getLegalPaymentDatesBy('legalCaseID', id);
+                const response = data.response;
+                if( response.length ){
+                  //this.paymentDates.legalCaseID = id;
+                  //this.paymentDates.dates = response;
+                  const tmpData = {
+                    legalCaseID : id,
+                    dates: response
+                  };
+                  context.commit('setPaymentDatesForm', tmpData);
                 }
             }catch (error) {
                 //context.commit('showError', error);
