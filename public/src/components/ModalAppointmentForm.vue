@@ -42,7 +42,7 @@
             <b-form-input v-model="appointmentForm.alertColor" type="color" class="form-control" id="filter" placeholder="Color de la alerta"></b-form-input>
           </b-form-group>
 
-          <b-button :disabled="showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
+          <b-button :disabled="$store.getters.showLoader" @click.prevent="checkForm(function(){setNewAppointment()})" type="submit" variant="primary">
             Agendar
           </b-button>
           <b-button @click.prevent="closeAppointmentForm" variant="danger">Cancelar</b-button>
@@ -65,7 +65,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalAppointmentForm',
-  props: ["showLoader", "appointmentForm", "editingAppointment", "date", "staticData"],
+  props: ["appointmentForm", "editingAppointment", "date", "staticData"],
   data () {
     return {
       errors:[],
@@ -102,7 +102,7 @@ export default {
       this.clearAppointmentForm();
     },
     fillAppointmentForm: async function(){
-      this.$emit('update:showLoader', true);
+      this.$store.commit('setShowLoader', true);
       const dataClients = await repositories.getAllClients();
       this.clientList = dataClients.response;
 
@@ -115,7 +115,7 @@ export default {
       const usersFormatted = this.buildUserClientName(this.usersList);
       this.$set(this.appointmentForm, 'usersList', usersFormatted);
     
-      this.$emit('update:showLoader', false);
+      this.$store.commit('setShowLoader', false);
     },
     buildUserClientName: function(data){
       data.forEach(item => {
@@ -133,14 +133,14 @@ export default {
       });
     },
     setNewAppointment: async function(){
-      this.$emit('update:showLoader', true);
+      this.$store.commit('setShowLoader', true);
       this.appointmentForm.madeByUserID = loggedINUserID;
       await repositories.addNewAppointment(this.appointmentForm);
       this.closeAppointmentForm();
       const start = this.date.start;
       const end = this.date.end;
       await this.$emit('fetchEvents', {start, end});
-      this.$emit('update:showLoader', false);
+      this.$store.commit('setShowLoader', false);
     }
   }
 }

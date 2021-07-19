@@ -76,10 +76,10 @@
                       </ul>
                   </b-form-group>
                   
-                  <b-button :disabled="showLoader" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
+                  <b-button :disabled="$store.getters.showLoader" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
                     Crear
                   </b-button>
-                  <b-button :disabled="showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
+                  <b-button :disabled="$store.getters.showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
                     Guardar
                   </b-button>
                   <b-button @click.prevent="closeLegalForm" variant="danger">Cancelar</b-button>
@@ -101,7 +101,7 @@ import moment from 'moment';
 
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["showLoader", "editingLegalCase", "today"],
+  props: ["editingLegalCase", "today"],
   data () {
     return {
       errors:[],
@@ -163,9 +163,9 @@ export default {
     },
     onCloseLegalForm: async function(){
       if( this.$store.getters.legalCaseForm.id ){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         await repositories.updateLegalCaseIsInUse({'id': this.$store.getters.legalCaseForm.id, 'inUse': 0});
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
       }
       this.clearLegalCaseForm();
     },
@@ -173,7 +173,7 @@ export default {
       this.$bvModal.hide('bv-modal-legal-case-form');
     },
     setNewLegalCase: async function(){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         const userID = this.$store.getters.currentLegalCaseUserId;
         const data = await repositories.addNewLegalCase(userID, this.$store.getters.legalCaseForm);
 
@@ -205,10 +205,10 @@ export default {
         await this.$emit('renderLegalCases', {searchBy:'userID', value:userID, userID:userID});
 
         this.closeLegalForm();
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
     },
     setEditedLegalCase: async function(){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         const userID = this.$store.getters.currentLegalCaseUserId;
 
         await repositories.editLegalCase(this.$store.getters.legalCaseForm);
@@ -248,7 +248,7 @@ export default {
         }
 
         this.closeLegalForm();
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){

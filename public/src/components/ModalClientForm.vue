@@ -50,10 +50,10 @@
                 <b-form-input v-model="$store.getters.clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
-              <b-button :disabled="showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
+              <b-button :disabled="$store.getters.showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
                 Crear
               </b-button>
-              <b-button :disabled="showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
+              <b-button :disabled="$store.getters.showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
                 Guardar
               </b-button>
               <b-button @click.prevent="closeClientForm" variant="danger">Cancelar</b-button>
@@ -74,7 +74,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["showLoader", "editingUser"],
+  props: ["editingUser"],
   data () {
     return {
       errors:[],
@@ -128,26 +128,26 @@ export default {
 
     },
     setNewClient: async function(){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         const data = await repositories.addNewClient(this.$store.getters.clientForm);
 
         this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
 
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
         if( this.URLparams.appointmentDate ){
           this.$router.push('/inicio?appointmentDate='+this.URLparams.appointmentDate+'&clientID='+data.clientID);
         }
     },
     setEditedClient: async function(){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         await repositories.editClient(this.$store.getters.clientForm);
 
         await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
 
         this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
     },
     clearClientForm: function(){
         const data = {
@@ -173,9 +173,9 @@ export default {
     },
     onCloseClientForm: async function(){
       if( this.$store.getters.clientForm.id ){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         await repositories.updateClientIsInUse({'id': this.$store.getters.clientForm.id, 'inUse': 0});
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
       }
       this.clearClientForm();
       if( this.URLparams.appointmentDate ){
@@ -186,14 +186,14 @@ export default {
       this.$bvModal.hide('bv-modal-client-form');
     },
     checkIfClientAlreadyExists: async function(){
-      this.$emit('update:showLoader', true);
+      this.$store.commit('setShowLoader', true);
       const data = await repositories.getClientBy('personalID', this.$store.getters.clientForm.personalID);
       const response = data.response;
       if( response.length ){
         this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
         this.closeClientForm();
       }
-      this.$emit('update:showLoader', false);
+      this.$store.commit('setShowLoader', false);
     }
   }
 }

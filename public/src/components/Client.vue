@@ -2,7 +2,7 @@
   <div class="client">
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="primary" :disabled="showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
+    <b-button variant="primary" :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
       Ver todos los Clientes
     </b-button>
 
@@ -23,7 +23,7 @@
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
-            <b-button :disabled="showLoader" v-if="!systemUsersInterface" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Casos</b-button>
+            <b-button :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Casos</b-button>
             <b-button v-if="user.role != 'Administrador' && systemUsersInterface && checkAccessList('eliminar usuarios')" @click="deleteUser(user.id)" variant="danger">Eliminar Usuario</b-button>
             <b-button v-if="systemUsersInterface" @click="updatePassword(user.id)" variant="success">Cambiar Contraseña</b-button>
 
@@ -46,8 +46,8 @@
                 <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto del caso:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                   <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                  <b-button :disabled="showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
-                  <b-button :disabled="showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
+                  <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                  <b-button :disabled="$store.getters.showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
 
                   <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
                     <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
@@ -94,13 +94,11 @@
       </ul>
     </div>
 
-    <modal-client-form @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :editing-user="editingUser"></modal-client-form>
-    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :show-loader.sync="showLoader" :search-client-form="searchClientForm"></modal-search-form>
-    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :show-loader.sync="showLoader" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
-    <modal-update-password-form :show-loader.sync="showLoader" :update-password-form="updatePasswordForm"></modal-update-password-form>
-    <div v-if="showLoader" class="loader">
-      <b-spinner large></b-spinner>
-    </div>
+    <modal-client-form @renderClientBy="renderClientBy" :editing-user="editingUser"></modal-client-form>
+    <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy" :search-client-form="searchClientForm"></modal-search-form>
+    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
+    <modal-update-password-form :update-password-form="updatePasswordForm"></modal-update-password-form>
+
   </div>
 </template>
 
@@ -131,8 +129,7 @@ export default {
       editingLegalCase: false,
       today: '',
       editingUser: false,
-      systemUsersInterface: false,
-      showLoader: false
+      systemUsersInterface: false
     }
   },
   created(){
@@ -147,39 +144,39 @@ export default {
       return global.checkAccessList(action);
     },
     getStaticDataFromDB: async function(){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getJudicialStatusList');
       await this.$store.dispatch('getSubjectList');
       await this.$store.dispatch('getAdministrativeStatusList');
       await this.$store.dispatch('getLocationListData');
       
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     renderAllClients: async function(){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       this.resetClientVars();
 
       await this.$store.dispatch('getAllClients');
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     renderAllUsers: async function(){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       this.resetClientVars();
 
       await this.$store.dispatch('getAllUsers');
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     renderClientBy: async function({service, searchBy, value, callback}){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getClientBy', {service, searchBy, value, callback});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
       
     },
     showSearchClientModal: function(){
@@ -192,26 +189,26 @@ export default {
       }
     },
     renderLegalCases: async function({searchBy, value, userID, callback}){      
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     isClientInUse: async function(id){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getIsClientInUse', {id});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
 
     },
     fillClientForm: async function(id){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('fillClientForm', {id});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     fillEditClientForm: async function(id){
       if( this.checkAccessList('editar cliente') ){
@@ -230,27 +227,27 @@ export default {
       }
     },
     isLegalCaseInUse: async function(id){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getIsLegalCaseInUse', {id});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     fillLegalCaseForm: async function(id, userID){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       this.$store.commit('setCurrentLegalCaseUserId', userID);
 
       await this.$store.dispatch('fillLegalCaseForm', {id});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     fillPaymentDatesOnForm: async function(id){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('fillPaymentDatesOnForm', {id});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     fillEditLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
@@ -274,18 +271,18 @@ export default {
       }
     },
     renderLegalCaseNotes: async function(legalCaseID){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     renderLegalPaymentDates: async function(legalCaseID){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     resetClientVars: function(){
       this.$store.commit('setLegalPaymentDates', []);
@@ -328,31 +325,30 @@ export default {
       }
     },
     deleteUser: async function(userID){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       await repositories.deleteUser({id:userID});
       await this.renderAllUsers();
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     updatePassword: async function(userID){
       this.$store.commit('setCurrentUserIdUpdatePassword', userID);
       this.$bvModal.show('bv-modal-update-password-form');
     },
     removePaymentDate: async function(legalPaymentDateID, legalCaseID){
-      this.showLoader = true;
+      this.$store.commit('setShowLoader', true);
 
       const data = {};
       data.id = legalPaymentDateID;
       await repositories.deletePaymentDate(data);
       await this.renderLegalPaymentDates(legalCaseID);
 
-      this.showLoader = false;
+      this.$store.commit('setShowLoader', false);
     },
     unblockUser: async function(userID){
 
       await this.$store.dispatch('updateClientIsInUse', {id: userID, inUse: 0});
-      //await repositories.updateClientIsInUse({'id': userID, 'inUse': 0});
       //service, searchBy, value, callback
       await this.renderClientBy({service:'getClientBy', searchBy:'id', value:userID});
 
@@ -360,7 +356,6 @@ export default {
     unblockLegalCase: async function(legalCaseID, userID){
 
       await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
-      //await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 0});
       //searchBy, value, userID, callback
       await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
 

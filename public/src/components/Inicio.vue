@@ -153,11 +153,8 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form @fetchEvents="fetchEvents" :show-loader.sync="showLoader" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
+    <modal-appointment-form @fetchEvents="fetchEvents" :appointment-form="appointmentForm" :editing-appointment="editingAppointment" :date="date" :static-data="staticData"></modal-appointment-form>
 
-    <div v-if="showLoader" class="loader">
-      <b-spinner large></b-spinner>
-    </div>
   </div>
 </template>
 
@@ -199,7 +196,6 @@
           start: null,
           end: null
         },
-        showLoader: false,
         staticData:{
           appointmentTypeList: []
         }
@@ -230,12 +226,12 @@
         return global.checkAccessList(action);
       },
       getStaticDataFromDB: async function(){
-        this.showLoader = true;
+        this.$store.commit('setShowLoader', true);
 
         const appointmentTypeListData = await repositories.getAppointmentTypeList();
         this.staticData.appointmentTypeList = appointmentTypeListData.response;
 
-        this.showLoader = false;
+        this.$store.commit('setShowLoader', false);
       },
       setToday: function() {
         this.value = '';
@@ -247,7 +243,7 @@
         this.$refs.calendar.next();
       },
       fetchEvents: async function({ start, end }) {
-        this.showLoader = true;
+        this.$store.commit('setShowLoader', true);
         this.date.start = start;
         this.date.end = end;
 
@@ -289,7 +285,7 @@
 
         this.events = response;
 
-        this.showLoader = false;
+        this.$store.commit('setShowLoader', false);
         
       },
       showEvent: function ({ nativeEvent, event }) {
@@ -328,13 +324,13 @@
         }
       },
       cancelAppointment: async function(appointmentID){
-        this.showLoader = true;
+        this.$store.commit('setShowLoader', true);
         await repositories.cancelAppointment({id:appointmentID});
         const start = this.date.start;
         const end = this.date.end;
         this.fetchEvents({start, end});
         this.selectedOpen = false;
-        this.showLoader = false;
+        this.$store.commit('setShowLoader', false);
       },
       loadDataFromURLParams: async function(params){
         if(this.checkAccessList('agendar cita') && params.appointmentDate){

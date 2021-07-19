@@ -18,7 +18,7 @@
                     <b-form-group label-for="confirmPassword" label="Confirmar contraseña">
                         <b-form-input v-model="updatePasswordForm.confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Contraseña"></b-form-input>
                     </b-form-group>
-                    <b-button :disabled="showLoader" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
+                    <b-button :disabled="$store.getters.showLoader" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
                         Actualizar
                     </b-button>
                     <b-button @click.prevent="closeUpdatePasswordForm" variant="danger">Cancelar</b-button>
@@ -39,7 +39,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
-  props: ["showLoader", "updatePasswordForm"],
+  props: ["updatePasswordForm"],
   data () {
     return {
         errors:[]
@@ -71,10 +71,10 @@ export default {
         this.clearUpdatePasswordForm();
     },
     updatePassword: async function(){
-        this.$emit('update:showLoader', true);
+        this.$store.commit('setShowLoader', true);
         await repositories.updatePassword(this.$store.getters.currentUserIdUpdatePassword, this.updatePasswordForm);
         this.closeUpdatePasswordForm();
-        this.$emit('update:showLoader', false);
+        this.$store.commit('setShowLoader', false);
       }
   }
 }

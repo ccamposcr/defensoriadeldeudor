@@ -38,7 +38,7 @@
                     <b-form-group v-show="searchClientForm.searchBy == 'internalCode'" label-for="internalCode" label="Buscar por número de expediente">
                         <b-form-input v-model="searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de Expediente"></b-form-input>
                     </b-form-group>
-                    <b-button :disabled="showLoader" v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
+                    <b-button :disabled="$store.getters.showLoader" v-show="searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
                         Buscar
                     </b-button>
                     <b-button @click.prevent="closeSearchForm" variant="danger">Cancelar</b-button>
@@ -59,7 +59,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalSearchForm',
-  props: ["showLoader", "searchClientForm", "locationStaticData", "legalCases"],
+  props: ["searchClientForm", "locationStaticData", "legalCases"],
   data () {
     return {
         errors:[]

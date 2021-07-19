@@ -6,6 +6,7 @@ import repositories from './repositories';
 
 export default new Vuex.Store({
     state: {
+        showLoader: false,
         users: [],
         legalCases: [],
         staticData:{
@@ -69,7 +70,8 @@ export default new Vuex.Store({
         paymentDates: state => state.paymentDates,
         legalCaseNotes: state => legalCaseID => state.legalCaseNotes[legalCaseID],
         legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID],
-        currentUserIdUpdatePassword: state => state.currentUserIdUpdatePassword
+        currentUserIdUpdatePassword: state => state.currentUserIdUpdatePassword,
+        showLoader: state => state.showLoader
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -133,6 +135,9 @@ export default new Vuex.Store({
         },
         setCurrentUserIdUpdatePassword(state, data){
             state.currentUserIdUpdatePassword = data;
+        },
+        setShowLoader(state, data){
+            state.showLoader = data;
         }
         /*setStudents(state, students) {
             state.students = students;

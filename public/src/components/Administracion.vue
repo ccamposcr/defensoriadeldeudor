@@ -30,7 +30,7 @@
 
             </div>
 
-            <b-button :disabled="showLoader" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
+            <b-button :disabled="$store.getters.showLoader" @click.prevent="saveRoleAccessList" type="submit" variant="primary">
                 Guardar permisos
             </b-button>
         </b-form>
@@ -91,11 +91,7 @@
             <b-button @click.prevent="addSubject" type="submit" variant="primary">Agregar Naturaleza de expediente</b-button>
         </b-form>
     </div>
-
-
-    <div v-if="showLoader" class="loader">
-      <b-spinner large></b-spinner>
-    </div>
+    
   </div>
 </template>
 
@@ -121,7 +117,6 @@ import repositories from '../repositories';
                 data : []
             },
             showSuccessMsg: false,
-            showLoader: false,
             administration: {
                 administrativeStatus: null,
                 type: null,
@@ -135,7 +130,7 @@ import repositories from '../repositories';
     },
     methods: {
         saveRoleAccessList: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
             this.roleprivilegeaccess.data = [];
 
             for (const roleValue in this.administrationForm) {
@@ -148,11 +143,11 @@ import repositories from '../repositories';
             }
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
             this.showSuccessMsg = true;
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
 
         },
         getStaticDataFromDB: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
 
             const roleListData = await repositories.getRoleList();
             this.staticData.roleList = roleListData.response;
@@ -172,7 +167,7 @@ import repositories from '../repositories';
 
             await this.renderSubjectList();            
 
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
 
         },
         renderAdministrativeStatus: async function(){
@@ -192,7 +187,7 @@ import repositories from '../repositories';
             this.staticData.subjectList = subjectListData.response;
         },
         addAdministrativeStatus: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
 
             if(this.administration.administrativeStatus){
                 await repositories.addAdministrativeStatus({'administrativeStatus': this.administration.administrativeStatus});
@@ -201,10 +196,10 @@ import repositories from '../repositories';
             }
             
 
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
         },
         addAppointmentType: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
 
             if(this.administration.type){
                 await repositories.addAppointmentType({'type': this.administration.type});
@@ -212,10 +207,10 @@ import repositories from '../repositories';
                 this.administration.type = null;
             }
 
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
         },
         addJudicialStatus: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
 
             if(this.administration.judicialStatus){
                 await repositories.addJudicialStatus({'judicialStatus': this.administration.judicialStatus});
@@ -223,10 +218,10 @@ import repositories from '../repositories';
                 this.administration.judicialStatus = null;
             }
 
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
         },
         addSubject: async function(){
-            this.showLoader = true;
+            this.$store.commit('setShowLoader', true);
 
             if(this.administration.subject){
                 await repositories.addSubject({'subject': this.administration.subject});
@@ -234,7 +229,7 @@ import repositories from '../repositories';
                 this.administration.subject = null;
             }
             
-            this.showLoader = false;
+            this.$store.commit('setShowLoader', false);
         }
     }
   }
