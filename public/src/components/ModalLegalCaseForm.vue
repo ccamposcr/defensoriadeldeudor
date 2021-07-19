@@ -139,13 +139,6 @@ export default {
         }
     },
     clearLegalCaseForm: function(){
-        /*for(const item in this.legalCaseForm){
-            this.legalCaseForm[item] = null;
-        }
-        this.paymentDates.dates = [];
-        this.paymentDates.legalCaseID = null;
-        this.legalCaseForm.totalAmount = 0;
-        this.legalCaseForm.inUse = '0';*/
         const data = {
           id: '',
           internalCode: '',
@@ -200,7 +193,7 @@ export default {
             dates: this.$store.getters.paymentDates.dates
           }
           this.$store.commit('setPaymentDatesForm', tmpData);
-          //this.paymentDates.legalCaseID = data.legalCaseID;
+
           const paymentDatesStr = {
             'legalCaseID': this.$store.getters.paymentDates.legalCaseID,
             'dates': JSON.stringify(this.$store.getters.paymentDates.dates)
@@ -237,7 +230,7 @@ export default {
         }
 
         if( this.$store.getters.paymentDates.dates.length ){
-          //this.paymentDates.legalCaseID = this.$store.getters.legalCaseForm.legalCaseID;
+
           const tmpData = {
             legalCaseID: this.$store.getters.legalCaseForm.legalCaseID,
             dates: this.$store.getters.paymentDates.dates
@@ -259,9 +252,7 @@ export default {
     },
     addNewPaymentDay: function(){
       if (this.nextPaymentDay){
-        //TODO
         this.paymentsArray.push({'date': this.nextPaymentDay});
-        //this.paymentDates.dates.push();
         const tmpData = {
           legalCaseID: this.$store.getters.paymentDates.legalCaseID,
           dates: this.paymentsArray
@@ -271,7 +262,6 @@ export default {
       }
     },
     removePaymentDate: function(index){
-      //TODO
       this.paymentsArray.splice(index, 1);
       const tmpData = {
         legalCaseID: this.$store.getters.paymentDates.legalCaseID,
@@ -280,12 +270,10 @@ export default {
       this.$store.commit('setPaymentDatesForm', tmpData);
     },
     generateRecurringPayments: function(){
-      //TODO
       this.paymentsArray = [];
       if(this.nextPaymentDay && this.numberMonths > 0){
         let datePointer = this.nextPaymentDay;
         for( let i = 0; i < this.numberMonths; i++ ){
-          //TODO
           this.paymentsArray.push({'date': datePointer});
           datePointer = moment(datePointer + 'T00:00:00').add(1, 'week').format("YYYY-MM-DD");
         }

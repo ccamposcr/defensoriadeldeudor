@@ -55,31 +55,31 @@
                 </div>
 
               <!-- LEGAL NOTES -->
-                <div v-if="legalCaseNotes[legalCase.legalCaseID]">
+                <div v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID)">
                   
                   <ul class="legal-cases__notes">
-                    <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in legalCaseNotes[legalCase.legalCaseID]">
+                    <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in $store.getters.legalCaseNotes(legalCase.legalCaseID)">
                       <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
                       <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
                       <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
                     </li>
                   </ul>
-                  <span class="label-danger" v-if="legalCaseNotes[legalCase.legalCaseID] && !legalCaseNotes[legalCase.legalCaseID].length">No hay notas</span>
+                  <span class="label-danger" v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID) && !$store.getters.legalCaseNotes(legalCase.legalCaseID).length">No hay notas</span>
                 </div>
                 <!-- LEGAL NOTES END -->
 
                 <!-- LEGAL PAYMENT DATES -->
-                <div v-if="legalPaymentDates[legalCase.legalCaseID]">
+                <div v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID)">
                   
                   <ul class="legal-cases__payment-dates">
-                    <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in legalPaymentDates[legalCase.legalCaseID]">
+                    <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in $store.getters.legalPaymentDates(legalCase.legalCaseID)">
                       <p v-if="legalPaymentDate.date"><strong>Fecha de pago:</strong> {{ legalPaymentDate.date }}</p>
                       <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(legalPaymentDate.id, legalCase.legalCaseID)" variant="danger">
                         Eliminar
                       </b-button>
                     </li>
                   </ul>
-                  <span class="label-danger" v-if="legalPaymentDates[legalCase.legalCaseID] && !legalPaymentDates[legalCase.legalCaseID].length">No hay fechas de pago</span>
+                  <span class="label-danger" v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID) && !$store.getters.legalPaymentDates(legalCase.legalCaseID).length">No hay fechas de pago</span>
                 </div>
                 <!-- END LEGAL PAYMENT DATES -->
 
@@ -131,8 +131,6 @@ export default {
       editingLegalCase: false,
       today: '',
       editingUser: false,
-      legalCaseNotes: [],
-      legalPaymentDates: [],
       systemUsersInterface: false,
       updatePasswordUserId: null,
       showLoader: false
@@ -264,7 +262,7 @@ export default {
           alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
         }else{
           
-          await repositories.updateLegalCaseIsInUse({'id': legalCaseID, 'inUse': 1});
+          await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 1});
 
           await this.fillLegalCaseForm(legalCaseID, userID);
           
@@ -279,22 +277,29 @@ export default {
     renderLegalCaseNotes: async function(legalCaseID){
       this.showLoader = true;
 
-      const data = await repositories.getLegalCaseNotesBy('legalCaseID', legalCaseID);
-      this.$set(this.legalCaseNotes, legalCaseID, data.response);
+      await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
 
       this.showLoader = false;
     },
     renderLegalPaymentDates: async function(legalCaseID){
       this.showLoader = true;
 
-      const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
-      this.$set(this.legalPaymentDates, legalCaseID, data.response);
+      //const data = await repositories.getLegalPaymentDatesBy('legalCaseID', legalCaseID);
+      //this.$set(this.legalPaymentDates, legalCaseID, data.response);
+
+      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
 
       this.showLoader = false;
     },
     resetClientVars: function(){
-      //this.legalCases = [];
-      //this.legalCaseNotes = [];
+      const tmpData = {
+          legalCaseID: '',
+          dates: []
+      }
+      //TODO
+      //this.$store.commit('setPaymentDates', tmpData);
+      this.$store.commit('setLegalCaseNotes', []);
+      this.$store.commit('setLegalCases', []);
     },
     showLegalCaseForm: async function(userID){
       if( this.checkAccessList('agregar caso') ){

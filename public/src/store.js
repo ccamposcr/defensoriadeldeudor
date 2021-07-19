@@ -53,7 +53,9 @@ export default new Vuex.Store({
         paymentDates:{
             legalCaseID: '',
             dates: []
-        }
+        },
+        legalCaseNotes: [],
+        legalPaymentDates: []
     },
     getters: {
         users: state => state.users,
@@ -63,7 +65,9 @@ export default new Vuex.Store({
         isLegalCaseInUse: state => state.isLegalCaseInUse,
         legalCaseForm: state => state.legalCaseForm,
         currentLegalCaseUserId: state => state.currentLegalCaseUserId,
-        paymentDates: state => state.paymentDates
+        paymentDates: state => state.paymentDates,
+        legalCaseNotes: state => legalCaseID => state.legalCaseNotes[legalCaseID],
+        legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID]
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -92,6 +96,9 @@ export default new Vuex.Store({
         setLegalCasesBy(state, {data, userID}){
             Vue.set(state.legalCases, userID, data);
         },
+        setLegalCases(state, data){
+            state.legalCases = data;
+        },
         setIsClientInUse(state, data){
             state.isClientInUse = data;
         },
@@ -110,6 +117,18 @@ export default new Vuex.Store({
         setPaymentDatesForm(state, data){
             state.paymentDates = data;
         },
+        setLegalCaseNotesBy(state, {data, legalCaseID}){
+            Vue.set(state.legalCaseNotes, legalCaseID, data);
+        },
+        setLegalCaseNotes(state, data){
+            state.legalCaseNotes = data;
+        },
+        setLegalPaymentDatesBy(state, {data, legalCaseID}){
+            Vue.set(state.legalPaymentDates, legalCaseID, data);
+        },
+        setLegalPaymentDates(state, data){
+            state.legalPaymentDates = data;
+        }
         /*setStudents(state, students) {
             state.students = students;
         },
@@ -308,14 +327,42 @@ export default new Vuex.Store({
                 const data = await repositories.getLegalPaymentDatesBy('legalCaseID', id);
                 const response = data.response;
                 if( response.length ){
-                  //this.paymentDates.legalCaseID = id;
-                  //this.paymentDates.dates = response;
                   const tmpData = {
                     legalCaseID : id,
                     dates: response
                   };
                   context.commit('setPaymentDatesForm', tmpData);
                 }
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async updateLegalCaseIsInUse(context, {id, inUse}){
+            try {
+                await repositories.updateLegalCaseIsInUse({'id': id, 'inUse': inUse});
+                context.commit('setIsLegalCaseInUse', inUse);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getLegalCaseNotesBy(context, {searchBy, legalCaseID}){
+            try {
+                const data = await repositories.getLegalCaseNotesBy(searchBy, legalCaseID);
+                const response = data.response;
+                context.commit('setLegalCaseNotesBy', {data:response, legalCaseID});
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getLegalPaymentDatesBy(context, {searchBy, legalCaseID}){
+            try {
+                const data = await repositories.getLegalPaymentDatesBy(searchBy, legalCaseID);
+                const response = data.response;
+                //this.$set(this.legalPaymentDates, legalCaseID, data.response);
+                context.commit('setLegalPaymentDatesBy', {data:response, legalCaseID});
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
