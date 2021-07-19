@@ -68,8 +68,7 @@ export default {
   props: ["editingAppointment", "date"],
   data () {
     return {
-      errors:[],
-      clientList: []
+      errors:[]
     }
   },
   methods: {
@@ -111,31 +110,13 @@ export default {
     },
     fillAppointmentForm: async function(){
       this.$store.commit('setShowLoader', true);
-      const dataClients = await repositories.getAllClients();
-      this.clientList = dataClients.response;
 
-      const clientsFormatted = this.buildUserClientName(this.clientList);
-      //this.$set(this.appointmentForm, 'clientList', clientsFormatted);
-      this.$store.commit('setAppointmentFormBy', {data:clientsFormatted, by:'clientList'});
-
-      const dataUsers = await repositories.getAllUsers();
-      this.usersList = dataUsers.response;
-
-      const usersFormatted = this.buildUserClientName(this.usersList);
-      //this.$set(this.appointmentForm, 'usersList', usersFormatted);
-      this.$store.commit('setAppointmentFormBy', {data:usersFormatted, by:'usersList'});
+      await this.$store.dispatch('fillAppointmentForm');
     
       this.$store.commit('setShowLoader', false);
     },
-    buildUserClientName: function(data){
-      data.forEach(item => {
-        item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
-        item.userID = item.id;
-      });
-      return data;
-    },
     filter: function(){
-      this.$store.getters.appointmentForm.clientList =  this.clientList.filter((client) => {
+      this.$store.getters.appointmentForm.clientList =  this.$store.getters.appointmentOriginalClientList.filter((client) => {
           return client.personalID.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
                 client.name.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
                 client.lastName1.toLowerCase().includes(this.$store.getters.appointmentForm.filterBy.toLowerCase()) ||
@@ -144,8 +125,6 @@ export default {
     },
     setNewAppointment: async function(){
       this.$store.commit('setShowLoader', true);
-      //TODO
-      //this.appointmentForm.madeByUserID = loggedINUserID;
       this.$store.commit('setAppointmentFormBy', {data:loggedINUserID, by:'madeByUserID'});
       await repositories.addNewAppointment(this.$store.getters.appointmentForm);
       this.closeAppointmentForm();

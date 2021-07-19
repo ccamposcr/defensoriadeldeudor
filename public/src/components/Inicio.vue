@@ -303,7 +303,6 @@
         if( this.checkAccessList('agendar cita') ){
           const data = date + ' ' + hour +':00';
           this.$store.commit('setAppointmentFormBy', {data:data, by:'date'});
-          //this.$set(this.appointmentForm, 'date', );
           this.$bvModal.show('bv-modal-appointment-form');
         }
       },
@@ -319,12 +318,10 @@
       loadDataFromURLParams: async function(params){
         if(this.checkAccessList('agendar cita') && params.appointmentDate){
           this.$store.commit('setAppointmentFormBy', {data:params.appointmentDate, by:'date'});
-          //this.$set(this.appointmentForm, 'date', params.appointmentDate);
           this.$bvModal.show('bv-modal-appointment-form');
         }
         if(this.checkAccessList('agendar cita') && params.clientID){
           this.$store.commit('setAppointmentFormBy', {data:params.clientID, by:'userID'});
-          //this.$set(this.appointmentForm, 'userID', params.clientID);
         }
       },
       sync: function(){

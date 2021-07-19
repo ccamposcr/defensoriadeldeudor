@@ -72,7 +72,8 @@ export default new Vuex.Store({
             usersList: [],
             alertColor: '#28a745',
             appointmentTypeID: ''
-        }
+        },
+        appointmentOriginalClientList: []
     },
     getters: {
         users: state => state.users,
@@ -91,7 +92,8 @@ export default new Vuex.Store({
         appointmentsDates: state => state.appointmentsDates,
         events: state => state.events,
         staticData: state => state.staticData,
-        appointmentForm: state => state.appointmentForm
+        appointmentForm: state => state.appointmentForm,
+        appointmentOriginalClientList: state => state.appointmentOriginalClientList
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -177,6 +179,9 @@ export default new Vuex.Store({
         setAppointmentFormBy(state, {data, by}){
             Vue.set(state.appointmentForm, by, data);
         },
+        setAppointmentOriginalClientList(state, data){
+            state.appointmentOriginalClientList = data;
+        }
         /*setStudents(state, students) {
             state.students = students;
         },
@@ -439,6 +444,36 @@ export default new Vuex.Store({
                 const data = await repositories.getAppointmentsByDateRange(searchBy, startDate, endDate);
                 const response = data.response;
                 context.commit('setAppointmentsDates', response);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async fillAppointmentForm(context){
+            
+            const buildUserClientName = function(data){
+                data.forEach(item => {
+                item.client = item.personalID + ' -> ' + item.name + ' ' + item.lastName1 + ' ' + item.lastName2;
+                item.userID = item.id;
+                });
+                return data;
+            }
+
+            try {
+
+                const dataClients = await repositories.getAllClients();
+                const responseClients = dataClients.response;
+
+                const clientsFormatted = buildUserClientName(responseClients);
+                context.commit('setAppointmentFormBy', {data:clientsFormatted, by:'clientList'});
+                context.commit('setAppointmentOriginalClientList', clientsFormatted);
+
+                const dataUsers = await repositories.getAllUsers();
+                const responseUsers = dataUsers.response;
+
+                const usersFormatted = buildUserClientName(responseUsers);
+                context.commit('setAppointmentFormBy', {data:usersFormatted, by:'usersList'});
+
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
