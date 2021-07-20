@@ -4,52 +4,27 @@
         <div v-if="$store.getters.legalCases(user.id)">
         <ul class="user__legal-cases">
             <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in $store.getters.legalCases(user.id)">
-            <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
-            <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
-            <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
-            <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
-            <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
-            <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-            <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto del caso:</strong> {{legalCase.totalAmount}}</p>
-            <div class="case__options">
-                <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
-                <b-button :disabled="$store.getters.showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
+                <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
+                <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
+                <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
+                <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
+                <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
+                <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
+                <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto del caso:</strong> {{legalCase.totalAmount}}</p>
+                <div class="case__options">
+                    <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
+                    <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                    <b-button :disabled="$store.getters.showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
 
-                <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
-                <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
-                </b-form-group>
-            </div>
+                    <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
+                    <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
+                    </b-form-group>
+                </div>
 
-            <!-- LEGAL NOTES -->
-            <div v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID)">
-                
-                <ul class="legal-cases__notes">
-                <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in $store.getters.legalCaseNotes(legalCase.legalCaseID)">
-                    <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
-                    <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
-                    <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
-                </li>
-                </ul>
-                <span class="label-danger" v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID) && !$store.getters.legalCaseNotes(legalCase.legalCaseID).length">No hay notas</span>
-            </div>
-            <!-- LEGAL NOTES END -->
+                <legalNotes :legal-case="legalCase"></legalNotes>
 
-            <!-- LEGAL PAYMENT DATES -->
-            <div v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID)">
-                
-                <ul class="legal-cases__payment-dates">
-                <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in $store.getters.legalPaymentDates(legalCase.legalCaseID)">
-                    <p v-if="legalPaymentDate.date"><strong>Fecha de pago:</strong> {{ legalPaymentDate.date }}</p>
-                    <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(legalPaymentDate.id, legalCase.legalCaseID)" variant="danger">
-                    Eliminar
-                    </b-button>
-                </li>
-                </ul>
-                <span class="label-danger" v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID) && !$store.getters.legalPaymentDates(legalCase.legalCaseID).length">No hay fechas de pago</span>
-            </div>
-            <!-- END LEGAL PAYMENT DATES -->
-
+                <legal-payment-dates :legal-case="legalCase"></legal-payment-dates>
+            
             </li>
         </ul>
         </div>
@@ -60,13 +35,15 @@
 </template>
 
 <script>
-import repositories from '../repositories';
+
 import global from '../global';
+import legalNotes from './LegalNotes.vue';
+import legalPaymentDates from './LegalPaymentDates.vue';
 
 export default {
-  name: 'Client',
+  name: 'LegalCases',
   props: ["user"],
-  components: {},
+  components: {legalNotes, legalPaymentDates},
   data () {
     return {
     }
@@ -164,17 +141,6 @@ export default {
 
       }
     },
-    removePaymentDate: async function(legalPaymentDateID, legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      const data = {};
-      data.id = legalPaymentDateID;
-      //OK
-      await repositories.deletePaymentDate(data);
-      await this.renderLegalPaymentDates(legalCaseID);
-
-      this.$store.commit('setShowLoader', false);
-    },
     unblockLegalCase: async function(legalCaseID, userID){
 
       await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
@@ -217,31 +183,14 @@ export default {
         &:last-child{
           border-right: none;
         }
-      }
-      &__notes,
-      &__payment-dates{
-        list-style-type: none;
-        padding: 0;
-        margin-top: 30px;
-        background-color: #e6e5e5;
+        p{
+            margin-bottom: 0;
+        }
       }
     }
     .case{
       &__options{
         margin-top: 30px;
       }
-    }
-    .notes__note,
-    .payment-dates__date{
-      padding: 15px;
-      border-bottom: 1px solid gray;
-      &:last-child{
-        border-bottom: none;
-      }
-    }
-    .payment-dates__date{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 </style>
