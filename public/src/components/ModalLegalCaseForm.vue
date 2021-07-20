@@ -42,7 +42,7 @@
                     <h5>Fechas de pagos manuales</h5>
                     <p>Seleccione una fecha y presione el botón de "Agregar fecha", haga lo mismo con la cantidad de fechas que necesite ingresar. </p>
                     <b-form-group label-for="nextPaymentDay" label="Agregar múltiples fechas de pago (opcional)">
-                      <b-form-datepicker :min="today" id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
+                      <b-form-datepicker id="nextPaymentDay" v-model="nextPaymentDay" locale="es"></b-form-datepicker>
                     </b-form-group>
 
                     <b-form-group>
@@ -69,17 +69,17 @@
                       <ul class="case-form__list">
                           <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDates.dates">
                             <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
-                            <b-button v-if="!editingLegalCase" @click.prevent="removePaymentDate(index)" variant="danger">
+                            <b-button v-if="!$store.getters.editingLegalCase" @click.prevent="removePaymentDate(index)" variant="danger">
                               Eliminar
                             </b-button>
                           </li>
                       </ul>
                   </b-form-group>
                   
-                  <b-button :disabled="$store.getters.showLoader" v-if="!editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
+                  <b-button :disabled="$store.getters.showLoader" v-if="!$store.getters.editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
                     Crear
                   </b-button>
-                  <b-button :disabled="$store.getters.showLoader" v-if="editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
+                  <b-button :disabled="$store.getters.showLoader" v-if="$store.getters.editingLegalCase" @click.prevent="checkForm(function(){setEditedLegalCase()})" type="submit" variant="primary">
                     Guardar
                   </b-button>
                   <b-button @click.prevent="closeLegalForm" variant="danger">Cancelar</b-button>
@@ -101,7 +101,6 @@ import moment from 'moment';
 
 export default {
   name: 'ModalLegalCaseForm',
-  props: ["editingLegalCase", "today"],
   data () {
     return {
       errors:[],

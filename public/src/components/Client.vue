@@ -32,72 +32,16 @@
             </b-form-group>
           </div>
 
-
-          <!-- LEGAL CASES -->
-          <div v-if="$store.getters.legalCases(user.id)">
-            <ul class="user__legal-cases">
-              <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in $store.getters.legalCases(user.id)">
-                <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
-                <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
-                <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
-                <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
-                <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
-                <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-                <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto del caso:</strong> {{legalCase.totalAmount}}</p>
-                <div class="case__options">
-                  <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                  <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
-                  <b-button :disabled="$store.getters.showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
-
-                  <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
-                    <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
-                  </b-form-group>
-                </div>
-
-              <!-- LEGAL NOTES -->
-                <div v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID)">
-                  
-                  <ul class="legal-cases__notes">
-                    <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in $store.getters.legalCaseNotes(legalCase.legalCaseID)">
-                      <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
-                      <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
-                      <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
-                    </li>
-                  </ul>
-                  <span class="label-danger" v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID) && !$store.getters.legalCaseNotes(legalCase.legalCaseID).length">No hay notas</span>
-                </div>
-                <!-- LEGAL NOTES END -->
-
-                <!-- LEGAL PAYMENT DATES -->
-                <div v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID)">
-                  
-                  <ul class="legal-cases__payment-dates">
-                    <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in $store.getters.legalPaymentDates(legalCase.legalCaseID)">
-                      <p v-if="legalPaymentDate.date"><strong>Fecha de pago:</strong> {{ legalPaymentDate.date }}</p>
-                      <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(legalPaymentDate.id, legalCase.legalCaseID)" variant="danger">
-                        Eliminar
-                      </b-button>
-                    </li>
-                  </ul>
-                  <span class="label-danger" v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID) && !$store.getters.legalPaymentDates(legalCase.legalCaseID).length">No hay fechas de pago</span>
-                </div>
-                <!-- END LEGAL PAYMENT DATES -->
-
-              </li>
-            </ul>
-          </div>
-          <span class="label-danger" v-if="$store.getters.legalCases(user.id) && !$store.getters.legalCases(user.id).length">No hay casos</span>
-          <!-- END LEGAL CASES -->
-
+          <legal-cases :user="user"></legal-cases>
 
         </li>
       </ul>
     </div>
 
-    <modal-client-form @renderClientBy="renderClientBy" :editing-user="editingUser"></modal-client-form>
+    <modal-client-form @renderClientBy="renderClientBy"></modal-client-form>
     <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy"></modal-search-form>
-    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases" :editing-legal-case="editingLegalCase" :today="today"></modal-legal-case-form>
     <modal-update-password-form></modal-update-password-form>
+    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases"></modal-legal-case-form>
 
   </div>
 </template>
@@ -105,24 +49,19 @@
 <script>
 import ModalClientForm from './ModalClientForm.vue';
 import ModalSearchForm from './ModalSearchForm.vue';
-import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import ModalUpdatePasswordForm from './ModalUpdatePasswordForm.vue';
+import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
 import repositories from '../repositories';
 import global from '../global';
+import LegalCases from './LegalCases.vue';
 
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalLegalCaseForm, ModalUpdatePasswordForm},
+  components: {ModalClientForm, ModalSearchForm, ModalUpdatePasswordForm, ModalLegalCaseForm, LegalCases},
   data () {
     return {
-      editingLegalCase: false,
-      today: '',
-      editingUser: false,
       systemUsersInterface: false
     }
-  },
-  created(){
-    this.getStaticDataFromDB();
   },
   mounted() {
     const params = this.$route.query;
@@ -131,16 +70,6 @@ export default {
   methods: {
     checkAccessList: function(action){
       return global.checkAccessList(action);
-    },
-    getStaticDataFromDB: async function(){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getJudicialStatusList');
-      await this.$store.dispatch('getSubjectList');
-      await this.$store.dispatch('getAdministrativeStatusList');
-      await this.$store.dispatch('getLocationListData');
-      
-      this.$store.commit('setShowLoader', false);
     },
     renderAllClients: async function(){
       this.$store.commit('setShowLoader', true);
@@ -173,16 +102,9 @@ export default {
     },
     showClientFormModal: function(){
       if( this.checkAccessList('agregar cliente') ){
-        this.editingUser = false;
+        this.$store.commit('setEditingUser', false);
         this.$bvModal.show('bv-modal-client-form');
       }
-    },
-    renderLegalCases: async function({searchBy, value, userID, callback}){      
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
-
-      this.$store.commit('setShowLoader', false);
     },
     isClientInUse: async function(id){
       this.$store.commit('setShowLoader', true);
@@ -208,79 +130,15 @@ export default {
           await this.$store.dispatch('updateClientIsInUse', {id: id, inUse: 1});
 
           await this.fillClientForm(id);
-        
-          this.editingUser = true;
+          this.$store.commit('setEditingUser', true);
           this.$bvModal.show('bv-modal-client-form');
 
         }
       }
     },
-    isLegalCaseInUse: async function(id){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getIsLegalCaseInUse', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    fillLegalCaseForm: async function(id, userID){
-      this.$store.commit('setShowLoader', true);
-
-      this.$store.commit('setCurrentLegalCaseUserId', userID);
-
-      await this.$store.dispatch('fillLegalCaseForm', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    fillPaymentDatesOnForm: async function(id){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('fillPaymentDatesOnForm', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    fillEditLegalCaseForm: async function(legalCaseID, userID){
-      if( this.checkAccessList('editar caso') ){
-  
-        await this.isLegalCaseInUse(legalCaseID);
-
-        if(this.$store.getters.isLegalCaseInUse === '1'){
-          alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
-        }else{
-          
-          await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 1});
-
-          await this.fillLegalCaseForm(legalCaseID, userID);
-          
-          await this.fillPaymentDatesOnForm(legalCaseID);
-
-          this.editingLegalCase = true;
-          this.$bvModal.show('bv-modal-legal-case-form');
-          
-        }
-      }
-    },
-    renderLegalCaseNotes: async function(legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    renderLegalPaymentDates: async function(legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    resetClientVars: function(){
-      this.$store.commit('setLegalPaymentDates', []);
-      this.$store.commit('setLegalCaseNotes', []);
-      this.$store.commit('setLegalCases', []);
-    },
     showLegalCaseForm: async function(userID){
       if( this.checkAccessList('agregar caso') ){
-        this.editingLegalCase = false;
+        this.$store.commit('setEditingLegalCase', false);
         this.$store.commit('setCurrentLegalCaseUserId', userID);
         this.$bvModal.show('bv-modal-legal-case-form');
       }
@@ -289,11 +147,6 @@ export default {
       if(params.userID){
         //service, searchBy, value, callback
         await this.renderClientBy({service:'getClientBy', searchBy:'id', value:params.userID});
-
-      }
-      if(params.legalCaseID){
-        //searchBy, value, userID, callback
-        await this.renderLegalCases({searchBy:'id', value:params.legalCaseID, userID:params.userID});
 
       }
       if(params.showNewClientForm){
@@ -325,17 +178,6 @@ export default {
       this.$store.commit('setCurrentUserIdUpdatePassword', userID);
       this.$bvModal.show('bv-modal-update-password-form');
     },
-    removePaymentDate: async function(legalPaymentDateID, legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      const data = {};
-      data.id = legalPaymentDateID;
-      //OK
-      await repositories.deletePaymentDate(data);
-      await this.renderLegalPaymentDates(legalCaseID);
-
-      this.$store.commit('setShowLoader', false);
-    },
     unblockUser: async function(userID){
 
       await this.$store.dispatch('updateClientIsInUse', {id: userID, inUse: 0});
@@ -343,12 +185,31 @@ export default {
       await this.renderClientBy({service:'getClientBy', searchBy:'id', value:userID});
 
     },
-    unblockLegalCase: async function(legalCaseID, userID){
+    renderLegalCases: async function({searchBy, value, userID, callback}){      
+      this.$store.commit('setShowLoader', true);
 
-      await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
-      //searchBy, value, userID, callback
-      await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
+      await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
 
+      this.$store.commit('setShowLoader', false);
+    },
+    renderLegalCaseNotes: async function(legalCaseID){
+      this.$store.commit('setShowLoader', true);
+
+      await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
+
+      this.$store.commit('setShowLoader', false);
+    },
+    renderLegalPaymentDates: async function(legalCaseID){
+      this.$store.commit('setShowLoader', true);
+
+      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
+
+      this.$store.commit('setShowLoader', false);
+    },
+    resetClientVars: function(){
+      this.$store.commit('setLegalPaymentDates', []);
+      this.$store.commit('setLegalCaseNotes', []);
+      this.$store.commit('setLegalCases', []);
     }
   }
 }
@@ -377,63 +238,6 @@ export default {
           margin-bottom: 0;
         }
       }
-    }
-    .user{
-      &__legal-cases{
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        flex-wrap: wrap;
-        background-color: #fbfbfb;
-        margin-top: 30px;
-      }
-      &__name{
-        font-size: 20px;
-        font-weight: bold;
-      }
-      &__options{
-        margin-top: 30px;
-      }
-    }
-    .legal-cases{
-      &__case{
-        padding: 15px;
-        flex: 1 1 50%;
-        border-bottom: 1px solid gray;
-
-        &:nth-child(odd){
-          border-right: 1px solid gray;
-        }
-
-        &:last-child{
-          border-right: none;
-        }
-      }
-      &__notes,
-      &__payment-dates{
-        list-style-type: none;
-        padding: 0;
-        margin-top: 30px;
-        background-color: #e6e5e5;
-      }
-    }
-    .case{
-      &__options{
-        margin-top: 30px;
-      }
-    }
-    .notes__note,
-    .payment-dates__date{
-      padding: 15px;
-      border-bottom: 1px solid gray;
-      &:last-child{
-        border-bottom: none;
-      }
-    }
-    .payment-dates__date{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
   }
 </style>

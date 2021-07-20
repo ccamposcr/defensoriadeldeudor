@@ -87,7 +87,9 @@ export default new Vuex.Store({
             password: '',
             confirmPassword: ''
         },
-        administrationForm: []
+        administrationForm: [],
+        editingUser: false,
+        editingLegalCase: false
     },
     getters: {
         users: state => state.users,
@@ -110,7 +112,9 @@ export default new Vuex.Store({
         appointmentOriginalClientList: state => state.appointmentOriginalClientList,
         searchClientForm: state => state.searchClientForm,
         updatePasswordForm: state => state.updatePasswordForm,
-        administrationForm: state => state.administrationForm
+        administrationForm: state => state.administrationForm,
+        editingUser: state => state.editingUser,
+        editingLegalCase: state => state.editingLegalCase
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -208,6 +212,12 @@ export default new Vuex.Store({
         },
         setAdministrationForm(state, data){
             state.administrationForm = data;
+        },
+        setEditingUser(state, data){
+            state.editingUser = data;
+        },
+        setEditingLegalCase(state, data){
+            state.editingLegalCase = data;
         }
     },
     actions: {

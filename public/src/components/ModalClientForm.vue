@@ -14,7 +14,7 @@
           <b-form class="client__new-form">
               <input type="hidden" v-model="$store.getters.clientForm.id">
               <b-form-group label-for="personalID" label="Cédula">
-                <b-form-input @blur="checkIfClientAlreadyExists"  v-model="$store.getters.clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="editingUser"></b-form-input>
+                <b-form-input @blur="checkIfClientAlreadyExists"  v-model="$store.getters.clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Cédula" :disabled="$store.getters.editingUser"></b-form-input>
               </b-form-group>
               <b-form-group label-for="name" label="Nombre">
                 <b-form-input v-model="$store.getters.clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>
@@ -50,10 +50,10 @@
                 <b-form-input v-model="$store.getters.clientForm.address" type="text" class="form-control" id="address" placeholder="Dirección"></b-form-input>
               </b-form-group>
 
-              <b-button :disabled="$store.getters.showLoader" v-if="!editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
+              <b-button :disabled="$store.getters.showLoader" v-if="!$store.getters.editingUser" @click.prevent="checkForm(function(){setNewClient()})" type="submit" variant="primary">
                 Crear
               </b-button>
-              <b-button :disabled="$store.getters.showLoader" v-if="editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
+              <b-button :disabled="$store.getters.showLoader" v-if="$store.getters.editingUser" @click.prevent="checkForm(function(){setEditedClient()})" type="submit" variant="primary">
                 Guardar
               </b-button>
               <b-button @click.prevent="closeClientForm" variant="danger">Cancelar</b-button>
@@ -74,7 +74,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalClientForm',
-  props: ["editingUser"],
+  props: [],
   data () {
     return {
       errors:[],
