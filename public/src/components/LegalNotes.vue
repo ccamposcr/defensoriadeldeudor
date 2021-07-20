@@ -48,5 +48,8 @@ export default {
         &:last-child{
             border-bottom: none;
         }
+        p{
+            margin-bottom: 0;
+        }
     }
 </style>
