@@ -55,11 +55,10 @@
  
 
 <script>
-import repositories from '../repositories';
 
 export default {
   name: 'ModalSearchForm',
-  props: ["locationStaticData", "legalCases"],
+  props: [],
   data () {
     return {
         errors:[]
@@ -85,10 +84,6 @@ export default {
         }
     },
     clearSearchForm: function(){
-      /*for(const item in this.searchClientForm){
-          this.searchClientForm[item] = null;
-      }
-      this.searchClientForm.searchBy = 'personalID';*/
         const data = {
             personalID: '',
             name: '',

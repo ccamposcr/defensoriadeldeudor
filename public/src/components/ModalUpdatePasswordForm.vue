@@ -13,10 +13,10 @@
                 </div>
                 <b-form class="client__update-password-form">
                     <b-form-group label-for="password" label="Contraseña">
-                        <b-form-input v-model="updatePasswordForm.password" type="password" class="form-control" id="password" placeholder="Contraseña"></b-form-input>
+                        <b-form-input v-model="$store.getters.updatePasswordForm.password" type="password" class="form-control" id="password" placeholder="Contraseña"></b-form-input>
                     </b-form-group>
                     <b-form-group label-for="confirmPassword" label="Confirmar contraseña">
-                        <b-form-input v-model="updatePasswordForm.confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Contraseña"></b-form-input>
+                        <b-form-input v-model="$store.getters.updatePasswordForm.confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Contraseña"></b-form-input>
                     </b-form-group>
                     <b-button :disabled="$store.getters.showLoader" @click.prevent="checkForm(function(){updatePassword()})" type="submit" variant="primary">
                         Actualizar
@@ -39,7 +39,7 @@ import repositories from '../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
-  props: ["updatePasswordForm"],
+  props: [],
   data () {
     return {
         errors:[]
@@ -48,10 +48,10 @@ export default {
   methods: {
     checkForm: function(callback){
         this.errors = [];
-        if(!this.updatePasswordForm.password){
+        if(!this.$store.getters.updatePasswordForm.password){
             this.errors.push("Ingrese una contraseña");
         }
-        if(this.updatePasswordForm.password != this.updatePasswordForm.confirmPassword){
+        if(this.$store.getters.updatePasswordForm.password != this.$store.getters.updatePasswordForm.confirmPassword){
             this.errors.push("Ambas contraseñas deben ser iguales");
         }
         if(!this.errors.length){
@@ -59,9 +59,11 @@ export default {
         }
     },
     clearUpdatePasswordForm: function(){
-        for(const item in this.updatePasswordForm){
-            this.updatePasswordForm[item] = null;
+        const data = {
+            password: '',
+            confirmPassword: ''
         }
+        this.$store.commit('setUpdatePasswordForm', data);
         this.errors = [];
     },
     closeUpdatePasswordForm: function(){
@@ -72,7 +74,8 @@ export default {
     },
     updatePassword: async function(){
         this.$store.commit('setShowLoader', true);
-        await repositories.updatePassword(this.$store.getters.currentUserIdUpdatePassword, this.updatePasswordForm);
+        //OK
+        await repositories.updatePassword(this.$store.getters.currentUserIdUpdatePassword, this.$store.getters.updatePasswordForm);
         this.closeUpdatePasswordForm();
         this.$store.commit('setShowLoader', false);
       }

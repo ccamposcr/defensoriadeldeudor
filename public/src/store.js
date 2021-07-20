@@ -80,6 +80,10 @@ export default new Vuex.Store({
             code: '',
             internalCode: '',
             searchBy: 'personalID'
+        },
+        updatePasswordForm:{
+            password: '',
+            confirmPassword: ''
         }
     },
     getters: {
@@ -101,7 +105,8 @@ export default new Vuex.Store({
         staticData: state => state.staticData,
         appointmentForm: state => state.appointmentForm,
         appointmentOriginalClientList: state => state.appointmentOriginalClientList,
-        searchClientForm: state => state.searchClientForm
+        searchClientForm: state => state.searchClientForm,
+        updatePasswordForm: state => state.updatePasswordForm
         /*students: state => state.students.map(s => ({
             ...s, fullName: s.firstName + ' ' + s.lastName
         })),
@@ -192,6 +197,9 @@ export default new Vuex.Store({
         },
         setSearchClientForm(state, data){
             state.searchClientForm = data;
+        },
+        setUpdatePasswordForm(state, data){
+            state.updatePasswordForm = data;
         }
         /*setStudents(state, students) {
             state.students = students;
