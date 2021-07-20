@@ -14,7 +14,9 @@ export default new Vuex.Store({
             subjectList: [],
             administrativeStatusList: [],
             locationList: [],
-            appointmentTypeList: []
+            appointmentTypeList: [],
+            roleList: [],
+            accessList: []
         },
         locationStaticData: {'999': 'Archivo'},
         isClientInUse: 0,
@@ -84,7 +86,8 @@ export default new Vuex.Store({
         updatePasswordForm:{
             password: '',
             confirmPassword: ''
-        }
+        },
+        administrationForm: []
     },
     getters: {
         users: state => state.users,
@@ -106,12 +109,8 @@ export default new Vuex.Store({
         appointmentForm: state => state.appointmentForm,
         appointmentOriginalClientList: state => state.appointmentOriginalClientList,
         searchClientForm: state => state.searchClientForm,
-        updatePasswordForm: state => state.updatePasswordForm
-        /*students: state => state.students.map(s => ({
-            ...s, fullName: s.firstName + ' ' + s.lastName
-        })),
-        findStudent: state => id => state.students.find(s => s.id == id),
-        isLoaded: state => !!state.students.length*/
+        updatePasswordForm: state => state.updatePasswordForm,
+        administrationForm: state => state.administrationForm
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -128,6 +127,12 @@ export default new Vuex.Store({
         },
         setAppointmentTypeList(state, data){
             state.staticData.appointmentTypeList = data;
+        },
+        setRoleList(state, data){
+            state.staticData.roleList = data;
+        },
+        setAccessList(state, data){
+            state.staticData.accessList = data;
         },
         setClients(state, data){
             state.users = data;
@@ -200,36 +205,12 @@ export default new Vuex.Store({
         },
         setUpdatePasswordForm(state, data){
             state.updatePasswordForm = data;
+        },
+        setAdministrationForm(state, data){
+            state.administrationForm = data;
         }
-        /*setStudents(state, students) {
-            state.students = students;
-        },
-        addStudent(state, student) {
-            state.students.push(student);
-        },
-        editStudent(state, student) {
-            const index = state.students.findIndex(s => s.id == student.id);
-            Vue.set(state.students, index, student);
-        }*/
     },
     actions: {
-        /*async getStudents(context) {
-            try {
-                const students = (await axios.get('http://localhost:3000/students')).data;
-                context.commit('setStudents', students);   
-            } catch (error) {
-                context.commit('showError', error);
-            }
-
-        },
-        async createStudent(context, names ) {
-            const student = (await axios.post("http://localhost:3000/students", names )).data;
-            context.commit('addStudent', student);
-        },
-        async editStudent(context, {id, names}) {
-            const student = (await axios.put(`http://localhost:3000/students/${id}`, names)).data;
-            context.commit('editStudent', student);
-        }*/
         async getJudicialStatusList(context) {
             try {
                 const data = await repositories.getJudicialStatusList();
@@ -270,6 +251,36 @@ export default new Vuex.Store({
                 });
                 response.push({'location': context.state.locationStaticData['999'], 'id': '999'});
                 context.commit('setLocationList', response);  
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getRoleList(context){
+            try {
+                const data = await repositories.getRoleList();
+                const response = data.response;
+                context.commit('setRoleList', response);  
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getAccessList(context){
+            try {
+                const data = await repositories.getAccessList();
+                const response = data.response;
+                context.commit('setAccessList', response);  
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getRolePrivilegeAccess(context){
+            try {
+                const data = await repositories.getRolePrivilegeAccess();
+                const response = data.response;
+                context.commit('setAdministrationForm', response);  
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
@@ -500,6 +511,5 @@ export default new Vuex.Store({
         }
     },
     modules: {
-        //error: errorSystem
     }
 })

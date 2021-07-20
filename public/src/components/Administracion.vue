@@ -9,7 +9,7 @@
                 <b-alert v-show="showSuccessMsg" variant="success" show>Permisos guardados!</b-alert>
             </b-form-group>
 
-            <div class="administration__group" v-for="item in staticData.roleList" :key="item.id">
+            <div class="administration__group" v-for="item in $store.getters.staticData.roleList" :key="item.id">
                 
                 <b-form-group>
                     <h6 class="role" :id="item.id">Rol {{item.role}}</h6>
@@ -22,9 +22,9 @@
                         label="Accesos del Rol"
                         value-field="id"
                         text-field="action"
-                        v-model="administrationForm[item.id]"
+                        v-model="$store.getters.administrationForm[item.id]"
                     >
-                        <b-form-checkbox class="group__role" :data-role="item.id" :data-access="access.id" v-for="access in staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
+                        <b-form-checkbox class="group__role" :data-role="item.id" :data-access="access.id" v-for="access in $store.getters.staticData.accessList" :key="access.id" :value="access.id">{{access.action}}</b-form-checkbox>
                     </b-form-checkbox-group>
                 </b-form-group>
 
@@ -38,7 +38,7 @@
 
     <div class="administration__box">
         <h5 class="box__title">Estado Administrativo</h5>
-        <ul v-for="item in staticData.administrativeStatusList" :key="item.id">
+        <ul v-for="item in $store.getters.staticData.administrativeStatusList" :key="item.id">
             <li>{{item.administrativeStatus}}</li>
         </ul>
         <b-form class="form">
@@ -52,7 +52,7 @@
 
     <div class="administration__box">
         <h5 class="box__title">Tipos de Citas</h5>
-        <ul v-for="item in staticData.appointmentTypeList" :key="item.id">
+        <ul v-for="item in $store.getters.staticData.appointmentTypeList" :key="item.id">
             <li>{{item.type}}</li>
         </ul>
         <b-form class="form">
@@ -66,7 +66,7 @@
 
     <div class="administration__box">
         <h5 class="box__title">Estado Judicial</h5>
-        <ul v-for="item in staticData.judicialStatusList" :key="item.id">
+        <ul v-for="item in $store.getters.staticData.judicialStatusList" :key="item.id">
             <li>{{item.judicialStatus}}</li>
         </ul>
         <b-form class="form">
@@ -80,7 +80,7 @@
 
     <div class="administration__box">
         <h5 class="box__title">Naturaleza de expediente</h5>
-        <ul v-for="item in staticData.subjectList" :key="item.id">
+        <ul v-for="item in $store.getters.staticData.subjectList" :key="item.id">
             <li>{{item.subject}}</li>
         </ul>
         <b-form class="form">
@@ -104,15 +104,6 @@ import repositories from '../repositories';
     components: {},
     data () {
         return{
-            staticData:{
-                roleList: [],
-                accessList: [],
-                administrativeStatusList: [],
-                appointmentTypeList: [],
-                judicialStatusList: [],
-                subjectList: []
-            },
-            administrationForm: [],
             roleprivilegeaccess: {
                 data : []
             },
@@ -133,8 +124,8 @@ import repositories from '../repositories';
             this.$store.commit('setShowLoader', true);
             this.roleprivilegeaccess.data = [];
 
-            for (const roleValue in this.administrationForm) {
-                this.administrationForm[roleValue].forEach((accessValue) => {
+            for (const roleValue in this.$store.getters.administrationForm) {
+                this.$store.getters.administrationForm[roleValue].forEach((accessValue) => {
                     this.roleprivilegeaccess.data.push({
                         'roleID': roleValue,
                         'accessID': accessValue
@@ -149,53 +140,27 @@ import repositories from '../repositories';
         getStaticDataFromDB: async function(){
             this.$store.commit('setShowLoader', true);
 
-            const roleListData = await repositories.getRoleList();
-            this.staticData.roleList = roleListData.response;
-
-            const accessListData = await repositories.getAccessList();
-            this.staticData.accessList = accessListData.response;
-
-            const roleprivilegeaccessData = await repositories.getRolePrivilegeAccess();
-            const response = roleprivilegeaccessData.response;
-            this.administrationForm = response;
-
-            await this.renderAdministrativeStatus();
-
-            await this.renderAppointmentTypeList();
-
-            await this.renderJudicialStatus();
-
-            await this.renderSubjectList();            
+            await this.$store.dispatch('getRoleList');
+            await this.$store.dispatch('getAccessList');
+            await this.$store.dispatch('getRolePrivilegeAccess');
+            await this.$store.dispatch('getJudicialStatusList');
+            await this.$store.dispatch('getSubjectList');
+            await this.$store.dispatch('getAdministrativeStatusList');
+            await this.$store.dispatch('getLocationListData');
+            await this.$store.dispatch('getAppointmentTypeList');      
 
             this.$store.commit('setShowLoader', false);
 
-        },
-        renderAdministrativeStatus: async function(){
-            const administrativeStatusListData = await repositories.getAdministrativeStatusList();
-            this.staticData.administrativeStatusList = administrativeStatusListData.response;
-        },
-        renderAppointmentTypeList: async function(){
-            const appointmentTypeListData = await repositories.getAppointmentTypeList();
-            this.staticData.appointmentTypeList = appointmentTypeListData.response;
-        },
-        renderJudicialStatus: async function(){
-            const judicialStatusListData = await repositories.getJudicialStatusList();
-            this.staticData.judicialStatusList = judicialStatusListData.response;
-        },
-        renderSubjectList: async function(){
-            const subjectListData = await repositories.getSubjectList();
-            this.staticData.subjectList = subjectListData.response;
         },
         addAdministrativeStatus: async function(){
             this.$store.commit('setShowLoader', true);
 
             if(this.administration.administrativeStatus){
                 await repositories.addAdministrativeStatus({'administrativeStatus': this.administration.administrativeStatus});
-                await this.renderAdministrativeStatus();
+                await this.$store.dispatch('getAdministrativeStatusList');
                 this.administration.administrativeStatus = null;
             }
             
-
             this.$store.commit('setShowLoader', false);
         },
         addAppointmentType: async function(){
@@ -203,7 +168,7 @@ import repositories from '../repositories';
 
             if(this.administration.type){
                 await repositories.addAppointmentType({'type': this.administration.type});
-                await this.renderAppointmentTypeList();
+                await this.$store.dispatch('getAppointmentTypeList');
                 this.administration.type = null;
             }
 
@@ -214,7 +179,7 @@ import repositories from '../repositories';
 
             if(this.administration.judicialStatus){
                 await repositories.addJudicialStatus({'judicialStatus': this.administration.judicialStatus});
-                await this.renderJudicialStatus();
+                await this.$store.dispatch('getJudicialStatusList');
                 this.administration.judicialStatus = null;
             }
 
@@ -225,7 +190,7 @@ import repositories from '../repositories';
 
             if(this.administration.subject){
                 await repositories.addSubject({'subject': this.administration.subject});
-                await this.renderSubjectList();
+                await this.$store.dispatch('getSubjectList');
                 this.administration.subject = null;
             }
             
