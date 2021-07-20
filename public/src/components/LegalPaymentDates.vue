@@ -20,7 +20,7 @@
 </template>
 
 <script>
-
+import repositories from '../repositories';
 import global from '../global';
 
 export default {
