@@ -132,6 +132,7 @@ import repositories from '../repositories';
                     });
                 });
             }
+            //OK
             await repositories.setRolePrivilegeAccess(this.roleprivilegeaccess);
             this.showSuccessMsg = true;
             this.$store.commit('setShowLoader', false);
@@ -156,6 +157,7 @@ import repositories from '../repositories';
             this.$store.commit('setShowLoader', true);
 
             if(this.administration.administrativeStatus){
+                //OK
                 await repositories.addAdministrativeStatus({'administrativeStatus': this.administration.administrativeStatus});
                 await this.$store.dispatch('getAdministrativeStatusList');
                 this.administration.administrativeStatus = null;
@@ -167,6 +169,7 @@ import repositories from '../repositories';
             this.$store.commit('setShowLoader', true);
 
             if(this.administration.type){
+                //OK
                 await repositories.addAppointmentType({'type': this.administration.type});
                 await this.$store.dispatch('getAppointmentTypeList');
                 this.administration.type = null;
@@ -178,6 +181,7 @@ import repositories from '../repositories';
             this.$store.commit('setShowLoader', true);
 
             if(this.administration.judicialStatus){
+                //OK
                 await repositories.addJudicialStatus({'judicialStatus': this.administration.judicialStatus});
                 await this.$store.dispatch('getJudicialStatusList');
                 this.administration.judicialStatus = null;
@@ -189,6 +193,7 @@ import repositories from '../repositories';
             this.$store.commit('setShowLoader', true);
 
             if(this.administration.subject){
+                //OK
                 await repositories.addSubject({'subject': this.administration.subject});
                 await this.$store.dispatch('getSubjectList');
                 this.administration.subject = null;
