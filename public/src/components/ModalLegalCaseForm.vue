@@ -259,6 +259,7 @@ export default {
         this.$store.commit('setShowLoader', false);
     },
     addNewPaymentDay: function(){
+      this.paymentsArray = this.$store.getters.paymentDates.dates;
       if (this.nextPaymentDay){
         this.paymentsArray.push({'date': this.nextPaymentDay});
         const tmpData = {
@@ -278,7 +279,7 @@ export default {
       this.$store.commit('setPaymentDatesForm', tmpData);
     },
     generateRecurringPayments: function(){
-      this.paymentsArray = [];
+      this.paymentsArray = this.$store.getters.paymentDates.dates;
       if(this.nextPaymentDay && this.numberMonths > 0){
         let datePointer = this.nextPaymentDay;
         for( let i = 0; i < this.numberMonths; i++ ){
