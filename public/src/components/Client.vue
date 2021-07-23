@@ -1,15 +1,24 @@
 <template>
   <div class="client">
-    <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente</b-button>
+    <button v-show="!systemUsersInterface" class="show-instructions" @click.prevent="$store.commit('setInstructions', !$store.getters.instructions.show)">{{$store.getters.instructions.show ? $store.getters.instructions.hideShow : $store.getters.instructions.textShow}}</button>
+    <div class="instructions" v-show="$store.getters.instructions.show">
+      <h1>Instrucciones</h1>
+      <p><strong>Agregar cliente:</strong> Presione el botón agregar cliente nuevo</p>
+      <p><strong>Editar cliente:</strong> Busque el cliente por identificación o nombre y luego presione el botón editar cliente</p>
+      <p><strong>Agregar caso:</strong> Busque el cliente por identificación o nombre, luego presione el botón agregar caso</p>
+      <p><strong>Editar caso:</strong> Busque el caso por código interno ó número de expediente, luego presione el botón editar caso</p>
+    </div>
+
+    <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente - Caso</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <b-button variant="primary" :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
+    <!--<b-button variant="primary" :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
       Ver todos los Clientes
-    </b-button>
+    </b-button>-->
 
     <div v-show="$store.getters.users">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
-          <p v-if="user.personalID && user.personalID != null"><strong>C&eacute;dula:</strong> {{ user.personalID }}</p>
+          <p v-if="user.personalID && user.personalID != null"><strong>Identificaci&oacute;n</strong> {{ user.personalID }}</p>
           <p v-if="user.name && user.name != null"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
           <p v-if="user.phone && user.phone != null" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
           <p v-if="user.phone2 && user.phone2 != null" ><strong>Tel&eacute;fono 2:</strong> {{ user.phone2 }}</p>
@@ -41,7 +50,7 @@
     <modal-client-form @renderClientBy="renderClientBy"></modal-client-form>
     <modal-search-form @renderLegalCases="renderLegalCases" @renderClientBy="renderClientBy"></modal-search-form>
     <modal-update-password-form></modal-update-password-form>
-    <modal-legal-case-form @renderLegalPaymentDates="renderLegalPaymentDates" @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases"></modal-legal-case-form>
+    <modal-legal-case-form @renderLegalCaseNotes="renderLegalCaseNotes" @renderLegalCases="renderLegalCases"></modal-legal-case-form>
 
   </div>
 </template>
@@ -199,15 +208,15 @@ export default {
 
       this.$store.commit('setShowLoader', false);
     },
-    renderLegalPaymentDates: async function(legalCaseID){
+    /*renderPaymentDates: async function(userID){
       this.$store.commit('setShowLoader', true);
 
-      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
+      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
 
       this.$store.commit('setShowLoader', false);
-    },
+    },*/
     resetClientVars: function(){
-      this.$store.commit('setLegalPaymentDates', []);
+      //this.$store.commit('setPaymentDates', []);
       this.$store.commit('setLegalCaseNotes', []);
       this.$store.commit('setLegalCases', []);
     }
@@ -233,10 +242,15 @@ export default {
       &__user{
         background-color: #e6e5e5;
         margin-bottom: 15px;
-        padding: 15px;
+        padding: 15px 15px 5px 15px;
         p{
           margin-bottom: 0;
         }
+      }
+    }
+    .user{
+      &__options{
+        margin-top: 15px;
       }
     }
   }

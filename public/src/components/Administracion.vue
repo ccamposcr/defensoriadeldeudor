@@ -1,5 +1,11 @@
 <template>
 <div class="administration">
+    <button class="show-instructions" @click.prevent="$store.commit('setInstructions', !$store.getters.instructions.show)">{{$store.getters.instructions.show ? $store.getters.instructions.hideShow : $store.getters.instructions.textShow}}</button>
+    <div class="instructions" v-show="$store.getters.instructions.show">
+      <h1>Instrucciones</h1>
+      <p><strong>Agregar/Quitar permisos:</strong> Marque o desmarque el permiso  y luego presione el botón Guardar permisos</p>
+      <p><strong>Agregar un nuevo valor:</strong> Ingrese el valor deseado y luego presione el botón Agregar</p>
+    </div>
     <div class="administration__box">
         <b-form class="rol-form">
             <b-form-group>

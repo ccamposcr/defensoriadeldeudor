@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Client    from './components/Client.vue'
 import Inicio    from './components/Inicio.vue'
 import Administracion    from './components/Administracion.vue'
+import Financiero    from './components/Financiero.vue'
 
 Vue.use(Router)
 
@@ -16,6 +17,10 @@ export default new Router({
         {
             path: '/inicio',
             component: Inicio
+        },
+        {
+            path: '/financiero',
+            component: Financiero
         },
         {
             path: '/administracion',

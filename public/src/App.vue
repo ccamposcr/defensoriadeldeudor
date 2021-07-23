@@ -28,4 +28,5 @@ export default {
   @import "./scss/navigation.scss";
   @import "./scss/welcome.scss";
   @import "./scss/login.scss";
+  @import "./scss/instructions.scss";
 </style>

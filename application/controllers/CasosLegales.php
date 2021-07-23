@@ -19,8 +19,7 @@ class CasosLegales extends CI_Controller
             'subjectID' => $this->input->post('subjectID'), 
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
-            'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
-            'totalAmount' => $this->input->post('totalAmount'),
+            'administrativeStatusID' => $this->input->post('administrativeStatusID'),
             'locationID' => $this->input->post('locationID'),
             'code' => $this->input->post('code')
         );
@@ -53,27 +52,6 @@ class CasosLegales extends CI_Controller
         echo json_encode($response);
     }
 
-    function addPaymentDates(){
-        $legalCaseID = $this->input->post('legalCaseID');
-        $dates = json_decode($this->input->post('dates'));
-
-        foreach ($dates as $item) {
-            $data = array(
-                'legalCaseID' => $legalCaseID,
-                'date' => $item->date,
-                'status' => '1'
-            );
-            $this->casosLegales_model->addPaymentDates($data);
-        }
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash()
-        );
-
-        echo json_encode($response); 
-    }
-
     function editLegalCase(){
         $data = array(
             'internalCode' => $this->input->post('internalCode'),
@@ -81,7 +59,6 @@ class CasosLegales extends CI_Controller
             'userID' => $this->input->post('userID'), 
             'judicialStatusID' => $this->input->post('judicialStatusID'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'),
-            'totalAmount' => $this->input->post('totalAmount'),
             'locationID' => $this->input->post('locationID'),
             'code' => $this->input->post('code')
         );
@@ -148,52 +125,6 @@ class CasosLegales extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'response' => $this->casosLegales_model->getLegalCaseNotesBy($data)
-        );
-
-        echo json_encode($response);
-    }
-
-    function getLegalPaymentDatesBy(){
-        $data = array(
-            'searchBy' => $this->input->post('searchBy'), 
-            'value' => $this->input->post('value')
-        );
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->casosLegales_model->getLegalPaymentDatesBy($data)
-        );
-
-        echo json_encode($response);
-    }
-
-    function getPaymentDatesByDateRange(){
-        $data = array( 
-            'start' => $this->input->post('start'),
-            'end' => $this->input->post('end')
-        );
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->casosLegales_model->getPaymentDatesByDateRange($data)
-        );
-
-        echo json_encode($response);
-    }
-
-    function deletePaymentDate(){
-        $data = array(
-            'status' => '0'
-        );
-        $id = $this->input->post('id');
-        
-        $this->casosLegales_model->updatePaymentDate($id, $data);
-
-        $response = array(
-            'csrf_name' => $this->security->get_csrf_token_name(),
-            'csrf_hash' => $this->security->get_csrf_hash()
         );
 
         echo json_encode($response);

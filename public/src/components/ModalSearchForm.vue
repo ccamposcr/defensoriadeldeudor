@@ -19,24 +19,24 @@
                             name="search-by"
                             label="Seleccione la opción por la que desea buscar"
                         >
-                        <b-form-radio value="personalID">Cédula</b-form-radio>
+                        <b-form-radio value="personalID">Identificación</b-form-radio>
                         <b-form-radio value="name">Nombre</b-form-radio>
                         <b-form-radio value="code" >Código interno</b-form-radio>
                         <b-form-radio value="internalCode">Número de expediente</b-form-radio>
                         </b-form-radio-group>
                     </b-form-group>
 
-                    <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'personalID'" label-for="personalID2" label="Buscar por cédula">
-                        <b-form-input v-model="$store.getters.searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Cédula"></b-form-input>
+                    <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'personalID'" label-for="personalID2" label="Buscar por identificación">
+                        <b-form-input v-model="$store.getters.searchClientForm.personalID" type="number" class="form-control" id="personalID2" placeholder="Identificación (sin espacios ni guiones)"></b-form-input>
                     </b-form-group>
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'name'" label-for="name2" label="Buscar por nombre">
-                        <b-form-input v-model="$store.getters.searchClientForm.name" type="text" class="form-control" id="name2" placeholder="Nombre"></b-form-input>
+                        <b-form-input v-model="$store.getters.searchClientForm.name" type="text" class="form-control" id="name2" placeholder="Nombre del cliente"></b-form-input>
                     </b-form-group>
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'code'" label-for="code" label="Buscar por Código">
-                        <b-form-input v-model="$store.getters.searchClientForm.code" type="text" class="form-control" id="code" placeholder="Código"></b-form-input>
+                        <b-form-input v-model="$store.getters.searchClientForm.code" type="text" class="form-control" id="code" placeholder="Código del caso"></b-form-input>
                     </b-form-group>
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'internalCode'" label-for="internalCode" label="Buscar por número de expediente">
-                        <b-form-input v-model="$store.getters.searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de Expediente"></b-form-input>
+                        <b-form-input v-model="$store.getters.searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de Expediente del caso"></b-form-input>
                     </b-form-group>
                     <b-button :disabled="$store.getters.showLoader" v-show="$store.getters.searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
                         Buscar

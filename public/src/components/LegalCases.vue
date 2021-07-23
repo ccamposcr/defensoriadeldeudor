@@ -10,11 +10,10 @@
                 <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
                 <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
                 <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
-                <p v-if="legalCase.totalAmount && legalCase.totalAmount != null"><strong>Monto del caso:</strong> {{legalCase.totalAmount}}</p>
                 <div class="case__options">
                     <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
                     <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
-                    <b-button :disabled="$store.getters.showLoader" @click="renderLegalPaymentDates(legalCase.legalCaseID)" variant="primary">Ver fechas de pago</b-button>
+                    <!--<b-button :disabled="$store.getters.showLoader" @click="renderPaymentDates(user.id)" variant="primary">Ver fechas de pago</b-button>-->
 
                     <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
                     <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
@@ -22,8 +21,6 @@
                 </div>
 
                 <legalNotes :legal-case="legalCase"></legalNotes>
-
-                <legal-payment-dates :legal-case="legalCase"></legal-payment-dates>
             
             </li>
         </ul>
@@ -38,12 +35,11 @@
 
 import global from '../global';
 import legalNotes from './LegalNotes.vue';
-import legalPaymentDates from './LegalPaymentDates.vue';
 
 export default {
   name: 'LegalCases',
   props: ["user"],
-  components: {legalNotes, legalPaymentDates},
+  components: {legalNotes},
   data () {
     return {
     }
@@ -92,13 +88,13 @@ export default {
 
       this.$store.commit('setShowLoader', false);
     },
-    fillPaymentDatesOnForm: async function(id){
+    /*fillPaymentDatesOnForm: async function(id){
       this.$store.commit('setShowLoader', true);
 
       await this.$store.dispatch('fillPaymentDatesOnForm', {id});
 
       this.$store.commit('setShowLoader', false);
-    },
+    },*/
     fillEditLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
   
@@ -112,7 +108,7 @@ export default {
 
           await this.fillLegalCaseForm(legalCaseID, userID);
           
-          await this.fillPaymentDatesOnForm(legalCaseID);
+          //await this.fillPaymentDatesOnForm(legalCaseID);
 
           this.$store.commit('setEditingLegalCase', true);
           this.$bvModal.show('bv-modal-legal-case-form');
@@ -127,13 +123,13 @@ export default {
 
       this.$store.commit('setShowLoader', false);
     },
-    renderLegalPaymentDates: async function(legalCaseID){
+    /*renderPaymentDates: async function(userID){
       this.$store.commit('setShowLoader', true);
 
-      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
+      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
 
       this.$store.commit('setShowLoader', false);
-    },
+    },*/
     loadDataFromURLParams: async function(params){
       if(params.legalCaseID){
         //searchBy, value, userID, callback
@@ -191,6 +187,9 @@ export default {
     .case{
       &__options{
         margin-top: 30px;
+        button{
+          margin-bottom: 10px;
+        }
       }
     }
 </style>

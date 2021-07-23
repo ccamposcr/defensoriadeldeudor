@@ -1,20 +1,20 @@
 <template>
     <div>
 
-        <!-- LEGAL PAYMENT DATES -->
-        <div v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID)">
+        <!-- PAYMENT DATES -->
+        <div v-if="$store.getters.paymentDates(userID)">
             
             <ul class="legal-cases__payment-dates">
-            <li class="payment-dates__date" v-bind:key="legalPaymentDate.id" v-for="legalPaymentDate in $store.getters.legalPaymentDates(legalCase.legalCaseID)">
-                <p v-if="legalPaymentDate.date"><strong>Fecha de pago:</strong> {{ legalPaymentDate.date }}</p>
-                <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(legalPaymentDate.id, legalCase.legalCaseID)" variant="danger">
+            <li class="payment-dates__date" v-bind:key="paymentDate.id" v-for="paymentDate in $store.getters.paymentDates(userID)">
+                <p v-if="paymentDate.date"><strong>Fecha de pago:</strong> {{ paymentDate.date }}</p>
+                <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(paymentDate.id, userID)" variant="danger">
                 Eliminar
                 </b-button>
             </li>
             </ul>
-            <span class="label-danger" v-if="$store.getters.legalPaymentDates(legalCase.legalCaseID) && !$store.getters.legalPaymentDates(legalCase.legalCaseID).length">No hay fechas de pago</span>
+            <span class="label-danger" v-if="$store.getters.paymentDates(userID) && !$store.getters.paymentDates(userID).length">No hay fechas de pago</span>
         </div>
-        <!-- END LEGAL PAYMENT DATES -->
+        <!-- END PAYMENT DATES -->
 
   </div>
 </template>
@@ -24,7 +24,7 @@ import repositories from '../repositories';
 import global from '../global';
 
 export default {
-  name: 'LegalPaymentDates',
+  name: 'UserPaymentDates',
   props: ["legalCase"],
   components: {},
   data () {
@@ -35,21 +35,21 @@ export default {
     checkAccessList: function(action){
       return global.checkAccessList(action);
     },
-    removePaymentDate: async function(legalPaymentDateID, legalCaseID){
+    removePaymentDate: async function(paymentDateID, userID){
       this.$store.commit('setShowLoader', true);
 
       const data = {};
-      data.id = legalPaymentDateID;
+      data.id = paymentDateID;
       //OK
       await repositories.deletePaymentDate(data);
-      await this.renderLegalPaymentDates(legalCaseID);
+      await this.renderPaymentDates(userID);
 
       this.$store.commit('setShowLoader', false);
     },
-    renderLegalPaymentDates: async function(legalCaseID){
+    renderPaymentDates: async function(userID){
       this.$store.commit('setShowLoader', true);
 
-      await this.$store.dispatch('getLegalPaymentDatesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
+      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
 
       this.$store.commit('setShowLoader', false);
     }

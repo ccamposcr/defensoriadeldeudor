@@ -4,6 +4,24 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import repositories from './repositories';
 
+const instructions = {
+    state: {
+        instructions: {
+            show: false,
+            textShow: 'Ver instrucciones',
+            hideShow: 'Ocultar instrucciones'
+        }
+    },
+    getters: {
+        instructions: state => state.instructions
+    },
+    mutations: {
+        setInstructions(state, visibility) {
+            state.instructions.show = visibility;
+        }
+    }
+}
+
 export default new Vuex.Store({
     state: {
         showLoader: false,
@@ -417,7 +435,7 @@ export default new Vuex.Store({
         },
         async fillPaymentDatesOnForm(context, {id}){
             try {
-                const data = await repositories.getLegalPaymentDatesBy('legalCaseID', id);
+                const data = await repositories.getPaymentDatesBy('legalCaseID', id);
                 const response = data.response;
                 if( response.length ){
                   const tmpData = {
@@ -450,11 +468,11 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        async getLegalPaymentDatesBy(context, {searchBy, legalCaseID}){
+        async getPaymentDatesBy(context, {searchBy, legalCaseID}){
             try {
-                const data = await repositories.getLegalPaymentDatesBy(searchBy, legalCaseID);
+                const data = await repositories.getPaymentDatesBy(searchBy, legalCaseID);
                 const response = data.response;
-                context.commit('setLegalPaymentDatesBy', {data:response, legalCaseID});
+                context.commit('setPaymentDatesBy', {data:response, legalCaseID});
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
@@ -521,5 +539,6 @@ export default new Vuex.Store({
         }
     },
     modules: {
+        instructions: instructions
     }
 })

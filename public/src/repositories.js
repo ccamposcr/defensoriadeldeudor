@@ -174,9 +174,9 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
-    getLegalPaymentDatesBy: async function(searchBy, value){
+    getPaymentDatesBy: async function(searchBy, value){
         try {
-            const url = 'casosLegales/getLegalPaymentDatesBy';
+            const url = 'financiero/getPaymentDatesBy';
 
             const params = {
             'searchBy':searchBy,
@@ -201,7 +201,7 @@ var repositories = {
     },
     getPaymentDatesByDateRange: async function(start, end){
         try {
-            const url = 'casosLegales/getPaymentDatesByDateRange';
+            const url = 'financiero/getPaymentDatesByDateRange';
 
             const params = {
             'start': start,
@@ -247,7 +247,7 @@ var repositories = {
     },
     addPaymentDates: async function(params){
         try {
-            const url = 'casosLegales/addPaymentDates';
+            const url = 'financiero/addPaymentDates';
 
             params[csrf_name] = csrf_hash;
 
@@ -583,7 +583,7 @@ var repositories = {
     },
     deletePaymentDate: async function(params){
         try {
-            const url = 'casosLegales/deletePaymentDate';
+            const url = 'financiero/deletePaymentDate';
             params[csrf_name] = csrf_hash;
 
             const response = await fetch(url, {

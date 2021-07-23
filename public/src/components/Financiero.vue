@@ -1,12 +1,5 @@
 <template>
   <div class="inicio">
-    <button class="show-instructions" @click.prevent="$store.commit('setInstructions', !$store.getters.instructions.show)">{{$store.getters.instructions.show ? $store.getters.instructions.hideShow : $store.getters.instructions.textShow}}</button>
-    <div class="instructions" v-show="$store.getters.instructions.show">
-      <h1>Instrucciones</h1>
-      <p><strong>Agendar cita:</strong> Presione la casilla en el día y la hora del calendario para desplegar el formulario de cita</p>
-      <p><strong>Ver detalle de la cita:</strong> Presione la cita en el calendario</p>
-      <p><strong>Eliminar cita:</strong> Presione la cita en el calendario, luego presione el botón eliminar cita</p>
-    </div>
     <v-row>
       <v-col>
         <v-btn
@@ -85,7 +78,7 @@
 
           </v-toolbar>
         </v-sheet>
-        <v-sheet height="800">
+        <v-sheet>
           <v-calendar
             ref="calendar"
             :events="$store.getters.events"
@@ -94,8 +87,7 @@
             v-model="value"
             @change="fetchEvents"
             @click:event="showEvent"
-            @click:time="showAppointmentModal"
-            interval-count="14"
+            interval-count="0"
             first-time="06:00"
           >
             <template v-slot:day-body="{ date, week }">
@@ -138,11 +130,11 @@
                 </v-btn>
                 <v-btn
                   depressed
-                  color="error"
-                  @click="cancelAppointment(selectedEvent.appointmentID)"
-                  v-if="checkAccessList('eliminar cita') && selectedEvent.type=='appointment'"
+                  color="primary"
+                  :href="selectedEvent.href"
+                  v-if="selectedEvent.type=='notification'"
                 >
-                  Eliminar Cita
+                  Ir al caso
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -152,19 +144,16 @@
       </v-col>
     </v-row>
 
-    <modal-appointment-form @fetchEvents="fetchEvents" :editing-appointment="editingAppointment" :date="date"></modal-appointment-form>
-
   </div>
 </template>
 
 <script>
-  import ModalAppointmentForm from './ModalAppointmentForm.vue';
   import repositories from '../repositories';
   import global from '../global';
 
   export default {
-    name: 'Inicio',
-    components: {ModalAppointmentForm},
+    name: 'Financiero',
+    components: {},
     data () {
       return{
         value: '',
@@ -178,7 +167,6 @@
           week: 'Semana'
         },
         ready: false,
-        editingAppointment: false,
         date:{
           start: null,
           end: null
@@ -186,7 +174,6 @@
       }
     },
     created(){
-      this.getStaticDataFromDB();
     },
     computed: {
       cal () {
@@ -202,19 +189,10 @@
       this.scrollToTime();
       this.updateTime();
       this.$refs.calendar.scrollToTime('08:00');
-      const params = this.$route.query;
-      this.loadDataFromURLParams(params);
     },
     methods: {
       checkAccessList: function(action){
         return global.checkAccessList(action);
-      },
-      getStaticDataFromDB: async function(){
-        this.$store.commit('setShowLoader', true);
-
-        await this.$store.dispatch('getAppointmentTypeList');
-
-        this.$store.commit('setShowLoader', false);
       },
       setToday: function() {
         this.value = '';
@@ -233,22 +211,19 @@
         const startDate = this.date.start.date;
         const endDate = this.date.end.date;
 
-        await this.$store.dispatch('getAppointmentsByDateRange', {searchBy: 'date', startDate, endDate});
+        await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
 
-        if( this.$store.getters.appointmentsDates.length ){
-          this.$store.getters.appointmentsDates.forEach(item => {
-            item.name = `Cita -> ${(item.type ? item.type + ' -> ' : '')} ${item.clientUserName} ${item.clientLastName1}`;
-            item.details = `<strong>Cita:</strong> ${item.date} <br/><strong>Cliente:</strong> ${item.clientUserName} ${item.clientLastName1} ${item.clientLastName2}
-            ${(item.internalUserUserName ? '<br/><strong>Funcionario asignado:</strong> ' + item.internalUserUserName + ' ' + item.internalUserLastName1 + ' ' + item.internalUserLastName2 : '')}
-            <br/><strong>Hecha por:</strong> ' ${item.madeByUserUserName} ${item.madeByUserLastName1} ${item.madeByUserLastName2}
-            ${(item.type ? '<br/><strong>Tipo de Cita:</strong> ' + item.type : '')}`;
-            item.start = item.date;
-            item.color = item.alertColor;
-            item.type = 'appointment';
+        if( this.$store.getters.paymentDates.length ){
+          this.$store.getters.paymentDates.forEach(item => {
+            item.name = 'Cobro -> N.: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
+            item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') +'<br/><strong>Número de expediente:</strong> ' + item.internalCode + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
+            item.href = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
+            item.color = 'orange';
+            item.type = 'notification';
           });
         }
 
-        this.$store.commit('setEvents', this.$store.getters.appointmentsDates);
+        this.$store.commit('setEvents', this.$store.getters.paymentDates);
 
         this.$store.commit('setShowLoader', false);
         
@@ -281,32 +256,6 @@
       },
       updateTime: function () {
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
-      },
-      showAppointmentModal: function({ date, hour }){
-        if( this.checkAccessList('agendar cita') ){
-          const data = `${date} ${hour}':00'`;
-          this.$store.commit('setAppointmentFormBy', {data:data, by:'date'});
-          this.$bvModal.show('bv-modal-appointment-form');
-        }
-      },
-      cancelAppointment: async function(appointmentID){
-        this.$store.commit('setShowLoader', true);
-        //OK
-        await repositories.cancelAppointment({id:appointmentID});
-        const start = this.date.start;
-        const end = this.date.end;
-        this.fetchEvents({start, end});
-        this.selectedOpen = false;
-        this.$store.commit('setShowLoader', false);
-      },
-      loadDataFromURLParams: async function(params){
-        if(this.checkAccessList('agendar cita') && params.appointmentDate){
-          this.$store.commit('setAppointmentFormBy', {data:params.appointmentDate, by:'date'});
-          this.$bvModal.show('bv-modal-appointment-form');
-        }
-        if(this.checkAccessList('agendar cita') && params.clientID){
-          this.$store.commit('setAppointmentFormBy', {data:params.clientID, by:'userID'});
-        }
       },
       sync: function(){
         const start = this.date.start;

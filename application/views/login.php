@@ -26,13 +26,13 @@
                   echo form_open('login/validation', $attributes);
                ?>
                   <div class="form-group">
-                     <label>Ingrese su Cédula</label>
-                     <input type="text" name="personalID" class="form-control" value="<?php echo set_value('personalID'); ?>" />
+                     <label>Ingrese su identificación</label>
+                     <input placeholder="xxxxxxxxx (sin espacios ni guiones)" type="number" name="personalID" class="form-control" value="<?php echo set_value('personalID'); ?>" />
                      <span class="text-danger"><?php echo form_error('personalID'); ?></span>
                   </div>
 
                   <div class="form-group">
-                     <label>Ingrese su Contraseña</label>
+                     <label>Ingrese su contraseña</label>
                      <input type="password" name="password" class="form-control" value="<?php echo set_value('password'); ?>" />
                      <span class="text-danger"><?php echo form_error('password'); ?></span>
                   </div>

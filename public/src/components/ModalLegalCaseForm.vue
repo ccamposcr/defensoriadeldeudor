@@ -34,6 +34,8 @@
                   <b-form-group label-for="note" label="Nueva nota (opcional)">
                     <b-form-textarea id="note" v-model="$store.getters.legalCaseForm.note" placeholder="Agregue una nota" rows="3" max-rows="6"></b-form-textarea>
                   </b-form-group>
+
+                  <!--
                   <b-form-group label-for="totalAmount" label="Monto del caso">
                     <b-form-input v-model="$store.getters.legalCaseForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del caso"></b-form-input>
                   </b-form-group>
@@ -75,6 +77,7 @@
                           </li>
                       </ul>
                   </b-form-group>
+                  -->
                   
                   <b-button :disabled="$store.getters.showLoader" v-if="!$store.getters.editingLegalCase" @click.prevent="checkForm(function(){setNewLegalCase()})" type="submit" variant="primary">
                     Crear
@@ -104,9 +107,9 @@ export default {
   data () {
     return {
       errors:[],
-      nextPaymentDay: null,
+      //nextPaymentDay: null,
       numberMonths: 0,
-      paymentsArray: []
+      //paymentsArray: []
     }
   },
   methods: {
@@ -130,9 +133,6 @@ export default {
         if(!this.$store.getters.legalCaseForm.locationID){
             this.errors.push("Seleccione la ubicación del expediente");
         }
-        if(!this.$store.getters.legalCaseForm.totalAmount){
-            this.errors.push("Ingrese un monto del caso");
-        }
         if(!this.errors.length){
             callback();
         }
@@ -146,19 +146,18 @@ export default {
           judicialStatusID: '',
           administrativeStatusID: '',
           locationID: '',
-          note: '',
-          totalAmount: ''
+          note: ''
         };
         this.$store.commit('setLegalCaseForm', data);
         this.errors = [];
         this.numberMonths = 0;
 
-        this.paymentsArray = [];
+        /*this.paymentsArray = [];
         const tmpData = {
             legalCaseID: '',
             dates: []
         }
-        this.$store.commit('setPaymentDatesForm', tmpData);
+        this.$store.commit('setPaymentDatesForm', tmpData);*/
     },
     onCloseLegalForm: async function(){
       if( this.$store.getters.legalCaseForm.id ){
@@ -189,7 +188,7 @@ export default {
           await repositories.addLegalCaseNote(legalCaseNote);
         }
 
-        if( this.$store.getters.paymentDates.dates.length ){
+        /*if( this.$store.getters.paymentDates.dates.length ){
      
           const tmpData = {
             legalCaseID: data.legalCaseID,
@@ -203,7 +202,7 @@ export default {
           }
           //OK
           await repositories.addPaymentDates(paymentDatesStr);
-        }
+        }*/
 
         //searchBy, value, userID, callback
         await this.$emit('renderLegalCases', {searchBy:'userID', value:userID, userID:userID});
@@ -235,7 +234,7 @@ export default {
           await this.$emit('renderLegalCaseNotes', legalCaseNote.legalCaseID);
         }
 
-        if( this.$store.getters.paymentDates.dates.length ){
+        /*if( this.$store.getters.paymentDates.dates.length ){
 
           const tmpData = {
             legalCaseID: this.$store.getters.legalCaseForm.legalCaseID,
@@ -252,12 +251,12 @@ export default {
 
           //OK
           await repositories.addPaymentDates(paymentDatesStr);
-          await this.$emit('renderLegalPaymentDates', this.$store.getters.paymentDates.legalCaseID);
-        }
+          await this.$emit('renderPaymentDates', this.$store.getters.paymentDates.legalCaseID);
+        }*/
 
         this.closeLegalForm();
         this.$store.commit('setShowLoader', false);
-    },
+    },/*
     addNewPaymentDay: function(){
       this.paymentsArray = this.$store.getters.paymentDates.dates;
       if (this.nextPaymentDay){
@@ -293,7 +292,7 @@ export default {
         this.$store.commit('setPaymentDatesForm', tmpData);
         this.nextPaymentDay = null;
       }
-    }
+    }*/
   }
 }
 </script>
