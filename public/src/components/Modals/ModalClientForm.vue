@@ -70,7 +70,7 @@
  
 
 <script>
-import repositories from '../repositories';
+import repositories from '../../repositories';
 
 export default {
   name: 'ModalClientForm',
@@ -204,5 +204,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 </style>

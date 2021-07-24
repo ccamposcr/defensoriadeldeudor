@@ -60,8 +60,8 @@
 </template>
 
 <script>
-import repositories from '../repositories';
- import global from '../global';
+import repositories from '../../repositories';
+ import global from '../../global';
 
 export default {
   name: 'ModalAppointmentForm',
@@ -138,5 +138,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 </style>

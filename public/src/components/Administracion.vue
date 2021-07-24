@@ -211,7 +211,7 @@ import repositories from '../repositories';
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .administration{
     .group{
         &__role{

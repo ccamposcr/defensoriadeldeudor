@@ -1,5 +1,5 @@
 <template>
-  <div class="inicio">
+  <div class="financiero">
     <v-row>
       <v-col>
         <v-btn
@@ -144,16 +144,37 @@
       </v-col>
     </v-row>
 
+    <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
+
+    <div class="client" v-show="$store.getters.users">
+      <ul class="client__list">
+        <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
+          
+          <client-detail :user="user"></client-detail>
+
+          <div class="user__options">
+            <b-button v-if="checkAccessList('agregar pagos')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Pagos</b-button>
+            <b-button :disabled="$store.getters.showLoader" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Pagos</b-button>
+          </div>
+
+        </li>
+      </ul>
+    </div>
+
+    <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
+
   </div>
 </template>
 
 <script>
-  import repositories from '../repositories';
-  import global from '../global';
+import ClientDetail from './ClientDetail.vue';
+import repositories from '../repositories';
+import global from '../global';
+import ModalSearchForm from './Modals/ModalSearchForm.vue';
 
-  export default {
+export default {
     name: 'Financiero',
-    components: {},
+    components: {ModalSearchForm, ClientDetail},
     data () {
       return{
         value: '',
@@ -211,7 +232,7 @@
         const startDate = this.date.start.date;
         const endDate = this.date.end.date;
 
-        await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
+        //await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
 
         if( this.$store.getters.paymentDates.length ){
           this.$store.getters.paymentDates.forEach(item => {
@@ -261,12 +282,22 @@
         const start = this.date.start;
         const end = this.date.end;
         this.fetchEvents({start, end});
+      },
+      renderClientBy: async function({service, searchBy, value, callback}){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getClientBy', {service, searchBy, value, callback});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      showSearchClientModal: function(){
+        this.$bvModal.show('bv-modal-search-form');
       }
     }
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .v-current-time {
     height: 2px;
     background-color: #ea4335;

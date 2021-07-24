@@ -158,7 +158,7 @@
 </template>
 
 <script>
-  import ModalAppointmentForm from './ModalAppointmentForm.vue';
+  import ModalAppointmentForm from './Modals/ModalAppointmentForm.vue';
   import repositories from '../repositories';
   import global from '../global';
 
@@ -317,7 +317,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .v-current-time {
     height: 2px;
     background-color: #ea4335;

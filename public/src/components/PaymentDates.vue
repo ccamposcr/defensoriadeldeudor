@@ -24,7 +24,7 @@ import repositories from '../repositories';
 import global from '../global';
 
 export default {
-  name: 'UserPaymentDates',
+  name: 'PaymentDates',
   props: ["legalCase"],
   components: {},
   data () {

@@ -18,17 +18,9 @@
     <div v-show="$store.getters.users">
       <ul class="client__list">
         <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
-          <p v-if="user.personalID && user.personalID != null"><strong>Identificaci&oacute;n</strong> {{ user.personalID }}</p>
-          <p v-if="user.name && user.name != null"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
-          <p v-if="user.phone && user.phone != null" ><strong>Tel&eacute;fono:</strong> {{ user.phone }}</p>
-          <p v-if="user.phone2 && user.phone2 != null" ><strong>Tel&eacute;fono 2:</strong> {{ user.phone2 }}</p>
-          <p v-if="user.phone3 && user.phone3 != null" ><strong>Tel&eacute;fono 3:</strong> {{ user.phone3 }}</p>
-          <p v-if="user.email && user.email != null"><strong>Email:</strong> {{ user.email }}</p>
-          <p v-if="user.email2 && user.email2 != null"><strong>Email 2:</strong> {{ user.email2 }}</p>
-          <p v-if="user.email3 && user.email3 != null"><strong>Email 3:</strong> {{ user.email3 }}</p>
-          <p v-if="user.job && user.job != null"><strong>Ocupación:</strong> {{ user.job }}</p>
-          <p v-if="user.address && user.address != null"><strong>Direcci&oacute;n:</strong> {{ user.address }}</p>
-          <p v-if="user.role && user.role != null"><strong>Rol:</strong> {{ user.role }}</p>
+          
+          <client-detail :user="user"></client-detail>
+
           <div class="user__options">
             <b-button v-if="!systemUsersInterface && checkAccessList('editar cliente')" @click="fillEditClientForm(user.id)" variant="info">Editar Cliente</b-button>
             <b-button v-if="!systemUsersInterface && checkAccessList('agregar caso')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Caso</b-button>
@@ -56,17 +48,18 @@
 </template>
 
 <script>
-import ModalClientForm from './ModalClientForm.vue';
-import ModalSearchForm from './ModalSearchForm.vue';
-import ModalUpdatePasswordForm from './ModalUpdatePasswordForm.vue';
-import ModalLegalCaseForm from './ModalLegalCaseForm.vue';
+import ClientDetail from './ClientDetail.vue';
+import ModalClientForm from './Modals/ModalClientForm.vue';
+import ModalSearchForm from './Modals/ModalSearchForm.vue';
+import ModalUpdatePasswordForm from './Modals/ModalUpdatePasswordForm.vue';
+import ModalLegalCaseForm from './Modals/ModalLegalCaseForm.vue';
 import repositories from '../repositories';
 import global from '../global';
 import LegalCases from './LegalCases.vue';
 
 export default {
   name: 'Client',
-  components: {ModalClientForm, ModalSearchForm, ModalUpdatePasswordForm, ModalLegalCaseForm, LegalCases},
+  components: {ClientDetail, ModalClientForm, ModalSearchForm, ModalUpdatePasswordForm, ModalLegalCaseForm, LegalCases},
   data () {
     return {
       systemUsersInterface: false
@@ -243,9 +236,6 @@ export default {
         background-color: #e6e5e5;
         margin-bottom: 15px;
         padding: 15px 15px 5px 15px;
-        p{
-          margin-bottom: 0;
-        }
       }
     }
     .user{

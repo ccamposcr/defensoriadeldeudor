@@ -4,12 +4,9 @@
         <div v-if="$store.getters.legalCases(user.id)">
         <ul class="user__legal-cases">
             <li class="legal-cases__case" v-bind:key="legalCase.id" v-for="legalCase in $store.getters.legalCases(user.id)">
-                <p v-if="legalCase.internalCode && legalCase.internalCode != null"><strong>Número de expediente:</strong> {{ legalCase.internalCode }}</p>
-                <p v-if="legalCase.code && legalCase.code != null"><strong>Código interno:</strong> {{ legalCase.code }}</p>
-                <p v-if="legalCase.subject && legalCase.subject != null"><strong>Naturaleza de expediente:</strong> {{ legalCase.subject }}</p>
-                <p v-if="legalCase.judicialStatus && legalCase.judicialStatus != null"><strong>Estado judicial:</strong> {{ legalCase.judicialStatus }}</p>
-                <p v-if="legalCase.administrativeStatus && legalCase.administrativeStatus != null"><strong>Estado administrativo:</strong> {{ legalCase.administrativeStatus }}</p>
-                <p v-if="legalCase.location && legalCase.location != null"><strong>Ubicación del expediente:</strong> {{ legalCase.location }}</p>
+
+                <legal-case-detail :legal-case="legalCase"></legal-case-detail>
+
                 <div class="case__options">
                     <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
                     <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
@@ -20,7 +17,7 @@
                     </b-form-group>
                 </div>
 
-                <legalNotes :legal-case="legalCase"></legalNotes>
+                <legal-notes :legal-case="legalCase"></legal-notes>
             
             </li>
         </ul>
@@ -34,12 +31,13 @@
 <script>
 
 import global from '../global';
+import LegalCaseDetail from './LegalCaseDetail.vue';
 import legalNotes from './LegalNotes.vue';
 
 export default {
   name: 'LegalCases',
   props: ["user"],
-  components: {legalNotes},
+  components: {legalNotes, LegalCaseDetail},
   data () {
     return {
     }
@@ -178,9 +176,6 @@ export default {
 
         &:last-child{
           border-right: none;
-        }
-        p{
-            margin-bottom: 0;
         }
       }
     }

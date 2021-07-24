@@ -35,7 +35,7 @@
  
 
 <script>
-import repositories from '../repositories';
+import repositories from '../../repositories';
 
 export default {
   name: 'ModalUpdatePasswordForm',
@@ -83,5 +83,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 </style>

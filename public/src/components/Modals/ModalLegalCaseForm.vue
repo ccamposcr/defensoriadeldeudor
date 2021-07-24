@@ -99,7 +99,7 @@
  
 
 <script>
-import repositories from '../repositories';
+import repositories from '../../repositories';
 import moment from 'moment';
 
 export default {

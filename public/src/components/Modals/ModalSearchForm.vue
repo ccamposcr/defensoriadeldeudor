@@ -36,7 +36,7 @@
                         <b-form-input v-model="$store.getters.searchClientForm.code" type="text" class="form-control" id="code" placeholder="Código del caso"></b-form-input>
                     </b-form-group>
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'internalCode'" label-for="internalCode" label="Buscar por número de expediente">
-                        <b-form-input v-model="$store.getters.searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de Expediente del caso"></b-form-input>
+                        <b-form-input v-model="$store.getters.searchClientForm.internalCode" type="text" class="form-control" id="internalCode" placeholder="Número de expediente del caso"></b-form-input>
                     </b-form-group>
                     <b-button :disabled="$store.getters.showLoader" v-show="$store.getters.searchClientForm.searchBy" @click.prevent="checkForm(function(){showSearchResults()})" type="submit" variant="primary">
                         Buscar
@@ -128,5 +128,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 </style>
