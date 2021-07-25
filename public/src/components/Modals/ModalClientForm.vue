@@ -14,7 +14,7 @@
           <b-form class="client__new-form">
               <input type="hidden" v-model="$store.getters.clientForm.id">
               <b-form-group label-for="personalID" label="Identificación">
-                <b-form-input @blur="checkIfClientAlreadyExists" v-model="$store.getters.clientForm.personalID" type="number" class="form-control" id="personalID" placeholder="Identificación (sin espacios ni guiones)" :disabled="$store.getters.editingUser"></b-form-input>
+                <b-form-input @blur="checkIfClientAlreadyExists" v-model="$store.getters.clientForm.personalID" type="text" class="form-control" id="personalID" placeholder="Identificación (sin espacios ni guiones)" :disabled="$store.getters.editingUser"></b-form-input>
               </b-form-group>
               <b-form-group label-for="name" label="Nombre">
                 <b-form-input v-model="$store.getters.clientForm.name" type="text" class="form-control" id="name" placeholder="Nombre"></b-form-input>

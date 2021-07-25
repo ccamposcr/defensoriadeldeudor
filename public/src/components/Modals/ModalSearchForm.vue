@@ -27,7 +27,7 @@
                     </b-form-group>
 
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'personalID'" label-for="personalID2" label="Buscar por identificación">
-                        <b-form-input v-model="$store.getters.searchClientForm.personalID" type="number" class="form-control" id="personalID2" placeholder="Identificación (sin espacios ni guiones)"></b-form-input>
+                        <b-form-input v-model="$store.getters.searchClientForm.personalID" type="text" class="form-control" id="personalID2" placeholder="Identificación (sin espacios ni guiones)"></b-form-input>
                     </b-form-group>
                     <b-form-group v-show="$store.getters.searchClientForm.searchBy == 'name'" label-for="name2" label="Buscar por nombre">
                         <b-form-input v-model="$store.getters.searchClientForm.name" type="text" class="form-control" id="name2" placeholder="Nombre del cliente"></b-form-input>
