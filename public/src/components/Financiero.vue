@@ -157,8 +157,8 @@
             <client-detail-min :user="user"></client-detail-min>
 
             <div class="user__options">
-              <b-button v-if="checkAccessList('agregar info financiera')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Información Financiera</b-button>
-              <b-button :disabled="$store.getters.showLoader" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Información Financiera</b-button>
+              <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm" variant="success">Agregar Información Financiera</b-button>
+              <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo(user.id)" variant="primary">Ver Información Financiera</b-button>
             </div>
 
           </li>
@@ -167,6 +167,7 @@
     </div>
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
+    <modal-financial-info-form></modal-financial-info-form>
 
   </div>
 </template>
@@ -176,10 +177,11 @@ import ClientDetailMin from './ClientDetailMin.vue';
 import repositories from '../repositories';
 import global from '../global';
 import ModalSearchForm from './Modals/ModalSearchForm.vue';
+import ModalFinancialInfoForm from './Modals/ModalFinancialInfoForm.vue';
 
 export default {
     name: 'Financiero',
-    components: {ModalSearchForm, ClientDetailMin},
+    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm},
     data () {
       return{
         value: '',
@@ -200,6 +202,7 @@ export default {
       }
     },
     created(){
+      this.getStaticDataFromDB();
     },
     computed: {
       cal () {
@@ -219,6 +222,13 @@ export default {
     methods: {
       checkAccessList: function(action){
         return global.checkAccessList(action);
+      },
+      getStaticDataFromDB: async function(){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getAdministrativeStatusList');
+        
+        this.$store.commit('setShowLoader', false);
       },
       setToday: function() {
         this.value = '';
@@ -304,6 +314,15 @@ export default {
         await this.$store.dispatch('getAllClients');
 
         this.$store.commit('setShowLoader', false);
+      },
+      showFinancialInfoForm: function(){
+        if( this.checkAccessList('agregar info financiera') ){
+          //this.$store.commit('setEditingUser', false);
+          this.$bvModal.show('bv-modal-financial-info-form');
+        }
+      },
+      renderFinancialInfo: async function(){
+
       }
     }
   }

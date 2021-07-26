@@ -8,12 +8,12 @@
                 <legal-case-detail :legal-case="legalCase"></legal-case-detail>
 
                 <div class="case__options">
-                    <b-button v-if="checkAccessList('editar caso')" @click="fillEditLegalCaseForm(legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
-                    <b-button :disabled="$store.getters.showLoader" @click="renderLegalCaseNotes(legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
+                    <b-button v-if="$emit('checkAccessList', 'editar caso')" @click="$emit('fillEditLegalCaseForm', legalCase.legalCaseID, user.id)" variant="info">Editar caso</b-button>
+                    <b-button :disabled="$store.getters.showLoader" @click="$emit('renderLegalCaseNotes', legalCase.legalCaseID)" variant="primary">Ver notas</b-button>
                     <!--<b-button :disabled="$store.getters.showLoader" @click="renderPaymentDates(user.id)" variant="primary">Ver fechas de pago</b-button>-->
 
-                    <b-form-group v-if="legalCase.inUse == '1' && checkAccessList('administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
-                    <b-button @click.prevent="unblockLegalCase(legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
+                    <b-form-group v-if="legalCase.inUse == '1' && $emit('checkAccessList','administrar')" label="Caso bloqueado -> *Precaución puede estar siendo editado por algún usuario">
+                    <b-button @click.prevent="$emit('unblockLegalCase', legalCase.legalCaseID, user.id)" variant="danger">Desbloquear</b-button>
                     </b-form-group>
                 </div>
 
@@ -30,7 +30,6 @@
 
 <script>
 
-import global from '../global';
 import LegalCaseDetail from './LegalCaseDetail.vue';
 import legalNotes from './LegalNotes.vue';
 
@@ -42,106 +41,7 @@ export default {
     return {
     }
   },
-  created(){
-    this.getStaticDataFromDB();
-  },
-  mounted() {
-    const params = this.$route.query;
-    this.loadDataFromURLParams(params);
-  },
   methods: {
-    checkAccessList: function(action){
-      return global.checkAccessList(action);
-    },
-    getStaticDataFromDB: async function(){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getJudicialStatusList');
-      await this.$store.dispatch('getSubjectList');
-      //await this.$store.dispatch('getAdministrativeStatusList');
-      await this.$store.dispatch('getLocationListData');
-      
-      this.$store.commit('setShowLoader', false);
-    },
-    renderLegalCases: async function({searchBy, value, userID, callback}){      
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    isLegalCaseInUse: async function(id){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getIsLegalCaseInUse', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    fillLegalCaseForm: async function(id, userID){
-      this.$store.commit('setShowLoader', true);
-
-      this.$store.commit('setCurrentLegalCaseUserId', userID);
-
-      await this.$store.dispatch('fillLegalCaseForm', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    /*fillPaymentDatesOnForm: async function(id){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('fillPaymentDatesOnForm', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },*/
-    fillEditLegalCaseForm: async function(legalCaseID, userID){
-      if( this.checkAccessList('editar caso') ){
-  
-        await this.isLegalCaseInUse(legalCaseID);
-
-        if(this.$store.getters.isLegalCaseInUse === '1'){
-          alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
-        }else{
-          
-          await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 1});
-
-          await this.fillLegalCaseForm(legalCaseID, userID);
-          
-          //await this.fillPaymentDatesOnForm(legalCaseID);
-
-          this.$store.commit('setEditingLegalCase', true);
-          this.$bvModal.show('bv-modal-legal-case-form');
-          
-        }
-      }
-    },
-    renderLegalCaseNotes: async function(legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    /*renderPaymentDates: async function(userID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
-
-      this.$store.commit('setShowLoader', false);
-    },*/
-    loadDataFromURLParams: async function(params){
-      if(params.legalCaseID){
-        //searchBy, value, userID, callback
-        await this.renderLegalCases({searchBy:'id', value:params.legalCaseID, userID:params.userID});
-
-      }
-    },
-    unblockLegalCase: async function(legalCaseID, userID){
-
-      await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
-      //searchBy, value, userID, callback
-      await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
-
-    }
   }
 }
 </script>

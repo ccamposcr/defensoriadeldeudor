@@ -25,7 +25,7 @@ import global from '../global';
 
 export default {
   name: 'PaymentDates',
-  props: ["legalCase"],
+  props: [],
   components: {},
   data () {
     return {

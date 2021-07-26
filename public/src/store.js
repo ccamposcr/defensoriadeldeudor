@@ -63,9 +63,7 @@ export default new Vuex.Store({
             subjectID: '',
             userID: '',
             judicialStatusID: '',
-            administrativeStatusID: '',
             note: '',
-            totalAmount: 0,
             legalCaseID: '',
             locationID: '',
             code: '',
@@ -73,7 +71,7 @@ export default new Vuex.Store({
         },
         currentLegalCaseUserId: '',
         paymentDates:{
-            legalCaseID: '',
+            userID: '',
             dates: []
         },
         legalCaseNotes: [],
@@ -107,7 +105,13 @@ export default new Vuex.Store({
         },
         administrationForm: [],
         editingUser: false,
-        editingLegalCase: false
+        editingLegalCase: false,
+        editingFinancialInfo: false,
+        financialForm:{
+            id: '',
+            totalAmount: '',
+            administrativeStatusID: ''
+        }
     },
     getters: {
         users: state => state.users,
@@ -132,7 +136,9 @@ export default new Vuex.Store({
         updatePasswordForm: state => state.updatePasswordForm,
         administrationForm: state => state.administrationForm,
         editingUser: state => state.editingUser,
-        editingLegalCase: state => state.editingLegalCase
+        editingLegalCase: state => state.editingLegalCase,
+        editingFinancialInfo: state => state.editingFinancialInfo,
+        financialForm: state => state.financialForm
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -236,6 +242,12 @@ export default new Vuex.Store({
         },
         setEditingLegalCase(state, data){
             state.editingLegalCase = data;
+        },
+        setEditingFinancialInfo(state, data){
+            state.editingFinancialInfo = data;
+        },
+        setFinancialForm(state, data){
+            state.financialForm = data;
         }
     },
     actions: {
