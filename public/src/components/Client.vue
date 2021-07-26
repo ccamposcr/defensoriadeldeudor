@@ -11,9 +11,9 @@
 
     <b-button variant="info" v-if="!systemUsersInterface" @click="showSearchClientModal">Buscar Cliente - Caso</b-button>
     <b-button variant="success" v-if="!systemUsersInterface && checkAccessList('agregar cliente')"  @click="showClientFormModal">Agregar Cliente Nuevo</b-button>
-    <!--<b-button variant="primary" :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
+    <b-button variant="primary" :disabled="$store.getters.showLoader" v-if="!systemUsersInterface" @click="renderAllClients">
       Ver todos los Clientes
-    </b-button>-->
+    </b-button>
 
     <div v-show="$store.getters.users">
       <ul class="client__list">

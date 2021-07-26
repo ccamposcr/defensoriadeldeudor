@@ -58,7 +58,7 @@ export default {
 
       await this.$store.dispatch('getJudicialStatusList');
       await this.$store.dispatch('getSubjectList');
-      await this.$store.dispatch('getAdministrativeStatusList');
+      //await this.$store.dispatch('getAdministrativeStatusList');
       await this.$store.dispatch('getLocationListData');
       
       this.$store.commit('setShowLoader', false);

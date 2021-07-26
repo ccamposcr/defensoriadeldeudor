@@ -144,21 +144,26 @@
       </v-col>
     </v-row>
 
-    <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
+    <div class="financiero__content">
+      <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
+      <b-button variant="primary" :disabled="$store.getters.showLoader" @click="renderAllClients">
+        Ver todos los Clientes
+      </b-button>
 
-    <div class="client" v-show="$store.getters.users">
-      <ul class="client__list">
-        <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
-          
-          <client-detail :user="user"></client-detail>
+      <div class="client" v-show="$store.getters.users">
+        <ul class="client__list">
+          <li class="list__user" v-bind:key="user.id" v-for="user in $store.getters.users">
+            
+            <client-detail-min :user="user"></client-detail-min>
 
-          <div class="user__options">
-            <b-button v-if="checkAccessList('agregar pagos')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Pagos</b-button>
-            <b-button :disabled="$store.getters.showLoader" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Pagos</b-button>
-          </div>
+            <div class="user__options">
+              <b-button v-if="checkAccessList('agregar info financiera')" @click="showLegalCaseForm(user.id)" variant="success">Agregar Información Financiera</b-button>
+              <b-button :disabled="$store.getters.showLoader" @click="renderLegalCases({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Información Financiera</b-button>
+            </div>
 
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
@@ -167,14 +172,14 @@
 </template>
 
 <script>
-import ClientDetail from './ClientDetail.vue';
+import ClientDetailMin from './ClientDetailMin.vue';
 import repositories from '../repositories';
 import global from '../global';
 import ModalSearchForm from './Modals/ModalSearchForm.vue';
 
 export default {
     name: 'Financiero',
-    components: {ModalSearchForm, ClientDetail},
+    components: {ModalSearchForm, ClientDetailMin},
     data () {
       return{
         value: '',
@@ -292,6 +297,13 @@ export default {
       },
       showSearchClientModal: function(){
         this.$bvModal.show('bv-modal-search-form');
+      },
+      renderAllClients: async function(){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getAllClients');
+
+        this.$store.commit('setShowLoader', false);
       }
     }
   }
@@ -318,5 +330,38 @@ export default {
   }
   .v-calendar-daily__day-interval{
     cursor: pointer;
+  }
+
+  .financiero{
+    &__content{
+      margin-top: 50px;
+    }
+    .btn{
+      margin-right: 10px;
+      margin-bottom: 10px;
+      &:last-child{
+        margin-right: 0;
+      }
+    }
+  }
+
+  .client{
+    &__list{
+      list-style-type: none;
+      padding: 0;
+      margin-top: 30px;
+    }
+    .list{
+      &__user{
+        background-color: #e6e5e5;
+        margin-bottom: 15px;
+        padding: 15px 15px 5px 15px;
+      }
+    }
+    .user{
+      &__options{
+        margin-top: 15px;
+      }
+    }
   }
 </style>

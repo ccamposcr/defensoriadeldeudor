@@ -27,7 +27,7 @@
                ?>
                   <div class="form-group">
                      <label>Ingrese su identificación</label>
-                     <input placeholder="xxxxxxxxx (sin espacios ni guiones)" type="number" name="personalID" class="form-control" value="<?php echo set_value('personalID'); ?>" />
+                     <input placeholder="xxxxxxxxx (sin espacios ni guiones)" type="text" name="personalID" class="form-control" value="<?php echo set_value('personalID'); ?>" />
                      <span class="text-danger"><?php echo form_error('personalID'); ?></span>
                   </div>
 
