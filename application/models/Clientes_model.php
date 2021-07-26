@@ -30,7 +30,7 @@ class Clientes_model extends CI_Model
 
     function getAllClients(){
         $this->db->select('id, personalID, name, lastName1, lastName2, status, phone, email, address, roleID, phone2, phone3, email2, email3, job, inUse');
-        $this->db->order_by('name ASC');
+        $this->db->order_by('dateCreated DESC');
         $this->db->where('roleID', '0');
         $query = $this->db->get('user');
         $results = $query->result();

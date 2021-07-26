@@ -34,7 +34,7 @@
               <b-form-group label-for="phone3" label="Teléfono 3 (opcional)" v-mask="'####-####'">
                 <b-form-input v-model="$store.getters.clientForm.phone3" type="text" class="form-control" id="phone3" placeholder="Teléfono 3"></b-form-input>
               </b-form-group>
-              <b-form-group label-for="email" label="Email principal">
+              <b-form-group label-for="email" label="Email principal (opcional)">
                 <b-form-input v-model="$store.getters.clientForm.email" type="email" class="form-control" id="email" placeholder="Email"></b-form-input>
               </b-form-group>
               <b-form-group label-for="email2" label="Email 2 (opcional)">
@@ -102,7 +102,7 @@ export default {
         if(!this.$store.getters.clientForm.phone){
             this.errors.push("Ingrese un teléfono válido");
         }
-        if(!this.$store.getters.clientForm.email || !this.validEmail(this.$store.getters.clientForm.email)){
+        if(this.$store.getters.clientForm.email && !this.validEmail(this.$store.getters.clientForm.email)){
             this.errors.push("Ingrese un email válido");
         }
         if(this.$store.getters.clientForm.email2 && !this.validEmail(this.$store.getters.clientForm.email2)){
