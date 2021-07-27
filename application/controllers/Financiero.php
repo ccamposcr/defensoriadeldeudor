@@ -54,7 +54,7 @@ class Financiero extends CI_Controller
         );
 
         echo json_encode($response);
-    }
+    }*/
 
     function getPaymentDatesByDateRange(){
         $data = array( 
@@ -65,12 +65,12 @@ class Financiero extends CI_Controller
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->casosLegales_model->getPaymentDatesByDateRange($data)
+            'response' => $this->financiero_model->getPaymentDatesByDateRange($data)
         );
 
         echo json_encode($response);
     }
-
+/*
     function deletePaymentDate(){
         $data = array(
             'status' => '0'
@@ -100,6 +100,21 @@ class Financiero extends CI_Controller
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
             'financialContractID' => $financialContractID
+        );
+
+        echo json_encode($response);
+    }
+
+    function getFinancialInfoBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->financiero_model->getFinancialInfoBy($data)
         );
 
         echo json_encode($response);

@@ -134,7 +134,7 @@
                   :href="selectedEvent.href"
                   v-if="selectedEvent.type=='notification'"
                 >
-                  Ir al caso
+                  Ir al cobro
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -158,8 +158,22 @@
 
             <div class="user__options">
               <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm(user.id)" variant="success">Agregar Información Financiera</b-button>
-              <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo(user.id)" variant="primary">Ver Información Financiera</b-button>
+              <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Información Financiera</b-button>
             </div>
+
+            <!-- FINANCIAL INFO -->
+            <div v-if="$store.getters.financialInfo(user.id)">
+            <ul class="user__financial">
+                <li class="financial__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
+
+                    <p v-if="financial.totalAmount"><strong>Monto total:</strong> {{ financial.totalAmount }}</p>
+                    <p v-if="financial.administrativeStatus"><strong>Estado:</strong> {{ financial.administrativeStatus }}</p>
+                
+                </li>
+            </ul>
+            </div>
+            <span class="label-danger" v-if="$store.getters.financialInfo(user.id) && !$store.getters.financialInfo(user.id).length">No hay Información financiera</span>
+            <!-- FINANCIAL INFO -->
 
           </li>
         </ul>
@@ -167,7 +181,7 @@
     </div>
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
-    <modal-financial-info-form></modal-financial-info-form>
+    <modal-financial-info-form @renderFinancialInfo="renderFinancialInfo"></modal-financial-info-form>
 
   </div>
 </template>
@@ -247,14 +261,14 @@ export default {
         const startDate = this.date.start.date;
         const endDate = this.date.end.date;
 
-        //await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
+        await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
 
         if( this.$store.getters.paymentDates.length ){
           this.$store.getters.paymentDates.forEach(item => {
-            item.name = 'Cobro -> N.: ' + item.internalCode + ' -> ' + item.userName + ' ' + item.lastName1;
-            item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') +'<br/><strong>Número de expediente:</strong> ' + item.internalCode + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
-            item.href = base_url + 'clientes?userID=' + item.userID + '&legalCaseID=' + item.legalCaseID;
-            item.color = 'orange';
+            item.name = 'Cobro -> Cliente: ' + item.userName + ' ' + item.lastName1;
+            item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
+            //item.href = base_url + 'financiero?userID=' + item.userID + '&financialContractID=' + item.financialContractID;
+            item.color = 'red';
             item.type = 'notification';
           });
         }
@@ -317,14 +331,33 @@ export default {
       },
       showFinancialInfoForm: function(userID){
         if( this.checkAccessList('agregar info financiera') ){
+
           this.$store.commit('setEditingFinancialInfo', false);
-          
           this.$store.commit('setCurrentFinancialInfoUserId', userID);
           this.$bvModal.show('bv-modal-financial-info-form');
+
         }
       },
-      renderFinancialInfo: async function(){
+      renderFinancialInfo: async function({searchBy, value, userID, callback}){
+        this.$store.commit('setShowLoader', true);
 
+        await this.$store.dispatch('getFinancialInfoBy', {searchBy, value, userID, callback});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      renderPaymentDates: async function(financialContractID){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      fillPaymentDatesOnForm: async function(id){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('fillPaymentDatesOnForm', {id});
+
+        this.$store.commit('setShowLoader', false);
       }
     }
   }

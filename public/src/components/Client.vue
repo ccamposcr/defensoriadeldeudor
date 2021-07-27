@@ -218,24 +218,10 @@ export default {
 
       this.$store.commit('setShowLoader', false);
     },
-    /*renderPaymentDates: async function(userID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
-
-      this.$store.commit('setShowLoader', false);
-    },*/
     resetClientVars: function(){
       //this.$store.commit('setPaymentDates', []);
       this.$store.commit('setLegalCaseNotes', []);
       this.$store.commit('setLegalCases', []);
-    },
-    renderLegalCases: async function({searchBy, value, userID, callback}){      
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCasesBy', {searchBy, value, userID, callback});
-
-      this.$store.commit('setShowLoader', false);
     },
     isLegalCaseInUse: async function(id){
       this.$store.commit('setShowLoader', true);
@@ -253,13 +239,6 @@ export default {
 
       this.$store.commit('setShowLoader', false);
     },
-    /*fillPaymentDatesOnForm: async function(id){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('fillPaymentDatesOnForm', {id});
-
-      this.$store.commit('setShowLoader', false);
-    },*/
     fillEditLegalCaseForm: async function(legalCaseID, userID){
       if( this.checkAccessList('editar caso') ){
   
@@ -281,20 +260,6 @@ export default {
         }
       }
     },
-    renderLegalCaseNotes: async function(legalCaseID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getLegalCaseNotesBy', {searchBy: 'legalCaseID', legalCaseID: legalCaseID});
-
-      this.$store.commit('setShowLoader', false);
-    },
-    /*renderPaymentDates: async function(userID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
-
-      this.$store.commit('setShowLoader', false);
-    },*/
     unblockLegalCase: async function(legalCaseID, userID){
 
       await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});

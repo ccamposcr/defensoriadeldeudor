@@ -1,7 +1,7 @@
 <template>
     <div>
-        <p v-if="user.personalID && user.personalID != null"><strong>Identificaci&oacute;n</strong> {{ user.personalID }}</p>
-        <p v-if="user.name && user.name != null"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
+        <p v-if="user.personalID"><strong>Identificaci&oacute;n</strong> {{ user.personalID }}</p>
+        <p v-if="user.name"><strong>Nombre:</strong> <span class="user__name">{{ user.name }} {{ user.lastName1 }} {{ user.lastName2 }}</span></p>
   </div>
 </template>
 

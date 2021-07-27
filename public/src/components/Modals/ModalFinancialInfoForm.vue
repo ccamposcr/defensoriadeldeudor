@@ -181,6 +181,9 @@ export default {
           await repositories.addPaymentDates(paymentDatesStr);
         }
 
+        //searchBy, userID, callback
+        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID});
+
 
         this.closeFinancialForm();
         this.$store.commit('setShowLoader', false);
@@ -247,7 +250,7 @@ export default {
           if( !this.paymentsArray.some(e => e.date === datePointer) ){
             this.paymentsArray.push({'date': datePointer});
           }
-          datePointer = moment(datePointer + 'T00:00:00').add(1, 'week').format("YYYY-MM-DD");
+          datePointer = moment(datePointer + 'T00:00:00').add(1, 'month').format("YYYY-MM-DD");
         }
         const tmpData = {
           financialContractID: this.$store.getters.paymentDatesForm.userID,

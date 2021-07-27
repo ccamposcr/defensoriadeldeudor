@@ -111,7 +111,9 @@ export default new Vuex.Store({
             administrativeStatusID: '',
             userID: ''
         },
-        currentFinancialInfoUserId: ''
+        currentFinancialInfoUserId: '',
+        paymentDates: [],
+        financialInfo: []
     },
     getters: {
         users: state => state.users,
@@ -137,7 +139,9 @@ export default new Vuex.Store({
         editingLegalCase: state => state.editingLegalCase,
         editingFinancialInfo: state => state.editingFinancialInfo,
         financialForm: state => state.financialForm,
-        currentFinancialInfoUserId: state => state.currentFinancialInfoUserId
+        currentFinancialInfoUserId: state => state.currentFinancialInfoUserId,
+        paymentDates: state => state.paymentDates,
+        financialInfo: state => userID => state.financialInfo[userID]
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -241,7 +245,16 @@ export default new Vuex.Store({
         },
         setCurrentFinancialInfoUserId(state, data){
             state.currentFinancialInfoUserId = data;
-        }
+        },
+        setPaymentDates(state, data){
+            state.paymentDates = data;
+        },
+        setFinancialInfoBy(state, {data, userID}){
+            Vue.set(state.financialInfo, userID, data);
+        },
+        setFinancialInfo(state, data){
+            state.financialInfo = data;
+        },
     },
     actions: {
         async getJudicialStatusList(context) {
@@ -493,16 +506,16 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        /*async getPaymentDatesByDateRange(context, {startDate, endDate}){
+        async getPaymentDatesByDateRange(context, {startDate, endDate}){
             try {
                 const data = await repositories.getPaymentDatesByDateRange(startDate, endDate);
                 const response = data.response;
-                context.commit('setLegalCasePaymentDates', response);
+                context.commit('setPaymentDates', response);
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
             }
-        },*/
+        },
         async getAppointmentsByDateRange(context, {searchBy, startDate, endDate}){
             try {
                 const data = await repositories.getAppointmentsByDateRange(searchBy, startDate, endDate);
@@ -538,6 +551,21 @@ export default new Vuex.Store({
                 const usersFormatted = buildUserClientName(responseUsers);
                 context.commit('setAppointmentFormBy', {data:usersFormatted, by:'usersList'});
 
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getFinancialInfoBy(context, {searchBy, value, userID, callback}){
+            try {
+                const data = await repositories.getFinancialInfoBy(searchBy, value);
+                const response = data.response;
+
+                context.commit('setFinancialInfoBy', {data:response, userID});
+
+                if(callback && response.length){
+                    callback(response);
+                }
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
