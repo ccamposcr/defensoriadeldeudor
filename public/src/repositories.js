@@ -174,7 +174,7 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
-    getPaymentDatesBy: async function(searchBy, value){
+    /*getPaymentDatesBy: async function(searchBy, value){
         try {
             const url = 'financiero/getPaymentDatesBy';
 
@@ -198,8 +198,8 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },
-    getPaymentDatesByDateRange: async function(start, end){
+    },*/
+    /*getPaymentDatesByDateRange: async function(start, end){
         try {
             const url = 'financiero/getPaymentDatesByDateRange';
 
@@ -223,7 +223,7 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },
+    },*/
     addLegalCaseNote: async function(params){
         try {
             const url = 'casosLegales/addLegalCaseNote';
@@ -580,7 +580,7 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },
+    },/*
     deletePaymentDate: async function(params){
         try {
             const url = 'financiero/deletePaymentDate';
@@ -600,7 +600,7 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },
+    },*/
     updatePassword: async function(userID, params){
         try {
             const url = 'clientes/updatePassword';
@@ -730,6 +730,27 @@ var repositories = {
         try {
             const url = 'generic/addSubject';
             params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    addFinancialContract: async function(userID, params){
+        try {
+            const url = 'financiero/addFinancialContract';
+            params[csrf_name] = csrf_hash;
+            params['userID'] = userID;
 
             const response = await fetch(url, {
                 credentials: 'include',

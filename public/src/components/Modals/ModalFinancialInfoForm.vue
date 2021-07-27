@@ -15,7 +15,7 @@
                   <input type="hidden" v-model="$store.getters.financialForm.id">
                   
                   <b-form-group label-for="totalAmount" label="Monto del contrato">
-                    <b-form-input v-model="$store.getters.financialForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del contrato"></b-form-input>
+                    <b-form-input v-model.lazy="$store.getters.financialForm.totalAmount" v-money="money" type="text" class="form-control" id="totalAmount" placeholder="Monto del contrato"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
                     <b-form-select id="administrativeStatus" v-model="$store.getters.financialForm.administrativeStatusID" :options="$store.getters.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
@@ -51,12 +51,12 @@
                     </b-form-group>
                   </div>
 
-                  <b-form-group label="Listado fechas de pago" v-if="$store.getters.paymentDates.dates.length">
-                      <b-button v-if="!$store.getters.editingFinancialInfo && $store.getters.paymentDates.dates.length" @click.prevent="removeAllPayments" variant="danger">
+                  <b-form-group label="Listado fechas de pago" v-if="$store.getters.paymentDatesForm.dates.length">
+                      <b-button v-if="!$store.getters.editingFinancialInfo && $store.getters.paymentDatesForm.dates.length" @click.prevent="removeAllPayments" variant="danger">
                         Eliminar todas
                       </b-button>
                       <ul class="case-form__list">
-                          <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDates.dates">
+                          <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDatesForm.dates">
                             <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
                             <b-button v-if="!$store.getters.editingFinancialInfo" @click.prevent="removePaymentDate(index)" variant="danger">
                               Eliminar
@@ -97,7 +97,15 @@ export default {
       paymentDaySelected: '',
       paymentDaySelectedForRecurring: '',
       numberMonths: 0,
-      paymentsArray: []
+      paymentsArray: [],
+      money: {
+        decimal: ',',
+        thousands: '.',
+        prefix: '',
+        suffix: '',
+        precision: 2,
+        masked: false /* doesn't work with directive */
+      }
     }
   },
   methods: {
@@ -122,14 +130,14 @@ export default {
           totalAmount: '',
           administrativeStatusID: ''
         };
-        this.$store.commit('setfinancialForm', data);
+        this.$store.commit('setFinancialForm', data);
         this.errors = [];
         this.numberMonths = 0;
         this.paymentDaySelected = '';
         this.paymentDaySelectedForRecurring = '';
         this.paymentsArray = [];
         const tmpData = {
-            userID: '',
+            financialContractID: '',
             dates: []
         }
         this.$store.commit('setPaymentDatesForm', tmpData);
@@ -150,21 +158,28 @@ export default {
     setNewFinancialInfo: async function(){
         this.$store.commit('setShowLoader', true);
 
-        /*if( this.$store.getters.paymentDates.dates.length ){
+        const userID = this.$store.getters.currentFinancialInfoUserId;
+        //OK
+        const data = await repositories.addFinancialContract(userID, this.$store.getters.financialForm);
+
+        //this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
+
+
+        if( this.$store.getters.paymentDatesForm.dates.length ){
      
           const tmpData = {
-            userID: data.legalCaseID,
-            dates: this.$store.getters.paymentDates.dates
+            financialContractID: data.financialContractID,
+            dates: this.$store.getters.paymentDatesForm.dates
           }
           this.$store.commit('setPaymentDatesForm', tmpData);
 
           const paymentDatesStr = {
-            'userID': this.$store.getters.paymentDates.userID,
-            'dates': JSON.stringify(this.$store.getters.paymentDates.dates)
+            'financialContractID': this.$store.getters.paymentDatesForm.financialContractID,
+            'dates': JSON.stringify(this.$store.getters.paymentDatesForm.dates)
           }
           //OK
           await repositories.addPaymentDates(paymentDatesStr);
-        }*/
+        }
 
 
         this.closeFinancialForm();
@@ -173,45 +188,45 @@ export default {
     setEditedFinancialInfo: async function(){
         this.$store.commit('setShowLoader', true);
 
-        /*if( this.$store.getters.paymentDates.dates.length ){
+        /*if( this.$store.getters.paymentDatesForm.dates.length ){
 
           const tmpData = {
-            userID: this.$store.getters.financialForm.legalCaseID,
-            dates: this.$store.getters.paymentDates.dates
+            financialContractID: this.$store.getters.financialForm.legalCaseID,
+            dates: this.$store.getters.paymentDatesForm.dates
           }
           this.$store.commit('setPaymentDatesForm', tmpData);
 
-          const validArrayDates = this.$store.getters.paymentDates.dates.filter(elm => !elm.id );
+          const validArrayDates = this.$store.getters.paymentDatesForm.dates.filter(elm => !elm.id );
 
           const paymentDatesStr = {
-            'userID': this.$store.getters.paymentDates.userID,
+            'userID': this.$store.getters.paymentDatesForm.userID,
             'dates': JSON.stringify(validArrayDates)
           }
 
           //OK
           await repositories.addPaymentDates(paymentDatesStr);
-          await this.$emit('renderPaymentDates', this.$store.getters.paymentDates.userID);
+          await this.$emit('renderPaymentDates', this.$store.getters.paymentDatesForm.userID);
         }*/
 
         this.closeFinancialForm();
         this.$store.commit('setShowLoader', false);
     },
     addNewPaymentDay: function(){
-      this.paymentsArray = this.$store.getters.paymentDates.dates;
-      if (this.paymentDaySelected){
+      this.paymentsArray = this.$store.getters.paymentDatesForm.dates;
+      if (this.paymentDaySelected && !this.paymentsArray.some(e => e.date === this.paymentDaySelected)){
         this.paymentsArray.push({'date': this.paymentDaySelected});
         const tmpData = {
-          userID: this.$store.getters.paymentDates.userID,
+          financialContractID: this.$store.getters.paymentDatesForm.userID,
           dates: this.paymentsArray
         }
         this.$store.commit('setPaymentDatesForm', tmpData);
-        this.paymentDaySelected = '';
       }
+      this.paymentDaySelected = '';
     },
     removePaymentDate: function(index){
       this.paymentsArray.splice(index, 1);
       const tmpData = {
-        userID: this.$store.getters.paymentDates.userID,
+        financialContractID: this.$store.getters.paymentDatesForm.userID,
         dates: this.paymentsArray
       }
       this.$store.commit('setPaymentDatesForm', tmpData);
@@ -219,21 +234,23 @@ export default {
     removeAllPayments: function(){
       this.paymentsArray = [];
       const tmpData = {
-        userID: this.$store.getters.paymentDates.userID,
+        financialContractID: this.$store.getters.paymentDatesForm.userID,
         dates: this.paymentsArray
       }
       this.$store.commit('setPaymentDatesForm', tmpData);
     },
     generateRecurringPayments: function(){
-      this.paymentsArray = this.$store.getters.paymentDates.dates;
+      this.paymentsArray = this.$store.getters.paymentDatesForm.dates;
       if(this.paymentDaySelectedForRecurring && this.numberMonths > 0){
         let datePointer = this.paymentDaySelectedForRecurring;
         for( let i = 0; i < this.numberMonths; i++ ){
-          this.paymentsArray.push({'date': datePointer});
+          if( !this.paymentsArray.some(e => e.date === datePointer) ){
+            this.paymentsArray.push({'date': datePointer});
+          }
           datePointer = moment(datePointer + 'T00:00:00').add(1, 'week').format("YYYY-MM-DD");
         }
         const tmpData = {
-          userID: this.$store.getters.paymentDates.userID,
+          financialContractID: this.$store.getters.paymentDatesForm.userID,
           dates: this.paymentsArray
         }
         this.$store.commit('setPaymentDatesForm', tmpData);

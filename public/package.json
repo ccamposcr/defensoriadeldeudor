@@ -37,6 +37,7 @@
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
+    "v-money": "^0.8.1",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.6",
     "vue-moment": "^4.1.0",

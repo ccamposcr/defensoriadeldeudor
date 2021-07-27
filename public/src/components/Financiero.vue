@@ -157,7 +157,7 @@
             <client-detail-min :user="user"></client-detail-min>
 
             <div class="user__options">
-              <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm" variant="success">Agregar Información Financiera</b-button>
+              <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm(user.id)" variant="success">Agregar Información Financiera</b-button>
               <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo(user.id)" variant="primary">Ver Información Financiera</b-button>
             </div>
 
@@ -315,9 +315,11 @@ export default {
 
         this.$store.commit('setShowLoader', false);
       },
-      showFinancialInfoForm: function(){
+      showFinancialInfoForm: function(userID){
         if( this.checkAccessList('agregar info financiera') ){
-          //this.$store.commit('setEditingUser', false);
+          this.$store.commit('setEditingFinancialInfo', false);
+          
+          this.$store.commit('setCurrentFinancialInfoUserId', userID);
           this.$bvModal.show('bv-modal-financial-info-form');
         }
       },

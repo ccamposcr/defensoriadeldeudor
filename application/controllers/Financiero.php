@@ -22,16 +22,15 @@ class Financiero extends CI_Controller
     }
 
     function addPaymentDates(){
-        $legalCaseID = $this->input->post('legalCaseID');
+        $financialContractID = $this->input->post('financialContractID');
         $dates = json_decode($this->input->post('dates'));
 
         foreach ($dates as $item) {
             $data = array(
-                'legalCaseID' => $legalCaseID,
-                'date' => $item->date,
-                'status' => '1'
+                'financialContractID' => $financialContractID,
+                'paymentDateAlert' => $item->date
             );
-            $this->casosLegales_model->addPaymentDates($data);
+            $this->financiero_model->addPaymentDates($data);
         }
 
         $response = array(
@@ -41,7 +40,7 @@ class Financiero extends CI_Controller
 
         echo json_encode($response); 
     }
-
+/*
     function getLegalPaymentDatesBy(){
         $data = array(
             'searchBy' => $this->input->post('searchBy'), 
@@ -83,6 +82,24 @@ class Financiero extends CI_Controller
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }*/
+
+    function addFinancialContract(){
+        $data = array(
+            'totalAmount' => $this->input->post('totalAmount'),
+            'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
+            'userID' => $this->input->post('userID')
+        );
+
+        $financialContractID = $this->financiero_model->addFinancialContract($data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'financialContractID' => $financialContractID
         );
 
         echo json_encode($response);

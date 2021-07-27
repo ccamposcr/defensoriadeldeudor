@@ -5,7 +5,7 @@ class Financiero_model extends CI_Model
         $results = $this->db->insert('paymentdates', $data);
         return $results;
     }
-
+/*
     function getLegalPaymentDatesBy($data){
         $this->db->select('id, date');
         $this->db->from('paymentdates');
@@ -33,6 +33,12 @@ class Financiero_model extends CI_Model
         $this->db->where('id', $id);
         $results = $this->db->update('paymentdates', $data);
         return $results;
+    }*/
+
+    function addFinancialContract($data){       
+        $this->db->insert('financialcontract', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
     }
 }
 

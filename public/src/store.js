@@ -70,14 +70,12 @@ export default new Vuex.Store({
             inUse: '0'
         },
         currentLegalCaseUserId: '',
-        paymentDates:{
-            userID: '',
+        paymentDatesForm:{
+            financialContractID: '',
             dates: []
         },
         legalCaseNotes: [],
-        legalPaymentDates: [],
         currentUserIdUpdatePassword: '',
-        legalCasePaymentDates: [],
         appointmentsDates: [],
         events: [],
         appointmentForm: {
@@ -110,8 +108,10 @@ export default new Vuex.Store({
         financialForm:{
             id: '',
             totalAmount: '',
-            administrativeStatusID: ''
-        }
+            administrativeStatusID: '',
+            userID: ''
+        },
+        currentFinancialInfoUserId: ''
     },
     getters: {
         users: state => state.users,
@@ -121,12 +121,10 @@ export default new Vuex.Store({
         isLegalCaseInUse: state => state.isLegalCaseInUse,
         legalCaseForm: state => state.legalCaseForm,
         currentLegalCaseUserId: state => state.currentLegalCaseUserId,
-        paymentDates: state => state.paymentDates,
+        paymentDatesForm: state => state.paymentDatesForm,
         legalCaseNotes: state => legalCaseID => state.legalCaseNotes[legalCaseID],
-        legalPaymentDates: state => legalCaseID => state.legalPaymentDates[legalCaseID],
         currentUserIdUpdatePassword: state => state.currentUserIdUpdatePassword,
         showLoader: state => state.showLoader,
-        legalCasePaymentDates: state => state.legalCasePaymentDates,
         appointmentsDates: state => state.appointmentsDates,
         events: state => state.events,
         staticData: state => state.staticData,
@@ -138,7 +136,8 @@ export default new Vuex.Store({
         editingUser: state => state.editingUser,
         editingLegalCase: state => state.editingLegalCase,
         editingFinancialInfo: state => state.editingFinancialInfo,
-        financialForm: state => state.financialForm
+        financialForm: state => state.financialForm,
+        currentFinancialInfoUserId: state => state.currentFinancialInfoUserId
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -190,7 +189,7 @@ export default new Vuex.Store({
             state.currentLegalCaseUserId = data;
         },
         setPaymentDatesForm(state, data){
-            state.paymentDates = data;
+            state.paymentDatesForm = data;
         },
         setLegalCaseNotesBy(state, {data, legalCaseID}){
             Vue.set(state.legalCaseNotes, legalCaseID, data);
@@ -198,20 +197,11 @@ export default new Vuex.Store({
         setLegalCaseNotes(state, data){
             state.legalCaseNotes = data;
         },
-        setLegalPaymentDatesBy(state, {data, legalCaseID}){
-            Vue.set(state.legalPaymentDates, legalCaseID, data);
-        },
-        setLegalPaymentDates(state, data){
-            state.legalPaymentDates = data;
-        },
         setCurrentUserIdUpdatePassword(state, data){
             state.currentUserIdUpdatePassword = data;
         },
         setShowLoader(state, data){
             state.showLoader = data;
-        },
-        setLegalCasePaymentDates(state, data){
-            state.legalCasePaymentDates = data;
         },
         setAppointmentsDates(state, data){
             state.appointmentsDates = data;
@@ -248,6 +238,9 @@ export default new Vuex.Store({
         },
         setFinancialForm(state, data){
             state.financialForm = data;
+        },
+        setCurrentFinancialInfoUserId(state, data){
+            state.currentFinancialInfoUserId = data;
         }
     },
     actions: {
@@ -445,7 +438,7 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        async fillPaymentDatesOnForm(context, {id}){
+        /*async fillPaymentDatesOnForm(context, {id}){
             try {
                 const data = await repositories.getPaymentDatesBy('legalCaseID', id);
                 const response = data.response;
@@ -460,7 +453,7 @@ export default new Vuex.Store({
                 //context.commit('showError', error);
                 alert(error);
             }
-        },
+        },*/
         async updateLegalCaseIsInUse(context, {id, inUse}){
             try {
                 await repositories.updateLegalCaseIsInUse({'id': id, 'inUse': inUse});
@@ -480,7 +473,7 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        async getPaymentDatesBy(context, {searchBy, legalCaseID}){
+        /*async getPaymentDatesBy(context, {searchBy, legalCaseID}){
             try {
                 const data = await repositories.getPaymentDatesBy(searchBy, legalCaseID);
                 const response = data.response;
@@ -489,7 +482,8 @@ export default new Vuex.Store({
                 //context.commit('showError', error);
                 alert(error);
             }
-        }, async getAppointmentTypeList(context){
+        },*/
+        async getAppointmentTypeList(context){
             try {
                 const data = await repositories.getAppointmentTypeList();
                 const response = data.response;
@@ -499,7 +493,7 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        async getPaymentDatesByDateRange(context, {startDate, endDate}){
+        /*async getPaymentDatesByDateRange(context, {startDate, endDate}){
             try {
                 const data = await repositories.getPaymentDatesByDateRange(startDate, endDate);
                 const response = data.response;
@@ -508,7 +502,7 @@ export default new Vuex.Store({
                 //context.commit('showError', error);
                 alert(error);
             }
-        },
+        },*/
         async getAppointmentsByDateRange(context, {searchBy, startDate, endDate}){
             try {
                 const data = await repositories.getAppointmentsByDateRange(searchBy, startDate, endDate);
