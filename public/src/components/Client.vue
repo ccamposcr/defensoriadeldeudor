@@ -271,11 +271,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.v-application{
   .client{
     .btn{
       margin-right: 10px;
-      margin-bottom: 10px;
       &:last-child{
         margin-right: 0;
       }
@@ -289,7 +289,7 @@ export default {
       &__user{
         background-color: #e6e5e5;
         margin-bottom: 15px;
-        padding: 15px 15px 5px 15px;
+        padding: 15px;
       }
     }
     .user{
@@ -298,4 +298,5 @@ export default {
       }
     }
   }
+}
 </style>

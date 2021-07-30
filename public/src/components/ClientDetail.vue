@@ -28,7 +28,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.v-application{
   .list{
     &__user{
       p{
@@ -36,4 +37,5 @@ export default {
       }
     }
   }
+}
 </style>

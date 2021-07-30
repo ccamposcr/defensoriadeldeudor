@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import Client    from './components/Client.vue'
 import Inicio    from './components/Inicio.vue'
 import Administracion    from './components/Administracion.vue'
-import Financiero    from './components/Financiero.vue'
+import Financial    from './components/Financial.vue'
 
 Vue.use(Router)
 
@@ -20,7 +20,7 @@ export default new Router({
         },
         {
             path: '/financiero',
-            component: Financiero
+            component: Financial
         },
         {
             path: '/administracion',

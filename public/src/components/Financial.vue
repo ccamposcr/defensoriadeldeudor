@@ -160,20 +160,15 @@
               <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm(user.id)" variant="success">Agregar Información Financiera</b-button>
               <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Información Financiera</b-button>
             </div>
-
-            <!-- FINANCIAL INFO -->
+            
             <div v-if="$store.getters.financialInfo(user.id)">
-            <ul class="user__financial">
-                <li class="financial__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
-
-                    <p v-if="financial.totalAmount"><strong>Monto total:</strong> {{ financial.totalAmount }}</p>
-                    <p v-if="financial.administrativeStatus"><strong>Estado:</strong> {{ financial.administrativeStatus }}</p>
-                
-                </li>
-            </ul>
+              <ul class="box">
+                  <li class="box__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
+                      <financial-detail :financial="financial" @checkAccessList="checkAccessList" @fillEditFinancialForm="fillEditFinancialForm" :user="user" @unblockFinancialInfo="unblockFinancialInfo"></financial-detail>
+                  </li>
+              </ul>
             </div>
             <span class="label-danger" v-if="$store.getters.financialInfo(user.id) && !$store.getters.financialInfo(user.id).length">No hay Información financiera</span>
-            <!-- FINANCIAL INFO -->
 
           </li>
         </ul>
@@ -188,14 +183,15 @@
 
 <script>
 import ClientDetailMin from './ClientDetailMin.vue';
+import FinancialDetail from './FinancialDetail.vue';
 import repositories from '../repositories';
 import global from '../global';
 import ModalSearchForm from './Modals/ModalSearchForm.vue';
 import ModalFinancialInfoForm from './Modals/ModalFinancialInfoForm.vue';
 
 export default {
-    name: 'Financiero',
-    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm},
+    name: 'Financial',
+    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm, FinancialDetail},
     data () {
       return{
         value: '',
@@ -331,11 +327,9 @@ export default {
       },
       showFinancialInfoForm: function(userID){
         if( this.checkAccessList('agregar info financiera') ){
-
           this.$store.commit('setEditingFinancialInfo', false);
           this.$store.commit('setCurrentFinancialInfoUserId', userID);
           this.$bvModal.show('bv-modal-financial-info-form');
-
         }
       },
       renderFinancialInfo: async function({searchBy, value, userID, callback}){
@@ -358,64 +352,62 @@ export default {
         await this.$store.dispatch('fillPaymentDatesOnForm', {id});
 
         this.$store.commit('setShowLoader', false);
+      },
+      fillEditFinancialForm: async function(financialContractID, userID){
+        if( this.checkAccessList('editar info financiera') ){
+  
+          await this.isFinancialInfoInUse(financialContractID);
+
+          if(this.$store.getters.isFinancialInfoInUse === '1'){
+            alert('Este registro está siendo editado por otro usuario. Por favor intente más tarde.');
+          }else{
+            
+            await this.$store.dispatch('updateFinancialInfoIsInUse', {id: financialContractID, inUse: 1});
+
+            await this.fillFinancialForm(financialContractID, userID);
+            
+            //await this.fillPaymentDatesOnForm(legalCaseID);
+
+            this.$store.commit('setEditingFinancialInfo', true);
+            this.$bvModal.show('bv-modal-financial-info-form');
+            
+          }
+        }
+      },
+      fillFinancialForm: async function(id, userID){
+        this.$store.commit('setShowLoader', true);
+
+        this.$store.commit('setCurrentFinancialInfoUserId', userID);
+
+        await this.$store.dispatch('fillFinancialForm', {id});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      isFinancialInfoInUse: async function(id){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getIsFinancialInfoInUse', {id});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      unblockFinancialInfo: async function(financialContractID, userID){
+
+        await this.$store.dispatch('updateFinancialInfoIsInUse', {id: financialContractID, inUse: 0});
+        //searchBy, value, userID, callback
+        //await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
+
       }
+      
     }
   }
 </script>
 
-<style lang="scss" scoped>
-  .v-current-time {
-    height: 2px;
-    background-color: #ea4335;
-    position: absolute;
-    left: -1px;
-    right: 0;
-    pointer-events: none;
-    &.first::before {
-      content: '';
-      position: absolute;
-      background-color: #ea4335;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-top: -5px;
-      margin-left: -6.5px;
-    }
-  }
-  .v-calendar-daily__day-interval{
-    cursor: pointer;
-  }
-
+<style lang="scss">
+.v-application{
   .financiero{
     &__content{
       margin-top: 50px;
     }
-    .btn{
-      margin-right: 10px;
-      margin-bottom: 10px;
-      &:last-child{
-        margin-right: 0;
-      }
-    }
   }
-
-  .client{
-    &__list{
-      list-style-type: none;
-      padding: 0;
-      margin-top: 30px;
-    }
-    .list{
-      &__user{
-        background-color: #e6e5e5;
-        margin-bottom: 15px;
-        padding: 15px 15px 5px 15px;
-      }
-    }
-    .user{
-      &__options{
-        margin-top: 15px;
-      }
-    }
-  }
+}
 </style>

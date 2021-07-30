@@ -4,12 +4,12 @@
         <!-- LEGAL NOTES -->
         <div v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID)">
             
-            <ul class="legal-cases__notes">
-            <li class="notes__note" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in $store.getters.legalCaseNotes(legalCase.legalCaseID)">
-                <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
-                <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
-                <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
-            </li>
+            <ul class="detail__list">
+                <li class="list__option" v-bind:key="legalCaseNote.id" v-for="legalCaseNote in $store.getters.legalCaseNotes(legalCase.legalCaseID)">
+                    <p v-if="legalCaseNote.note"><strong>Nota:</strong> {{ legalCaseNote.note }}</p>
+                    <p v-if="legalCaseNote.name"><strong>Hecha por:</strong> {{ legalCaseNote.name }} {{ legalCaseNote.lastName1 }} {{ legalCaseNote.lastName2 }}</p>
+                    <p v-if="legalCaseNote.date"><strong>Fecha:</strong> {{ legalCaseNote.date }}</p>
+                </li>
             </ul>
             <span class="label-danger" v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID) && !$store.getters.legalCaseNotes(legalCase.legalCaseID).length">No hay notas</span>
         </div>
@@ -33,16 +33,17 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-    .legal-cases{
-        &__notes{
+<style lang="scss">
+.v-application{
+    .detail{
+        &__list{
             list-style-type: none;
             padding: 0;
             margin-top: 30px;
             background-color: #e6e5e5;
         }
     }
-    .notes__note{
+    .list__option{
         padding: 15px;
         border-bottom: 1px solid gray;
         &:last-child{
@@ -52,4 +53,5 @@ export default {
             margin-bottom: 0;
         }
     }
+}
 </style>

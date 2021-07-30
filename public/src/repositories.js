@@ -791,8 +791,47 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
+    },
+    isFinancialInfoInUse: async function(params){
+        try {
+            const url = 'financiero/isInUse';
+            params[csrf_name] = csrf_hash;
 
-    }
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    updateFinancialInfoIsInUse: async function(params){
+        try {
+            const url = 'financiero/updateIsInUse';
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
 }
   
 export default repositories

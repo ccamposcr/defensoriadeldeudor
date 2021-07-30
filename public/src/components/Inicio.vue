@@ -317,7 +317,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .v-current-time {
     height: 2px;
     background-color: #ea4335;

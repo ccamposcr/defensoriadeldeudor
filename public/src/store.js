@@ -109,11 +109,13 @@ export default new Vuex.Store({
             id: '',
             totalAmount: '',
             administrativeStatusID: '',
-            userID: ''
+            userID: '',
+            propertyNumber: ''
         },
         currentFinancialInfoUserId: '',
         paymentDates: [],
-        financialInfo: []
+        financialInfo: [],
+        isFinancialInfoInUse: 0
     },
     getters: {
         users: state => state.users,
@@ -141,7 +143,8 @@ export default new Vuex.Store({
         financialForm: state => state.financialForm,
         currentFinancialInfoUserId: state => state.currentFinancialInfoUserId,
         paymentDates: state => state.paymentDates,
-        financialInfo: state => userID => state.financialInfo[userID]
+        financialInfo: state => userID => state.financialInfo[userID],
+        isFinancialInfoInUse: state => state.isFinancialInfoInUse
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -255,6 +258,9 @@ export default new Vuex.Store({
         setFinancialInfo(state, data){
             state.financialInfo = data;
         },
+        setIsFinancialInfoInUse(state, data){
+            state.isFinancialInfoInUse = data;
+        }
     },
     actions: {
         async getJudicialStatusList(context) {
@@ -565,6 +571,45 @@ export default new Vuex.Store({
 
                 if(callback && response.length){
                     callback(response);
+                }
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getIsFinancialInfoInUse(context, {id}){
+            try {
+                const data = await repositories.isFinancialInfoInUse({'id': id});
+                const response = data.response;
+                let isInUse = 0;
+                
+                if( response.length ){
+                    isInUse = response[0].inUse;
+                }
+
+                context.commit('setIsFinancialInfoInUse', isInUse);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async updateFinancialInfoIsInUse(context, {id, inUse}){
+            try {
+                await repositories.updateFinancialInfoIsInUse({'id': id, 'inUse': inUse});
+                context.commit('setIsFinancialInfoInUse', inUse);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async fillFinancialForm(context, {id}){
+            try {
+                const data = await repositories.getFinancialInfoBy('id', id);
+                const response = data.response;
+
+                if( response.length ){
+                    response[0].id = id;
+                    context.commit('setFinancialForm', response[0]);
                 }
             }catch (error) {
                 //context.commit('showError', error);

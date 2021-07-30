@@ -211,30 +211,32 @@ import repositories from '../repositories';
   }
 </script>
 
-<style lang="scss" scoped>
-.administration{
-    .group{
-        &__role{
-            margin-bottom: 10px;
-        }
-    }
-
-    &__box{
-        padding-bottom: 50px;
-        border-bottom: 1px solid;
-        margin-bottom: 50px;
-
-        &:last-child{
-            border-bottom: none;
+<style lang="scss">
+.v-application{
+    .administration{
+        .group{
+            &__role{
+                margin-bottom: 10px;
+            }
         }
 
-        .form{
-            margin-top: 30px;
+        &__box{
+            padding-bottom: 50px;
+            border-bottom: 1px solid;
+            margin-bottom: 50px;
+
+            &:last-child{
+                border-bottom: none;
+            }
+
+            .form{
+                margin-top: 30px;
+            }
         }
-    }
-    .box{
-        &__title{
-            margin-bottom: 30px;
+        .box{
+            &__title{
+                margin-bottom: 30px;
+            }
         }
     }
 }

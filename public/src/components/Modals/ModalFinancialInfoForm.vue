@@ -11,7 +11,7 @@
                       <li class="label label-danger" :key="error" v-for="error in errors">{{ error }}</li>
                   </ul>
               </div>
-              <b-form class="legal__case-form">
+              <b-form class="financial-form">
                   <input type="hidden" v-model="$store.getters.financialForm.id">
                   
                   <b-form-group label-for="totalAmount" label="Monto del contrato">
@@ -20,8 +20,11 @@
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
                     <b-form-select id="administrativeStatus" v-model="$store.getters.financialForm.administrativeStatusID" :options="$store.getters.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
                   </b-form-group>
+                  <b-form-group label-for="propertyNumber" label="Número de propiedad (opcional)">
+                    <b-form-input v-model="$store.getters.financialForm.propertyNumber" type="text" class="form-control" id="propertyNumber" placeholder="Número de propiedad"></b-form-input>
+                  </b-form-group>
 
-                  <div class="case-form__payments-group">
+                  <div class="financial-form__payments-group">
                     <h5>Fechas de pagos manuales</h5>
                     <p>Seleccione una fecha y presione el botón de "Agregar fecha", haga lo mismo con la cantidad de fechas que necesite ingresar. </p>
                     <b-form-group label-for="paymentDaySelected" label="Seleccione la fecha">
@@ -35,7 +38,7 @@
                     </b-form-group>
                   </div>
 
-                  <div class="case-form__payments-group">
+                  <div class="financial-form__payments-group">
                     <h5>Generar fechas de pagos recurrentes</h5>
                     <p>Seleccione solamente una fecha, luego ingrese la cantidad de meses recurrentes y presion el botón "Generar fechas" para generar pagos recurrentes el mismo día durante X cantidad de meses.</p>
                     <b-form-group label-for="paymentDaySelectedForRecurring" label="Seleccione la fecha">
@@ -55,7 +58,7 @@
                       <b-button v-if="!$store.getters.editingFinancialInfo && $store.getters.paymentDatesForm.dates.length" @click.prevent="removeAllPayments" variant="danger">
                         Eliminar todas
                       </b-button>
-                      <ul class="case-form__list">
+                      <ul class="financial__list">
                           <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDatesForm.dates">
                             <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
                             <b-button v-if="!$store.getters.editingFinancialInfo" @click.prevent="removePaymentDate(index)" variant="danger">
@@ -128,7 +131,8 @@ export default {
         const data = {
           id: '',
           totalAmount: '',
-          administrativeStatusID: ''
+          administrativeStatusID: '',
+          propertyNumber: ''
         };
         this.$store.commit('setFinancialForm', data);
         this.errors = [];
@@ -265,7 +269,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.case-form{
+.financial-form{
   &__list{
     list-style-type: none;
   }

@@ -41,13 +41,28 @@ class Financiero_model extends CI_Model
     }
 
     function getFinancialInfoBy($data){
-        $this->db->select('financialcontract.id financialcontractID, financialcontract.totalAmount, financialcontract.administrativeStatusID, financialcontract.userID, administrativestatuslist.administrativeStatus');
+        $this->db->select('financialcontract.id financialContractID, financialcontract.totalAmount, financialcontract.administrativeStatusID, financialcontract.userID, financialcontract.dateCreated, financialcontract.propertyNumber, financialcontract.inUse, administrativestatuslist.administrativeStatus');
         $this->db->from('financialcontract');
         $this->db->where('financialcontract.' . $data['searchBy'], $data['value']);
         $this->db->join('administrativestatuslist', 'administrativestatuslist.id = financialcontract.administrativeStatusID', 'left');
         $this->db->order_by('financialcontract.dateCreated DESC');
         $query = $this->db->get();
         $results = $query->result();
+        return $results;
+    }
+
+    function isInUse($id){
+        $this->db->select('inUse');
+        $this->db->where('id', $id);
+        $query = $this->db->get('financialcontract');
+        $results = $query->result();
+        return $results;
+    }
+
+    function updateIsInUse($id, $state){    
+        $this->db->set('inUse', $state);    
+        $this->db->where('id', $id);
+        $results = $this->db->update('financialcontract');
         return $results;
     }
 }
