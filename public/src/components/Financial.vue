@@ -164,7 +164,8 @@
             <div v-if="$store.getters.financialInfo(user.id)">
               <ul class="box">
                   <li class="box__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
-                      <financial-detail :financial="financial" @checkAccessList="checkAccessList" @fillEditFinancialForm="fillEditFinancialForm" :user="user" @unblockFinancialInfo="unblockFinancialInfo"></financial-detail>
+                      <financial-detail :financial="financial" @checkAccessList="checkAccessList" @fillEditFinancialForm="fillEditFinancialForm" :user="user" @unblockFinancialInfo="unblockFinancialInfo" @renderPaymentDates="renderPaymentDates"></financial-detail>
+                      <payment-dates :financial="financial" @checkAccessList="checkAccessList" @removePaymentDate="removePaymentDate"></payment-dates>
                   </li>
               </ul>
             </div>
@@ -184,6 +185,7 @@
 <script>
 import ClientDetailMin from './ClientDetailMin.vue';
 import FinancialDetail from './FinancialDetail.vue';
+import PaymentDates from './PaymentDates.vue';
 import repositories from '../repositories';
 import global from '../global';
 import ModalSearchForm from './Modals/ModalSearchForm.vue';
@@ -191,7 +193,7 @@ import ModalFinancialInfoForm from './Modals/ModalFinancialInfoForm.vue';
 
 export default {
     name: 'Financial',
-    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm, FinancialDetail},
+    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm, FinancialDetail, PaymentDates},
     data () {
       return{
         value: '',
@@ -394,8 +396,26 @@ export default {
 
         await this.$store.dispatch('updateFinancialInfoIsInUse', {id: financialContractID, inUse: 0});
         //searchBy, value, userID, callback
-        //await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
+        await this.renderFinancialInfo({searchBy:'userID', value:userID, userID:userID});
 
+      },
+      renderPaymentDates: async function(financialContractID){
+        this.$store.commit('setShowLoader', true);
+
+        await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
+
+        this.$store.commit('setShowLoader', false);
+      },
+      removePaymentDate: async function({paymentDateID, financialContractID}){
+        this.$store.commit('setShowLoader', true);
+
+        const data = {};
+        data.id = paymentDateID;
+        //OK
+        await repositories.deletePaymentDate(data);
+        await this.renderPaymentDates(financialContractID);
+
+        this.$store.commit('setShowLoader', false);
       }
       
     }

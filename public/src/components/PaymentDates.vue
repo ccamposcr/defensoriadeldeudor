@@ -2,17 +2,21 @@
     <div>
 
         <!-- PAYMENT DATES -->
-        <div v-if="$store.getters.paymentDates(userID)">
+        <div v-if="$store.getters.paymentDatesBy(financial.financialContractID)">
             
-            <ul class="legal-cases__payment-dates">
-            <li class="payment-dates__date" v-bind:key="paymentDate.id" v-for="paymentDate in $store.getters.paymentDates(userID)">
-                <p v-if="paymentDate.date"><strong>Fecha de pago:</strong> {{ paymentDate.date }}</p>
-                <b-button v-if="checkAccessList('editar caso')" @click.prevent="removePaymentDate(paymentDate.id, userID)" variant="danger">
-                Eliminar
-                </b-button>
-            </li>
+            <ul class="detail__list">
+              <li class="list__option" v-bind:key="paymentDate.id" v-for="paymentDate in $store.getters.paymentDatesBy(financial.financialContractID)">
+                  <p v-if="paymentDate.paymentDateAlert"><strong>Fecha de pago:</strong> {{ paymentDate.paymentDateAlert }}</p>
+                  <p v-if="paymentDate.paymentDateMade"><strong>Pagado:</strong> {{ paymentDate.paymentDateAlert }}</p>
+                  <p v-if="paymentDate.referenceNumber"><strong>Número de refencia:</strong> {{ paymentDate.referenceNumber }}</p>
+                  <p v-if="paymentDate.amountPaid"><strong>Monto pagado:</strong> {{ paymentDate.amountPaid }}</p>
+                  <b-button v-if="$emit('checkAccessList', 'editar info financiera')" @click.prevent="$emit('removePaymentDate', {paymentDateID:paymentDate.id, financialContractID})" variant="danger">
+                  Eliminar
+                  </b-button>
+                  <b-button v-if="$emit('checkAccessList', 'agregar info financiera')" @click="$emit('addInvoice', {})" variant="success">Agregar pago</b-button>
+              </li>
             </ul>
-            <span class="label-danger" v-if="$store.getters.paymentDates(userID) && !$store.getters.paymentDates(userID).length">No hay fechas de pago</span>
+            <span class="label-danger" v-if="$store.getters.paymentDatesBy(financial.financialContractID) && !$store.getters.paymentDatesBy(financial.financialContractID).length">No hay fechas de pago</span>
         </div>
         <!-- END PAYMENT DATES -->
 
@@ -20,62 +24,19 @@
 </template>
 
 <script>
-import repositories from '../repositories';
-import global from '../global';
 
 export default {
   name: 'PaymentDates',
-  props: [],
+  props: ["financial"],
   components: {},
   data () {
     return {
     }
   },
   methods: {
-    checkAccessList: function(action){
-      return global.checkAccessList(action);
-    },
-    removePaymentDate: async function(paymentDateID, userID){
-      this.$store.commit('setShowLoader', true);
-
-      const data = {};
-      data.id = paymentDateID;
-      //OK
-      await repositories.deletePaymentDate(data);
-      await this.renderPaymentDates(userID);
-
-      this.$store.commit('setShowLoader', false);
-    },
-    renderPaymentDates: async function(userID){
-      this.$store.commit('setShowLoader', true);
-
-      await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'userID', userID: userID});
-
-      this.$store.commit('setShowLoader', false);
-    }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-    .legal-cases{
-        &__payment-dates{
-            list-style-type: none;
-            padding: 0;
-            margin-top: 30px;
-            background-color: #e6e5e5;
-        }
-    }
-    .payment-dates__date{
-      padding: 15px;
-      border-bottom: 1px solid gray;
-      &:last-child{
-        border-bottom: none;
-      }
-    }
-    .payment-dates__date{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+<style lang="scss">
 </style>

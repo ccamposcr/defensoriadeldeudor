@@ -143,6 +143,7 @@ export default new Vuex.Store({
         financialForm: state => state.financialForm,
         currentFinancialInfoUserId: state => state.currentFinancialInfoUserId,
         paymentDates: state => state.paymentDates,
+        paymentDatesBy: state => financialContractID => state.paymentDates[financialContractID],
         financialInfo: state => userID => state.financialInfo[userID],
         isFinancialInfoInUse: state => state.isFinancialInfoInUse
     },
@@ -180,6 +181,9 @@ export default new Vuex.Store({
         setLegalCases(state, data){
             state.legalCases = data;
         },
+        setLegalCases(state, data){
+            state.legalCases = data;
+        },
         setIsClientInUse(state, data){
             state.isClientInUse = data;
         },
@@ -204,6 +208,9 @@ export default new Vuex.Store({
         setLegalCaseNotes(state, data){
             state.legalCaseNotes = data;
         },
+        setLegalCaseNotes(state, data){
+            state.legalCaseNotes = data;
+        },
         setCurrentUserIdUpdatePassword(state, data){
             state.currentUserIdUpdatePassword = data;
         },
@@ -221,6 +228,9 @@ export default new Vuex.Store({
         },
         setAppointmentFormBy(state, {data, by}){
             Vue.set(state.appointmentForm, by, data);
+        },
+        setAppointmentForm(state, data){
+            state.appointmentForm = data;
         },
         setAppointmentOriginalClientList(state, data){
             state.appointmentOriginalClientList = data;
@@ -252,8 +262,14 @@ export default new Vuex.Store({
         setPaymentDates(state, data){
             state.paymentDates = data;
         },
+        setPaymentDatesBy(state, {data, financialContractID}){
+            Vue.set(state.paymentDates, financialContractID, data);
+        },
         setFinancialInfoBy(state, {data, userID}){
             Vue.set(state.financialInfo, userID, data);
+        },
+        setFinancialInfo(state, data){
+            state.financialInfo = data;
         },
         setFinancialInfo(state, data){
             state.financialInfo = data;
@@ -492,16 +508,16 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        /*async getPaymentDatesBy(context, {searchBy, legalCaseID}){
+        async getPaymentDatesBy(context, {searchBy, financialContractID}){
             try {
-                const data = await repositories.getPaymentDatesBy(searchBy, legalCaseID);
+                const data = await repositories.getPaymentDatesBy(searchBy, financialContractID);
                 const response = data.response;
-                context.commit('setPaymentDatesBy', {data:response, legalCaseID});
+                context.commit('setPaymentDatesBy', {data:response, financialContractID});
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
             }
-        },*/
+        },
         async getAppointmentTypeList(context){
             try {
                 const data = await repositories.getAppointmentTypeList();

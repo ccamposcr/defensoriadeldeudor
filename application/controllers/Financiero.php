@@ -40,8 +40,8 @@ class Financiero extends CI_Controller
 
         echo json_encode($response); 
     }
-/*
-    function getLegalPaymentDatesBy(){
+
+    function getPaymentDatesBy(){
         $data = array(
             'searchBy' => $this->input->post('searchBy'), 
             'value' => $this->input->post('value')
@@ -50,11 +50,11 @@ class Financiero extends CI_Controller
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash(),
-            'response' => $this->casosLegales_model->getLegalPaymentDatesBy($data)
+            'response' => $this->financiero_model->getPaymentDatesBy($data)
         );
 
         echo json_encode($response);
-    }*/
+    }
 
     function getPaymentDatesByDateRange(){
         $data = array( 
@@ -91,7 +91,8 @@ class Financiero extends CI_Controller
         $data = array(
             'totalAmount' => $this->input->post('totalAmount'),
             'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
-            'userID' => $this->input->post('userID')
+            'userID' => $this->input->post('userID'),
+            'propertyNumber' => $this->input->post('propertyNumber')
         );
 
         $financialContractID = $this->financiero_model->addFinancialContract($data);
@@ -137,6 +138,25 @@ class Financiero extends CI_Controller
         $id = $this->input->post('id');
         $state = $this->input->post('inUse');
         $isInUse = $this->financiero_model->updateIsInUse($id, $state);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response);
+    }
+
+    function editFinancialContract(){
+        $data = array(
+            'totalAmount' => $this->input->post('totalAmount'),
+            'administrativeStatusID' => $this->input->post('administrativeStatusID'), 
+            'userID' => $this->input->post('userID'),
+            'propertyNumber' => $this->input->post('propertyNumber')
+        );
+        
+        $id = $this->input->post('id');
+        $this->financiero_model->editFinancialContract($id, $data);
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),

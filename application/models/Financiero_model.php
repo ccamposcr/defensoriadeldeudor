@@ -5,16 +5,16 @@ class Financiero_model extends CI_Model
         $results = $this->db->insert('paymentdates', $data);
         return $results;
     }
-/*
-    function getLegalPaymentDatesBy($data){
-        $this->db->select('id, date');
+
+    function getPaymentDatesBy($data){
+        $this->db->select('id, financialContractID, paymentDateAlert, paymentDateMade, referenceNumber, amountPaid');
         $this->db->from('paymentdates');
         $this->db->where($data['searchBy'], $data['value']);
-        $this->db->where('status', '1');
+        //$this->db->where('status', '1');
         $query = $this->db->get();
         $results = $query->result();
         return $results;
-    }*/
+    }
 
     function getPaymentDatesByDateRange($data){
         $this->db->select('paymentdates.financialContractID financialContractID, financialcontract.totalAmount, financialcontract.userID userID, financialcontract.administrativeStatusID, paymentdates.paymentDateAlert start, user.name userName, user.lastName1, user.lastName2');
@@ -63,6 +63,12 @@ class Financiero_model extends CI_Model
         $this->db->set('inUse', $state);    
         $this->db->where('id', $id);
         $results = $this->db->update('financialcontract');
+        return $results;
+    }
+
+    function editFinancialContract($id, $data){    
+        $this->db->where('id', $id);
+        $results = $this->db->update('financialcontract', $data);
         return $results;
     }
 }

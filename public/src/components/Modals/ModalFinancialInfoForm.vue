@@ -149,8 +149,8 @@ export default {
     onCloseFinancialForm: async function(){
       if( this.$store.getters.financialForm.id ){
         this.$store.commit('setShowLoader', true);
-
-        //await this.$store.dispatch('updateLegalCaseIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
+        
+        await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
 
         this.$store.commit('setShowLoader', false);
       }
@@ -186,7 +186,7 @@ export default {
         }
 
         //searchBy, userID, callback
-        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID});
+        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID, userID:userID});
 
 
         this.closeFinancialForm();
@@ -194,6 +194,27 @@ export default {
     },
     setEditedFinancialInfo: async function(){
         this.$store.commit('setShowLoader', true);
+
+        const userID = this.$store.getters.currentFinancialInfoUserId;
+
+        //OK
+        await repositories.editFinancialContract(this.$store.getters.financialForm);
+
+        await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
+
+        //searchBy, userID, callback
+        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID, userID:userID});
+        
+        /*const legalCaseNote = {};
+        legalCaseNote.legalCaseID = this.$store.getters.legalCaseForm.legalCaseID;
+        legalCaseNote.userID = loggedINUserID;
+        legalCaseNote.note = this.$store.getters.legalCaseForm.note;
+
+        if( legalCaseNote.note ){
+          //OK
+          await repositories.addLegalCaseNote(legalCaseNote);
+          await this.$emit('renderLegalCaseNotes', legalCaseNote.legalCaseID);
+        }*/
 
         /*if( this.$store.getters.paymentDatesForm.dates.length ){
 

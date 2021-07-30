@@ -264,7 +264,7 @@ export default {
 
       await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 0});
       //searchBy, value, userID, callback
-      await this.renderLegalCases({searchBy:'id', value:legalCaseID, userID:userID});
+      await this.renderLegalCases({searchBy:'userID', value:userID, userID:userID});
 
     }
   }

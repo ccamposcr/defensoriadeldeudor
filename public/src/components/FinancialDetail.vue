@@ -9,16 +9,20 @@
             <b-form-group v-if="financial.inUse == '1' && $emit('checkAccessList','administrar')" label="Finaciero bloqueado -> *Precaución puede estar siendo editado por algún usuario">
                 <b-button @click.prevent="$emit('unblockFinancialInfo', financial.financialContractID, user.id)" variant="danger">Desbloquear</b-button>
             </b-form-group>
+            <b-button variant="primary" :disabled="$store.getters.showLoader" @click="$emit('renderPaymentDates', financial.financialContractID)">
+              Ver las fechas de pago
+            </b-button>
         </div>
     </div>
 </template>
 
 <script>
+import PaymentDates from './PaymentDates.vue'
 
 export default {
   name: 'FinancialDetail',
   props: ["financial", "user"],
-  components: {},
+  components: {PaymentDates},
   data () {
     return {}
   },
