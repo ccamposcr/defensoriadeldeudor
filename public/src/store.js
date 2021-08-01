@@ -115,7 +115,8 @@ export default new Vuex.Store({
         currentFinancialInfoUserId: '',
         paymentDates: [],
         financialInfo: [],
-        isFinancialInfoInUse: 0
+        isFinancialInfoInUse: 0,
+        paymentDatesEvents: []
     },
     getters: {
         users: state => state.users,
@@ -145,7 +146,8 @@ export default new Vuex.Store({
         paymentDates: state => state.paymentDates,
         paymentDatesBy: state => financialContractID => state.paymentDates[financialContractID],
         financialInfo: state => userID => state.financialInfo[userID],
-        isFinancialInfoInUse: state => state.isFinancialInfoInUse
+        isFinancialInfoInUse: state => state.isFinancialInfoInUse,
+        paymentDatesEvents: state => state.paymentDatesEvents
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -276,6 +278,9 @@ export default new Vuex.Store({
         },
         setIsFinancialInfoInUse(state, data){
             state.isFinancialInfoInUse = data;
+        },
+        setPaymentDatesEvents(state, data){
+            state.paymentDatesEvents = data;
         }
     },
     actions: {
@@ -473,13 +478,13 @@ export default new Vuex.Store({
                 alert(error);
             }
         },
-        /*async fillPaymentDatesOnForm(context, {id}){
+        async fillPaymentDatesOnForm(context, {id}){
             try {
-                const data = await repositories.getPaymentDatesBy('legalCaseID', id);
+                const data = await repositories.getPaymentDatesBy('financialContractID', id);
                 const response = data.response;
                 if( response.length ){
                   const tmpData = {
-                    legalCaseID : id,
+                    financialContractID : id,
                     dates: response
                   };
                   context.commit('setPaymentDatesForm', tmpData);
@@ -488,7 +493,7 @@ export default new Vuex.Store({
                 //context.commit('showError', error);
                 alert(error);
             }
-        },*/
+        },
         async updateLegalCaseIsInUse(context, {id, inUse}){
             try {
                 await repositories.updateLegalCaseIsInUse({'id': id, 'inUse': inUse});
@@ -532,7 +537,7 @@ export default new Vuex.Store({
             try {
                 const data = await repositories.getPaymentDatesByDateRange(startDate, endDate);
                 const response = data.response;
-                context.commit('setPaymentDates', response);
+                context.commit('setPaymentDatesEvents', response);
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);

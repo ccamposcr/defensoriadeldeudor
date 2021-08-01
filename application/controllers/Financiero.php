@@ -28,7 +28,8 @@ class Financiero extends CI_Controller
         foreach ($dates as $item) {
             $data = array(
                 'financialContractID' => $financialContractID,
-                'paymentDateAlert' => $item->date
+                'paymentDateAlert' => $item->paymentDateAlert,
+                'status' => '1'
             );
             $this->financiero_model->addPaymentDates($data);
         }
@@ -70,14 +71,14 @@ class Financiero extends CI_Controller
 
         echo json_encode($response);
     }
-/*
+
     function deletePaymentDate(){
         $data = array(
             'status' => '0'
         );
         $id = $this->input->post('id');
         
-        $this->casosLegales_model->updatePaymentDate($id, $data);
+        $this->financiero_model->updatePaymentDate($id, $data);
 
         $response = array(
             'csrf_name' => $this->security->get_csrf_token_name(),
@@ -85,7 +86,7 @@ class Financiero extends CI_Controller
         );
 
         echo json_encode($response);
-    }*/
+    }
 
     function addFinancialContract(){
         $data = array(

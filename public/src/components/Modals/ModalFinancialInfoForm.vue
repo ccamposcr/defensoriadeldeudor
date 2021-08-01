@@ -56,13 +56,13 @@
 
                   <b-form-group label="Listado fechas de pago" v-if="$store.getters.paymentDatesForm.dates.length">
                       <b-button v-if="!$store.getters.editingFinancialInfo && $store.getters.paymentDatesForm.dates.length" @click.prevent="removeAllPayments" variant="danger">
-                        Eliminar todas
+                        Quitar todas
                       </b-button>
                       <ul class="financial__list">
                           <li class="list__date" :key="index" v-for="(item, index) in $store.getters.paymentDatesForm.dates">
-                            <span><strong>Fecha de pago:</strong> {{ item.date }}</span>
+                            <span><strong>Fecha de pago:</strong> {{ item.paymentDateAlert }}</span>
                             <b-button v-if="!$store.getters.editingFinancialInfo" @click.prevent="removePaymentDate(index)" variant="danger">
-                              Eliminar
+                              Quitar
                             </b-button>
                           </li>
                       </ul>
@@ -120,7 +120,7 @@ export default {
         if(!this.$store.getters.financialForm.totalAmount){
             this.errors.push("Ingrese el monto de contrato");
         }
-        if(!this.paymentsArray.length){
+        if(!this.$store.getters.paymentDatesForm.dates.length){
             this.errors.push("Ingrese la o las fechas de pago");
         }
         if(!this.errors.length){
@@ -241,8 +241,8 @@ export default {
     },
     addNewPaymentDay: function(){
       this.paymentsArray = this.$store.getters.paymentDatesForm.dates;
-      if (this.paymentDaySelected && !this.paymentsArray.some(e => e.date === this.paymentDaySelected)){
-        this.paymentsArray.push({'date': this.paymentDaySelected});
+      if (this.paymentDaySelected && !this.paymentsArray.some(e => e.paymentDateAlert === this.paymentDaySelected)){
+        this.paymentsArray.push({'paymentDateAlert': this.paymentDaySelected});
         const tmpData = {
           financialContractID: this.$store.getters.paymentDatesForm.userID,
           dates: this.paymentsArray
@@ -272,8 +272,8 @@ export default {
       if(this.paymentDaySelectedForRecurring && this.numberMonths > 0){
         let datePointer = this.paymentDaySelectedForRecurring;
         for( let i = 0; i < this.numberMonths; i++ ){
-          if( !this.paymentsArray.some(e => e.date === datePointer) ){
-            this.paymentsArray.push({'date': datePointer});
+          if( !this.paymentsArray.some(e => e.paymentDateAlert === datePointer) ){
+            this.paymentsArray.push({'paymentDateAlert': datePointer});
           }
           datePointer = moment(datePointer + 'T00:00:00').add(1, 'month').format("YYYY-MM-DD");
         }

@@ -580,7 +580,7 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },/*
+    },
     deletePaymentDate: async function(params){
         try {
             const url = 'financiero/deletePaymentDate';
@@ -600,7 +600,7 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
-    },*/
+    },
     updatePassword: async function(userID, params){
         try {
             const url = 'clientes/updatePassword';

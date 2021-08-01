@@ -201,7 +201,7 @@ export default {
         selectedOpen: false,
         selectedElement: null,
         selectedEvent: {},
-        type: 'week',
+        type: 'month',
         typeToLabel: {
           month: 'Mes',
           week: 'Semana'
@@ -261,8 +261,9 @@ export default {
 
         await this.$store.dispatch('getPaymentDatesByDateRange', {startDate, endDate});
 
-        if( this.$store.getters.paymentDates.length ){
-          this.$store.getters.paymentDates.forEach(item => {
+        const events = this.$store.getters.paymentDatesEvents;
+        if( events.length ){
+          events.forEach(item => {
             item.name = 'Cobro -> Cliente: ' + item.userName + ' ' + item.lastName1;
             item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
             //item.href = base_url + 'financiero?userID=' + item.userID + '&financialContractID=' + item.financialContractID;
@@ -271,7 +272,7 @@ export default {
           });
         }
 
-        this.$store.commit('setEvents', this.$store.getters.paymentDates);
+        this.$store.commit('setEvents', events);
 
         this.$store.commit('setShowLoader', false);
         
@@ -368,7 +369,7 @@ export default {
 
             await this.fillFinancialForm(financialContractID, userID);
             
-            //await this.fillPaymentDatesOnForm(legalCaseID);
+            await this.fillPaymentDatesOnForm(financialContractID);
 
             this.$store.commit('setEditingFinancialInfo', true);
             this.$bvModal.show('bv-modal-financial-info-form');
@@ -399,13 +400,6 @@ export default {
         await this.renderFinancialInfo({searchBy:'userID', value:userID, userID:userID});
 
       },
-      renderPaymentDates: async function(financialContractID){
-        this.$store.commit('setShowLoader', true);
-
-        await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
-
-        this.$store.commit('setShowLoader', false);
-      },
       removePaymentDate: async function({paymentDateID, financialContractID}){
         this.$store.commit('setShowLoader', true);
 
@@ -414,6 +408,10 @@ export default {
         //OK
         await repositories.deletePaymentDate(data);
         await this.renderPaymentDates(financialContractID);
+
+        const start = this.date.start;
+        const end = this.date.end;
+        this.fetchEvents({start, end});
 
         this.$store.commit('setShowLoader', false);
       }

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- LEGAL CASES -->
         <div v-if="$store.getters.legalCases(user.id)">
         <ul class="box">
             <li class="box__detail" v-bind:key="legalCase.id" v-for="legalCase in $store.getters.legalCases(user.id)">
@@ -23,8 +22,6 @@
         </ul>
         </div>
         <span class="label-danger" v-if="$store.getters.legalCases(user.id) && !$store.getters.legalCases(user.id).length">No hay casos</span>
-        <!-- END LEGAL CASES -->
-
   </div>
 </template>
 

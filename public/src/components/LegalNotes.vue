@@ -1,7 +1,5 @@
 <template>
     <div>
-
-        <!-- LEGAL NOTES -->
         <div v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID)">
             
             <ul class="detail__list">
@@ -13,8 +11,6 @@
             </ul>
             <span class="label-danger" v-if="$store.getters.legalCaseNotes(legalCase.legalCaseID) && !$store.getters.legalCaseNotes(legalCase.legalCaseID).length">No hay notas</span>
         </div>
-        <!-- LEGAL NOTES END -->
-
   </div>
 </template>
 
