@@ -166,8 +166,6 @@ export default {
         //OK
         const data = await repositories.addFinancialContract(userID, this.$store.getters.financialForm);
 
-        //this.renderClientByPersonalID(this.$store.getters.clientForm.personalID);
-
 
         if( this.$store.getters.paymentDatesForm.dates.length ){
      
@@ -205,36 +203,28 @@ export default {
         //searchBy, userID, callback
         await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID, userID:userID});
         
-        /*const legalCaseNote = {};
-        legalCaseNote.legalCaseID = this.$store.getters.legalCaseForm.legalCaseID;
-        legalCaseNote.userID = loggedINUserID;
-        legalCaseNote.note = this.$store.getters.legalCaseForm.note;
 
-        if( legalCaseNote.note ){
-          //OK
-          await repositories.addLegalCaseNote(legalCaseNote);
-          await this.$emit('renderLegalCaseNotes', legalCaseNote.legalCaseID);
-        }*/
-
-        /*if( this.$store.getters.paymentDatesForm.dates.length ){
+        if( this.$store.getters.paymentDatesForm.dates.length ){
 
           const tmpData = {
-            financialContractID: this.$store.getters.financialForm.legalCaseID,
+            financialContractID: this.$store.getters.financialForm.financialContractID,
             dates: this.$store.getters.paymentDatesForm.dates
           }
           this.$store.commit('setPaymentDatesForm', tmpData);
 
-          const validArrayDates = this.$store.getters.paymentDatesForm.dates.filter(elm => !elm.id );
+          const dates = this.$store.getters.paymentDatesForm.dates;
+          const validArrayDates = dates.filter(elm => !elm.id );
 
           const paymentDatesStr = {
-            'userID': this.$store.getters.paymentDatesForm.userID,
+            'financialContractID': this.$store.getters.paymentDatesForm.financialContractID,
             'dates': JSON.stringify(validArrayDates)
           }
 
           //OK
           await repositories.addPaymentDates(paymentDatesStr);
-          await this.$emit('renderPaymentDates', this.$store.getters.paymentDatesForm.userID);
-        }*/
+          await this.$emit('renderPaymentDates', this.$store.getters.paymentDatesForm.financialContractID);
+          await this.$emit('sync');
+        }
 
         this.closeFinancialForm();
         this.$store.commit('setShowLoader', false);
@@ -244,7 +234,7 @@ export default {
       if (this.paymentDaySelected && !this.paymentsArray.some(e => e.paymentDateAlert === this.paymentDaySelected)){
         this.paymentsArray.push({'paymentDateAlert': this.paymentDaySelected});
         const tmpData = {
-          financialContractID: this.$store.getters.paymentDatesForm.userID,
+          financialContractID: this.$store.getters.paymentDatesForm.financialContractID,
           dates: this.paymentsArray
         }
         this.$store.commit('setPaymentDatesForm', tmpData);
@@ -254,7 +244,7 @@ export default {
     removePaymentDate: function(index){
       this.paymentsArray.splice(index, 1);
       const tmpData = {
-        financialContractID: this.$store.getters.paymentDatesForm.userID,
+        financialContractID: this.$store.getters.paymentDatesForm.financialContractID,
         dates: this.paymentsArray
       }
       this.$store.commit('setPaymentDatesForm', tmpData);
@@ -262,7 +252,7 @@ export default {
     removeAllPayments: function(){
       this.paymentsArray = [];
       const tmpData = {
-        financialContractID: this.$store.getters.paymentDatesForm.userID,
+        financialContractID: this.$store.getters.paymentDatesForm.financialContractID,
         dates: this.paymentsArray
       }
       this.$store.commit('setPaymentDatesForm', tmpData);
@@ -278,7 +268,7 @@ export default {
           datePointer = moment(datePointer + 'T00:00:00').add(1, 'month').format("YYYY-MM-DD");
         }
         const tmpData = {
-          financialContractID: this.$store.getters.paymentDatesForm.userID,
+          financialContractID: this.$store.getters.paymentDatesForm.financialContractID,
           dates: this.paymentsArray
         }
         this.$store.commit('setPaymentDatesForm', tmpData);

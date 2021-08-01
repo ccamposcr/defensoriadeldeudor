@@ -177,7 +177,7 @@
     </div>
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
-    <modal-financial-info-form @renderFinancialInfo="renderFinancialInfo"></modal-financial-info-form>
+    <modal-financial-info-form @renderFinancialInfo="renderFinancialInfo" @renderPaymentDates="renderPaymentDates" @sync="sync"></modal-financial-info-form>
 
   </div>
 </template>
@@ -409,9 +409,7 @@ export default {
         await repositories.deletePaymentDate(data);
         await this.renderPaymentDates(financialContractID);
 
-        const start = this.date.start;
-        const end = this.date.end;
-        this.fetchEvents({start, end});
+        this.sync();
 
         this.$store.commit('setShowLoader', false);
       }
