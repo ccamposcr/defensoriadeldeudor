@@ -17,7 +17,7 @@ class Financiero_model extends CI_Model
     }
 
     function getPaymentDatesByDateRange($data){
-        $this->db->select('paymentdates.financialContractID financialContractID, financialcontract.totalAmount, financialcontract.userID userID, financialcontract.administrativeStatusID, paymentdates.paymentDateAlert start, paymentdates.paymentDateMade, paymentdates.referenceNumber, paymentdates.amountPaid, user.name userName, user.lastName1, user.lastName2');
+        $this->db->select('paymentdates.financialContractID financialContractID, financialcontract.totalAmount, financialcontract.userID userID, financialcontract.administrativeStatusID, paymentdates.paymentDateAlert start, paymentdates.paymentDateMade, paymentdates.referenceNumber, paymentdates.amountPaid, paymentdates.id, user.name userName, user.lastName1, user.lastName2');
         $this->db->from('paymentdates');
         $this->db->where('paymentdates.paymentDateAlert >=', $data['start']);
         $this->db->where('paymentdates.paymentDateAlert <=', $data['end']);

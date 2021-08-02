@@ -131,10 +131,10 @@
                 <v-btn
                   depressed
                   color="primary"
-                  :href="selectedEvent.href"
+                  @click="showPaymentDateDetail(selectedEvent.href)"
                   v-if="selectedEvent.type=='notification'"
                 >
-                  Ir al cobro
+                  Ver el detalle
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -157,8 +157,8 @@
             <client-detail-min :user="user"></client-detail-min>
 
             <div class="user__options">
-              <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm(user.id)" variant="success">Agregar Información Financiera</b-button>
               <b-button :disabled="$store.getters.showLoader" @click="renderFinancialInfo({searchBy:'userID', value:user.id, userID:user.id})" variant="primary">Ver Información Financiera</b-button>
+              <b-button v-if="checkAccessList('agregar info financiera')" @click="showFinancialInfoForm(user.id)" variant="success">Agregar Información Financiera</b-button>
             </div>
             
             <div v-if="$store.getters.financialInfo(user.id)">
@@ -266,7 +266,7 @@ export default {
           events.forEach(item => {
             item.name = 'Cobro -> Cliente: ' + item.userName + ' ' + item.lastName1;
             item.details = (item.start ? '<strong>Cobrar el:</strong> '+ item.start : '') + '<br/><strong>Cliente:</strong> ' + item.userName + ' ' + item.lastName1 + ' ' + item.lastName2;
-            //item.href = base_url + 'financiero?userID=' + item.userID + '&financialContractID=' + item.financialContractID;
+            item.href = {userID: item.userID, financialContractID: item.financialContractID, paymentDateID: item.id};
             item.color = 'red';
             item.type = 'notification';
           });
@@ -323,6 +323,8 @@ export default {
       },
       renderAllClients: async function(){
         this.$store.commit('setShowLoader', true);
+
+        this.resetFinancialVars();
 
         await this.$store.dispatch('getAllClients');
 
@@ -412,6 +414,17 @@ export default {
         this.sync();
 
         this.$store.commit('setShowLoader', false);
+      },
+      showPaymentDateDetail: async function(data){
+        this.resetFinancialVars();
+        //{userID: "", financialContractID: "", paymentDateID: ""}
+        await this.renderClientBy({service: 'getClientBy', searchBy: 'id', value: data.userID});
+        await this.renderFinancialInfo({searchBy: 'userID', value: data.userID, userID: data.userID});
+        await this.renderPaymentDates(data.financialContractID);
+      },
+      resetFinancialVars: function(){
+        this.$store.commit('setFinancialInfo', []);
+        this.$store.commit('setPaymentDates', []);
       }
       
     }

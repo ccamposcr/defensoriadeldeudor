@@ -219,7 +219,6 @@ export default {
       this.$store.commit('setShowLoader', false);
     },
     resetClientVars: function(){
-      //this.$store.commit('setPaymentDates', []);
       this.$store.commit('setLegalCaseNotes', []);
       this.$store.commit('setLegalCases', []);
     },
@@ -251,8 +250,6 @@ export default {
           await this.$store.dispatch('updateLegalCaseIsInUse', {id: legalCaseID, inUse: 1});
 
           await this.fillLegalCaseForm(legalCaseID, userID);
-          
-          //await this.fillPaymentDatesOnForm(legalCaseID);
 
           this.$store.commit('setEditingLegalCase', true);
           this.$bvModal.show('bv-modal-legal-case-form');

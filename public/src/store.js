@@ -273,9 +273,6 @@ export default new Vuex.Store({
         setFinancialInfo(state, data){
             state.financialInfo = data;
         },
-        setFinancialInfo(state, data){
-            state.financialInfo = data;
-        },
         setIsFinancialInfoInUse(state, data){
             state.isFinancialInfoInUse = data;
         },
