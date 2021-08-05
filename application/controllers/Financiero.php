@@ -57,6 +57,36 @@ class Financiero extends CI_Controller
         echo json_encode($response);
     }
 
+    function getCOUNTPaymentDatesBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->financiero_model->getCOUNTPaymentDatesBy($data)
+        );
+
+        echo json_encode($response);
+    }
+
+    function getSUMPaymentDatesBy(){
+        $data = array(
+            'searchBy' => $this->input->post('searchBy'), 
+            'value' => $this->input->post('value')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->financiero_model->getSUMPaymentDatesBy($data)
+        );
+
+        echo json_encode($response);
+    }
+
     function getPaymentDatesByDateRange(){
         $data = array( 
             'start' => $this->input->post('start'),

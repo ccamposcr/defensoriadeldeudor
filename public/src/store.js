@@ -116,7 +116,9 @@ export default new Vuex.Store({
         paymentDates: [],
         financialInfo: [],
         isFinancialInfoInUse: 0,
-        paymentDatesEvents: []
+        paymentDatesEvents: [],
+        COUNTPaymentDates: [],
+        SUMPaymentDates: []
     },
     getters: {
         users: state => state.users,
@@ -147,7 +149,11 @@ export default new Vuex.Store({
         paymentDatesBy: state => financialContractID => state.paymentDates[financialContractID],
         financialInfo: state => userID => state.financialInfo[userID],
         isFinancialInfoInUse: state => state.isFinancialInfoInUse,
-        paymentDatesEvents: state => state.paymentDatesEvents
+        paymentDatesEvents: state => state.paymentDatesEvents,
+        COUNTPaymentDates: state => state.COUNTPaymentDates,
+        COUNTPaymentDatesBy: state => financialContractID => state.COUNTPaymentDates[financialContractID],
+        SUMPaymentDates: state => state.SUMPaymentDates,
+        SUMPaymentDatesBy: state => financialContractID => state.SUMPaymentDates[financialContractID]
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -278,6 +284,12 @@ export default new Vuex.Store({
         },
         setPaymentDatesEvents(state, data){
             state.paymentDatesEvents = data;
+        },
+        setCOUNTPaymentDatesBy(state, {data, financialContractID}){
+            Vue.set(state.COUNTPaymentDates, financialContractID, data);
+        },
+        setSUMPaymentDatesBy(state, {data, financialContractID}){
+            Vue.set(state.SUMPaymentDates, financialContractID, data);
         }
     },
     actions: {
@@ -515,6 +527,26 @@ export default new Vuex.Store({
                 const data = await repositories.getPaymentDatesBy(searchBy, financialContractID);
                 const response = data.response;
                 context.commit('setPaymentDatesBy', {data:response, financialContractID});
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getCOUNTPaymentDatesBy(context, {searchBy, financialContractID}){
+            try {
+                const data = await repositories.getCOUNTPaymentDatesBy(searchBy, financialContractID);
+                const response = data.response;
+                context.commit('setCOUNTPaymentDatesBy', {data:response, financialContractID});
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getSUMPaymentDatesBy(context, {searchBy, financialContractID}){
+            try {
+                const data = await repositories.getSUMPaymentDatesBy(searchBy, financialContractID);
+                const response = data.response;
+                context.commit('setSUMPaymentDatesBy', {data:response, financialContractID});
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);

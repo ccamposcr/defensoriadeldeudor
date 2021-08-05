@@ -15,7 +15,7 @@
                   <input type="hidden" v-model="$store.getters.financialForm.id">
                   
                   <b-form-group label-for="totalAmount" label="Monto del contrato">
-                    <b-form-input v-model.lazy="$store.getters.financialForm.totalAmount" v-money="money" type="text" class="form-control" id="totalAmount" placeholder="Monto del contrato"></b-form-input>
+                    <b-form-input v-model="$store.getters.financialForm.totalAmount" type="text" class="form-control" id="totalAmount" placeholder="Monto del contrato"></b-form-input>
                   </b-form-group>
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
                     <b-form-select id="administrativeStatus" v-model="$store.getters.financialForm.administrativeStatusID" :options="$store.getters.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
@@ -100,15 +100,7 @@ export default {
       paymentDaySelected: '',
       paymentDaySelectedForRecurring: '',
       numberMonths: 0,
-      paymentsArray: [],
-      money: {
-        decimal: ',',
-        thousands: '.',
-        prefix: '',
-        suffix: '',
-        precision: 2,
-        masked: false /* doesn't work with directive */
-      }
+      paymentsArray: []
     }
   },
   methods: {

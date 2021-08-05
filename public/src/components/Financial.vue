@@ -341,6 +341,9 @@ export default {
         this.$store.commit('setShowLoader', true);
 
         await this.$store.dispatch('getFinancialInfoBy', {searchBy, value, userID, callback});
+        //const financialInfo = this.$store.getters.financialInfo(userID);
+        //console.log(financialInfo);
+        //await this.$store.dispatch('getSUMPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
 
         this.$store.commit('setShowLoader', false);
       },
@@ -348,6 +351,10 @@ export default {
         this.$store.commit('setShowLoader', true);
 
         await this.$store.dispatch('getPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
+        await this.$store.dispatch('getCOUNTPaymentDatesBy', {searchBy: 'financialContractID', financialContractID: financialContractID});
+
+        //console.log(this.$store.getters.COUNTPaymentDates);
+        //console.log(this.$store.getters.SUMPaymentDates);
 
         this.$store.commit('setShowLoader', false);
       },
@@ -425,6 +432,9 @@ export default {
       resetFinancialVars: function(){
         this.$store.commit('setFinancialInfo', []);
         this.$store.commit('setPaymentDates', []);
+      },
+      showAddInvoiceFom: function(paymentDateID){
+
       }
       
     }

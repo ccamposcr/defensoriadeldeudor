@@ -16,6 +16,22 @@ class Financiero_model extends CI_Model
         return $results;
     }
 
+    function getCOUNTPaymentDatesBy($data){
+        $this->db->where($data['searchBy'], $data['value']);
+        $this->db->where('status', '1');
+        $num_rows = $this->db->count_all_results('paymentdates');
+        return $num_rows;
+    }
+
+    function getSUMPaymentDatesBy($data){
+        $this->db->select_sum('amountPaid');
+        $this->db->where($data['searchBy'], $data['value']);
+        $this->db->where('status', '1');
+        $query = $this->db->get('paymentdates');
+        $results = $query->result();
+        return $results;
+    }
+
     function getPaymentDatesByDateRange($data){
         $this->db->select('paymentdates.financialContractID financialContractID, financialcontract.totalAmount, financialcontract.userID userID, financialcontract.administrativeStatusID, paymentdates.paymentDateAlert start, paymentdates.paymentDateMade, paymentdates.referenceNumber, paymentdates.amountPaid, paymentdates.id, user.name userName, user.lastName1, user.lastName2');
         $this->db->from('paymentdates');

@@ -8,10 +8,13 @@
                   <p v-if="paymentDate.paymentDateMade"><strong>Pagado:</strong> {{ paymentDate.paymentDateMade }}</p>
                   <p v-if="paymentDate.referenceNumber"><strong>Número de refencia:</strong> {{ paymentDate.referenceNumber }}</p>
                   <p v-if="paymentDate.amountPaid"><strong>Monto pagado:</strong> {{ paymentDate.amountPaid }}</p>
-                  <b-button v-if="$emit('checkAccessList', 'editar info financiera')" @click.prevent="$emit('removePaymentDate', {paymentDateID:paymentDate.id, financialContractID:financial.financialContractID})" variant="danger">
-                  Eliminar
-                  </b-button>
-                  <b-button v-if="$emit('checkAccessList', 'agregar info financiera')" @click="$emit('addInvoice', {})" variant="success">Actualizar estado del pago</b-button>
+                  <p v-if="$store.getters.COUNTPaymentDatesBy(financial.financialContractID)"><strong>Monto a pagar:</strong> {{ (financial.totalAmount / $store.getters.COUNTPaymentDatesBy(financial.financialContractID)).toFixed(2) }}</p>
+                  <div class="detail__options">
+                    <b-button v-if="$emit('checkAccessList', 'editar info financiera')" @click.prevent="$emit('removePaymentDate', {paymentDateID:paymentDate.id, financialContractID:financial.financialContractID})" variant="danger">
+                      Eliminar
+                    </b-button>
+                    <b-button v-if="$emit('checkAccessList', 'agregar info financiera')" @click="$emit('showAddInvoiceFom', {paymentDateID:paymentDate.id})" variant="success">Ingresar pago del cliente</b-button>
+                  </div>
               </li>
             </ul>
             <span class="label-danger" v-if="$store.getters.paymentDatesBy(financial.financialContractID) && !$store.getters.paymentDatesBy(financial.financialContractID).length">No hay fechas de pago</span>

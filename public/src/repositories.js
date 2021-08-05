@@ -199,6 +199,56 @@ var repositories = {
             console.log('Error: ' + err);
         }
     },
+    getCOUNTPaymentDatesBy: async function(searchBy, value){
+        try {
+            const url = 'financiero/getCOUNTPaymentDatesBy';
+
+            const params = {
+            'searchBy':searchBy,
+            'value': value
+            };
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    getSUMPaymentDatesBy: async function(searchBy, value){
+        try {
+            const url = 'financiero/getSUMPaymentDatesBy';
+
+            const params = {
+            'searchBy':searchBy,
+            'value': value
+            };
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+            credentials: 'include',
+            method: 'POST',
+            body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
     getPaymentDatesByDateRange: async function(start, end){
         try {
             const url = 'financiero/getPaymentDatesByDateRange';
