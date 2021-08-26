@@ -84,8 +84,7 @@ export default {
         const financialContractID = this.$store.getters.currentFinancialInfoUserId;
         //OK
         await repositories.addInvoice(paymentDatesID, this.$store.getters.invoiceForm);
-        console.log('CCO');
-        console.log(financialContractID);
+
         await this.$emit('renderPaymentDates', financialContractID);
 
 
