@@ -71,6 +71,7 @@ export default new Vuex.Store({
         },
         currentLegalCaseUserId: '',
         paymentDatesForm:{
+            id: '',
             financialContractID: '',
             dates: []
         },
@@ -79,6 +80,7 @@ export default new Vuex.Store({
         appointmentsDates: [],
         events: [],
         appointmentForm: {
+            id: '',
             date: '',
             userID: '',
             internalUserID: '',
@@ -91,6 +93,7 @@ export default new Vuex.Store({
         },
         appointmentOriginalClientList: [],
         searchClientForm:{
+            id: '',
             personalID: '',
             name: '',
             code: '',
@@ -98,6 +101,7 @@ export default new Vuex.Store({
             searchBy: 'personalID'
         },
         updatePasswordForm:{
+            id: '',
             password: '',
             confirmPassword: ''
         },
@@ -118,7 +122,14 @@ export default new Vuex.Store({
         isFinancialInfoInUse: 0,
         paymentDatesEvents: [],
         COUNTPaymentDates: [],
-        SUMPaymentDates: []
+        SUMPaymentDates: [],
+        invoiceForm:{
+            id: '',
+            paymentDateMade: '',
+            referenceNumber: '',
+            amountPaid: ''
+        },
+        editingInvoiceInfo: false
     },
     getters: {
         users: state => state.users,
@@ -153,7 +164,9 @@ export default new Vuex.Store({
         COUNTPaymentDates: state => state.COUNTPaymentDates,
         COUNTPaymentDatesBy: state => financialContractID => state.COUNTPaymentDates[financialContractID],
         SUMPaymentDates: state => state.SUMPaymentDates,
-        SUMPaymentDatesBy: state => financialContractID => state.SUMPaymentDates[financialContractID]
+        SUMPaymentDatesBy: state => financialContractID => state.SUMPaymentDates[financialContractID],
+        invoiceForm: state => state.invoiceForm,
+        editingInvoiceInfo: state => state.editingInvoiceInfo
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -290,6 +303,12 @@ export default new Vuex.Store({
         },
         setSUMPaymentDatesBy(state, {data, financialContractID}){
             Vue.set(state.SUMPaymentDates, financialContractID, data);
+        },
+        setInvoiceForm(state, data){
+            state.invoiceForm = data;
+        },
+        setEditingInvoiceInfo(state, data){
+            state.editingInvoiceInfo = data;
         }
     },
     actions: {

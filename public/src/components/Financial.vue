@@ -165,7 +165,7 @@
               <ul class="box">
                   <li class="box__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
                       <financial-detail :financial="financial" @checkAccessList="checkAccessList" @fillEditFinancialForm="fillEditFinancialForm" :user="user" @unblockFinancialInfo="unblockFinancialInfo" @renderPaymentDates="renderPaymentDates"></financial-detail>
-                      <payment-dates :financial="financial" @checkAccessList="checkAccessList" @removePaymentDate="removePaymentDate"></payment-dates>
+                      <payment-dates :financial="financial" @checkAccessList="checkAccessList" @removePaymentDate="removePaymentDate" @showAddInvoiceForm="showAddInvoiceForm"></payment-dates>
                   </li>
               </ul>
             </div>
@@ -178,6 +178,7 @@
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
     <modal-financial-info-form @renderFinancialInfo="renderFinancialInfo" @renderPaymentDates="renderPaymentDates" @sync="sync"></modal-financial-info-form>
+    <modal-invoice-form></modal-invoice-form>
 
   </div>
 </template>
@@ -190,10 +191,11 @@ import repositories from '../repositories';
 import global from '../global';
 import ModalSearchForm from './Modals/ModalSearchForm.vue';
 import ModalFinancialInfoForm from './Modals/ModalFinancialInfoForm.vue';
+import ModalInvoiceForm from './Modals/ModalInvoiceForm.vue';
 
 export default {
     name: 'Financial',
-    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm, FinancialDetail, PaymentDates},
+    components: {ModalSearchForm, ClientDetailMin, ModalFinancialInfoForm, FinancialDetail, PaymentDates, ModalInvoiceForm},
     data () {
       return{
         value: '',
@@ -433,8 +435,8 @@ export default {
         this.$store.commit('setFinancialInfo', []);
         this.$store.commit('setPaymentDates', []);
       },
-      showAddInvoiceFom: function(paymentDateID){
-
+      showAddInvoiceForm: function({paymentDateID, financialContractID}){
+        this.$bvModal.show('bv-modal-invoice-form');
       }
       
     }

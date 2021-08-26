@@ -20,8 +20,8 @@
                   <b-form-group label-for="administrativeStatus" label="Estado Administrativo">
                     <b-form-select id="administrativeStatus" v-model="$store.getters.financialForm.administrativeStatusID" :options="$store.getters.staticData.administrativeStatusList" value-field="id" text-field="administrativeStatus"></b-form-select>
                   </b-form-group>
-                  <b-form-group label-for="propertyNumber" label="Número de propiedad (opcional)">
-                    <b-form-input v-model="$store.getters.financialForm.propertyNumber" type="text" class="form-control" id="propertyNumber" placeholder="Número de propiedad"></b-form-input>
+                  <b-form-group label-for="propertyNumber" label="Número del bien (opcional)">
+                    <b-form-input v-model="$store.getters.financialForm.propertyNumber" type="text" class="form-control" id="propertyNumber" placeholder="Número del bien"></b-form-input>
                   </b-form-group>
 
                   <div class="financial-form__payments-group">

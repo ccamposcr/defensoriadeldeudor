@@ -3,7 +3,7 @@
         <p v-if="financial.totalAmount"><strong>Monto total:</strong> {{ financial.totalAmount }}</p>
         <p v-if="financial.administrativeStatus"><strong>Estado:</strong> {{ financial.administrativeStatus }}</p>
         <p v-if="financial.dateCreated"><strong>Fecha creación:</strong> {{ financial.dateCreated }}</p>
-        <p v-if="financial.propertyNumber"><strong>Número de propiedad:</strong> {{ financial.propertyNumber }}</p>
+        <p v-if="financial.propertyNumber"><strong>Número del bien:</strong> {{ financial.propertyNumber }}</p>
         <!--<p v-if="$store.getters.SUMPaymentDatesBy(financial.financialContractID)"><strong>Saldo:</strong> {{ financial.totalAmount - $store.getters.SUMPaymentDatesBy(financial.financialContractID) }}</p>-->
         <div class="detail__options">
             <b-button v-if="$emit('checkAccessList', 'editar info financiera')" @click="$emit('fillEditFinancialForm', financial.financialContractID, user.id)" variant="info">Editar Información Financiera</b-button>
