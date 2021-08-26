@@ -67,35 +67,26 @@ export default {
     },
     clearInvoiceForm: function(){
         const data = {
-          id: '',
-          totalAmount: '',
-          administrativeStatusID: '',
-          propertyNumber: ''
+            id: '',
+            paymentDateMade: '',
+            referenceNumber: '',
+            amountPaid: ''
         };
-        this.$store.commit('setFinancialForm', data);
-        this.errors = [];
-        this.numberMonths = 0;
-        this.paymentDaySelected = '';
-        this.paymentDaySelectedForRecurring = '';
-        this.paymentsArray = [];
-        const tmpData = {
-            financialContractID: '',
-            dates: []
-        }
-        this.$store.commit('setPaymentDatesForm', tmpData);
+        this.$store.commit('setInvoiceForm', data);
+
     },
     onCloseInvoiceForm: async function(){
-      if( this.$store.getters.financialForm.id ){
+      if( this.$store.getters.invoiceForm.id ){
         this.$store.commit('setShowLoader', true);
         
-        await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
+        //await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
 
         this.$store.commit('setShowLoader', false);
       }
       this.clearFinancialForm();
     },
     closeInvoiceForm: async function(){
-      this.$bvModal.hide('bv-modal-financial-info-form');
+      this.$bvModal.hide('bv-modal-invoice-form');
     },
     setNewInvoiceInfo: async function(){
         this.$store.commit('setShowLoader', true);
