@@ -57,6 +57,25 @@ class Financiero extends CI_Controller
         echo json_encode($response);
     }
 
+    function addInvoice(){
+        $id = $this->input->post('paymentDatesID');
+        $data = array( 
+            'paymentDateMade' => date("Y-m-d"),
+            'referenceNumber' => $this->input->post('referenceNumber'),
+            'amountPaid' => $this->input->post('amountPaid'),
+            'paymentStatus' => '1'
+        );
+
+        $this->financiero_model->updatePaymentDate($id, $data);
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        );
+
+        echo json_encode($response); 
+    }
+
     function getCOUNTPaymentDatesBy(){
         $data = array(
             'searchBy' => $this->input->post('searchBy'), 

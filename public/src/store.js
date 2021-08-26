@@ -124,12 +124,11 @@ export default new Vuex.Store({
         COUNTPaymentDates: [],
         SUMPaymentDates: [],
         invoiceForm:{
-            id: '',
             paymentDateMade: '',
             referenceNumber: '',
             amountPaid: ''
         },
-        editingInvoiceInfo: false
+        currentPaymentId: ''
     },
     getters: {
         users: state => state.users,
@@ -166,7 +165,7 @@ export default new Vuex.Store({
         SUMPaymentDates: state => state.SUMPaymentDates,
         SUMPaymentDatesBy: state => financialContractID => state.SUMPaymentDates[financialContractID],
         invoiceForm: state => state.invoiceForm,
-        editingInvoiceInfo: state => state.editingInvoiceInfo
+        currentPaymentId: state => state.currentPaymentId
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -307,8 +306,8 @@ export default new Vuex.Store({
         setInvoiceForm(state, data){
             state.invoiceForm = data;
         },
-        setEditingInvoiceInfo(state, data){
-            state.editingInvoiceInfo = data;
+        setCurrentPaymentId(state, data){
+            state.currentPaymentId = data;
         }
     },
     actions: {

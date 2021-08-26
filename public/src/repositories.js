@@ -901,6 +901,27 @@ var repositories = {
         } catch(err) {
             console.log('Error: ' + err);
         }
+    },
+    addInvoice: async function(paymentDatesID, params){
+        try {
+            const url = 'financiero/addInvoice';
+            params[csrf_name] = csrf_hash;
+            params['paymentDatesID'] = paymentDatesID;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
     }
 }
   

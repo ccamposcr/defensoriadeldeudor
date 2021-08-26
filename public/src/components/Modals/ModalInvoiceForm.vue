@@ -21,12 +21,8 @@
                     <b-form-input v-model="$store.getters.invoiceForm.amountPaid" type="text" class="form-control" id="amountPaid" placeholder="Monto pagado"></b-form-input>
                   </b-form-group>
                   
-
-                  <b-button :disabled="$store.getters.showLoader" v-if="!$store.getters.editingInvoiceInfo" @click.prevent="checkForm(function(){setNewInvoiceInfo()})" type="submit" variant="primary">
-                    Ingresar
-                  </b-button>
-                  <b-button :disabled="$store.getters.showLoader" v-if="$store.getters.editingInvoiceInfo" @click.prevent="checkForm(function(){setEditedInvoiceInfo()})" type="submit" variant="primary">
-                    Guardar
+                  <b-button :disabled="$store.getters.showLoader" @click.prevent="checkForm(function(){setNewInvoiceInfo()})" type="submit" variant="primary">
+                    Agregar
                   </b-button>
                   <b-button @click.prevent="closeInvoiceForm" variant="danger">Cancelar</b-button>
               </b-form>
@@ -76,14 +72,7 @@ export default {
 
     },
     onCloseInvoiceForm: async function(){
-      if( this.$store.getters.invoiceForm.id ){
-        this.$store.commit('setShowLoader', true);
-        
-        //await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
-
-        this.$store.commit('setShowLoader', false);
-      }
-      this.clearFinancialForm();
+      this.clearInvoiceForm();
     },
     closeInvoiceForm: async function(){
       this.$bvModal.hide('bv-modal-invoice-form');
@@ -91,71 +80,16 @@ export default {
     setNewInvoiceInfo: async function(){
         this.$store.commit('setShowLoader', true);
 
-        const userID = this.$store.getters.currentFinancialInfoUserId;
+        const paymentDatesID = this.$store.getters.currentPaymentId;
+        const financialContractID = this.$store.getters.currentFinancialInfoUserId;
         //OK
-        const data = await repositories.addFinancialContract(userID, this.$store.getters.financialForm);
+        await repositories.addInvoice(paymentDatesID, this.$store.getters.invoiceForm);
+        console.log('CCO');
+        console.log(financialContractID);
+        await this.$emit('renderPaymentDates', financialContractID);
 
 
-        if( this.$store.getters.paymentDatesForm.dates.length ){
-     
-          const tmpData = {
-            financialContractID: data.financialContractID,
-            dates: this.$store.getters.paymentDatesForm.dates
-          }
-          this.$store.commit('setPaymentDatesForm', tmpData);
-
-          const paymentDatesStr = {
-            'financialContractID': this.$store.getters.paymentDatesForm.financialContractID,
-            'dates': JSON.stringify(this.$store.getters.paymentDatesForm.dates)
-          }
-          //OK
-          await repositories.addPaymentDates(paymentDatesStr);
-        }
-
-        //searchBy, userID, callback
-        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID, userID:userID});
-
-
-        this.closeFinancialForm();
-        this.$store.commit('setShowLoader', false);
-    },
-    setEditedInvoiceInfo: async function(){
-        this.$store.commit('setShowLoader', true);
-
-        const userID = this.$store.getters.currentFinancialInfoUserId;
-
-        //OK
-        await repositories.editFinancialContract(this.$store.getters.financialForm);
-
-        await this.$store.dispatch('updateFinancialInfoIsInUse', {id: this.$store.getters.financialForm.id, inUse: 0});
-
-        //searchBy, userID, callback
-        await this.$emit('renderFinancialInfo', {searchBy:'userID', value:userID, userID:userID});
-        
-
-        if( this.$store.getters.paymentDatesForm.dates.length ){
-
-          const tmpData = {
-            financialContractID: this.$store.getters.financialForm.financialContractID,
-            dates: this.$store.getters.paymentDatesForm.dates
-          }
-          this.$store.commit('setPaymentDatesForm', tmpData);
-
-          const dates = this.$store.getters.paymentDatesForm.dates;
-          const validArrayDates = dates.filter(elm => !elm.id );
-
-          const paymentDatesStr = {
-            'financialContractID': this.$store.getters.paymentDatesForm.financialContractID,
-            'dates': JSON.stringify(validArrayDates)
-          }
-
-          //OK
-          await repositories.addPaymentDates(paymentDatesStr);
-          await this.$emit('renderPaymentDates', this.$store.getters.paymentDatesForm.financialContractID);
-          await this.$emit('sync');
-        }
-
-        this.closeFinancialForm();
+        this.closeInvoiceForm();
         this.$store.commit('setShowLoader', false);
     }
   }

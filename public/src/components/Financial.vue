@@ -165,7 +165,7 @@
               <ul class="box">
                   <li class="box__detail" v-bind:key="financial.id" v-for="financial in $store.getters.financialInfo(user.id)">
                       <financial-detail :financial="financial" @checkAccessList="checkAccessList" @fillEditFinancialForm="fillEditFinancialForm" :user="user" @unblockFinancialInfo="unblockFinancialInfo" @renderPaymentDates="renderPaymentDates"></financial-detail>
-                      <payment-dates :financial="financial" @checkAccessList="checkAccessList" @removePaymentDate="removePaymentDate" @showAddInvoiceForm="showAddInvoiceForm"></payment-dates>
+                      <payment-dates :financial="financial" @checkAccessList="checkAccessList" @removePaymentDate="removePaymentDate" @showAddInvoiceForm="showAddInvoiceForm"  @renderPaymentDates="renderPaymentDates"></payment-dates>
                   </li>
               </ul>
             </div>
@@ -178,7 +178,7 @@
 
     <modal-search-form @renderClientBy="renderClientBy"></modal-search-form>
     <modal-financial-info-form @renderFinancialInfo="renderFinancialInfo" @renderPaymentDates="renderPaymentDates" @sync="sync"></modal-financial-info-form>
-    <modal-invoice-form></modal-invoice-form>
+    <modal-invoice-form @renderPaymentDates="renderPaymentDates"></modal-invoice-form>
 
   </div>
 </template>
@@ -435,8 +435,14 @@ export default {
         this.$store.commit('setFinancialInfo', []);
         this.$store.commit('setPaymentDates', []);
       },
-      showAddInvoiceForm: function({paymentDateID, financialContractID}){
-        this.$bvModal.show('bv-modal-invoice-form');
+      showAddInvoiceForm: function({paymentDateID, financialContractID, amountToPay}){
+        if( this.checkAccessList('agregar info financiera') ){
+          this.$store.commit('setCurrentPaymentId', paymentDateID);
+          this.$store.commit('setInvoiceForm', {paymentDateMade: '', referenceNumber: '', amountPaid: amountToPay});
+          this.$store.commit('setCurrentFinancialInfoUserId', financialContractID);
+          this.$bvModal.show('bv-modal-invoice-form');
+        }
+        
       }
       
     }

@@ -36,12 +36,12 @@ export default {
             list-style-type: none;
             padding: 0;
             margin-top: 30px;
-            background-color: #e6e5e5;
         }
     }
     .list__option{
         padding: 15px;
-        border-bottom: 1px solid gray;
+        margin-bottom: 15px;
+        background-color: #e6e5e5;
         &:last-child{
             border-bottom: none;
         }
