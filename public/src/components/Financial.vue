@@ -1,148 +1,163 @@
 <template>
   <div class="financiero">
-    <v-row>
-      <v-col>
-        <v-btn
-          outlined
-          class=""
-          color="green darken-2"
-          @click="sync"
-        >
-          Sincronizar
-        </v-btn>
-        <v-sheet height="64">
-          <v-toolbar
-            flat
-          >
+    <div class="financiero__wrapper">
+      <div class="financiero__calendar">
+        <v-row>
+          <v-col>
             <v-btn
               outlined
-              class="mr-4"
-              color="grey darken-2"
-              @click="setToday"
+              class=""
+              color="green darken-2"
+              @click="sync"
             >
-              Hoy
+              Sincronizar
             </v-btn>
-            <v-btn
-              fab
-              text
-              small
-              color="grey darken-2"
-              @click="prev"
-            >
-              <v-icon small>
-                mdi-chevron-left
-              </v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              text
-              small
-              color="grey darken-2"
-              @click="next"
-            >
-              <v-icon small>
-                mdi-chevron-right
-              </v-icon>
-            </v-btn>
-            <v-toolbar-title v-if="$refs.calendar">
-              {{ $refs.calendar.title }}
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-
-            <v-menu
-              bottom
-              right
-            >
-              <template v-slot:activator="{ on, attrs }">
+            <v-sheet height="64">
+              <v-toolbar
+                flat
+              >
                 <v-btn
                   outlined
+                  class="mr-4"
                   color="grey darken-2"
-                  v-bind="attrs"
-                  v-on="on"
+                  @click="setToday"
                 >
-                  <span>{{ typeToLabel[type] }}</span>
-                  <v-icon right>
-                    mdi-menu-down
+                  Hoy
+                </v-btn>
+                <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="prev"
+                >
+                  <v-icon small>
+                    mdi-chevron-left
                   </v-icon>
                 </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Semana</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'month'">
-                  <v-list-item-title>Mes</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-
-          </v-toolbar>
-        </v-sheet>
-        <v-sheet>
-          <v-calendar
-            ref="calendar"
-            :events="$store.getters.events"
-            color="primary"
-            :type="type"
-            v-model="value"
-            @change="fetchEvents"
-            @click:event="showEvent"
-            interval-count="0"
-            first-time="06:00"
-          >
-            <template v-slot:day-body="{ date, week }">
-              <div
-                class="v-current-time"
-                :class="{ first: date === week[0].date }"
-                :style="{ top: nowY }"
-              ></div>
-            </template>
-          </v-calendar>
-
-          <v-menu
-            v-model="selectedOpen"
-            :close-on-content-click="false"
-            :activator="selectedElement"
-            offset-x
-          >
-            <v-card
-              color="grey lighten-4"
-              min-width="350px"
-              flat
-            >
-              <v-toolbar
-                :color="selectedEvent.color"
-                dark
-              >
-                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                <v-spacer></v-spacer>
-              </v-toolbar>
-              <v-card-text>
-                <span v-html="selectedEvent.details"></span>
-              </v-card-text>
-              <v-card-actions>
                 <v-btn
+                  fab
                   text
-                  color="secondary"
-                  @click="selectedOpen = false"
+                  small
+                  color="grey darken-2"
+                  @click="next"
                 >
-                  Cerrar
+                  <v-icon small>
+                    mdi-chevron-right
+                  </v-icon>
                 </v-btn>
-                <v-btn
-                  depressed
-                  color="primary"
-                  @click="showPaymentDateDetail(selectedEvent.href)"
-                  v-if="selectedEvent.type=='notification'"
-                >
-                  Ver el detalle
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-menu>
+                <v-toolbar-title v-if="$refs.calendar">
+                  {{ $refs.calendar.title }}
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
 
-        </v-sheet>
-      </v-col>
-    </v-row>
+                <v-menu
+                  bottom
+                  right
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      outlined
+                      color="grey darken-2"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <span>{{ typeToLabel[type] }}</span>
+                      <v-icon right>
+                        mdi-menu-down
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="type = 'week'">
+                      <v-list-item-title>Semana</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="type = 'month'">
+                      <v-list-item-title>Mes</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+
+              </v-toolbar>
+            </v-sheet>
+            <v-sheet>
+              <v-calendar
+                ref="calendar"
+                :events="$store.getters.events"
+                color="primary"
+                :type="type"
+                v-model="value"
+                @change="fetchEvents"
+                @click:event="showEvent"
+                interval-count="0"
+                first-time="06:00"
+              >
+                <template v-slot:day-body="{ date, week }">
+                  <div
+                    class="v-current-time"
+                    :class="{ first: date === week[0].date }"
+                    :style="{ top: nowY }"
+                  ></div>
+                </template>
+              </v-calendar>
+
+              <v-menu
+                v-model="selectedOpen"
+                :close-on-content-click="false"
+                :activator="selectedElement"
+                offset-x
+              >
+                <v-card
+                  color="grey lighten-4"
+                  min-width="350px"
+                  flat
+                >
+                  <v-toolbar
+                    :color="selectedEvent.color"
+                    dark
+                  >
+                    <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                    <v-spacer></v-spacer>
+                  </v-toolbar>
+                  <v-card-text>
+                    <span v-html="selectedEvent.details"></span>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      text
+                      color="secondary"
+                      @click="selectedOpen = false"
+                    >
+                      Cerrar
+                    </v-btn>
+                    <v-btn
+                      depressed
+                      color="primary"
+                      @click="showPaymentDateDetail(selectedEvent.href)"
+                      v-if="selectedEvent.type=='notification'"
+                    >
+                      Ver el detalle
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </div>
+      <div class="financiero__aside">
+        <h6>Cobros en mora</h6>
+        <ul class="detail__list" v-if="$store.getters.overDuePaymentDates.length">
+          <li class="list__option" v-bind:key="overDuePayment.id" v-for="overDuePayment in $store.getters.overDuePaymentDates">
+            <p><strong>F.Pago: </strong>{{overDuePayment.start}}</p>
+            <p><strong>Nombre: </strong>{{overDuePayment.userName}} {{overDuePayment.lastName1}} {{overDuePayment.lastName2}}</p>
+            <button class="btn btn-danger" @click="showPaymentDateDetail({userID: overDuePayment.userID, financialContractID: overDuePayment.financialContractID, paymentDateID: overDuePayment.id})">Ver el detalle</button>
+          </li>
+        </ul>
+        <p v-show="!$store.getters.overDuePaymentDates.length">No hay pagos en mora</p>
+      </div>
+    </div>
 
     <div class="financiero__content">
       <b-button variant="info" @click="showSearchClientModal">Buscar Cliente</b-button>
@@ -275,6 +290,8 @@ export default {
         }
 
         this.$store.commit('setEvents', events);
+
+        await this.$store.dispatch('getOverDuePaymentDatesByDateRange', {endDate});
 
         this.$store.commit('setShowLoader', false);
         
@@ -454,6 +471,24 @@ export default {
   .financiero{
     &__content{
       margin-top: 50px;
+    }
+    &__wrapper{
+      display: flex;
+      flex-direction: row;
+    }
+    &__calendar{
+      width: 80%;
+    }
+    &__aside{
+      width: 18%;
+      margin-left: 2%;
+      border: #e0e0e0 1px solid;
+      padding: 10px;
+
+      .detail__list{
+        overflow: auto;
+        max-height: 300px;
+      }
     }
   }
 }

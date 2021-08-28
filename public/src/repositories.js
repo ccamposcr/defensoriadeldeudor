@@ -254,15 +254,39 @@ var repositories = {
             const url = 'financiero/getPaymentDatesByDateRange';
 
             const params = {
-            'start': start,
-            'end': end
+                'start': start,
+                'end': end
             };
             params[csrf_name] = csrf_hash;
 
             const response = await fetch(url, {
-            credentials: 'include',
-            method: 'POST',
-            body: new URLSearchParams(params)
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
+            });
+
+            const data = await response.json();
+            csrf_name = data.csrf_name;
+            csrf_hash = data.csrf_hash;
+
+            return data;
+        } catch(err) {
+            console.log('Error: ' + err);
+        }
+    },
+    getOverDuePaymentDatesByDateRange: async function(end){
+        try {
+            const url = 'financiero/getOverDuePaymentDatesByDateRange';
+
+            const params = {
+                'end': end
+            };
+            params[csrf_name] = csrf_hash;
+
+            const response = await fetch(url, {
+                credentials: 'include',
+                method: 'POST',
+                body: new URLSearchParams(params)
             });
 
             const data = await response.json();

@@ -121,6 +121,20 @@ class Financiero extends CI_Controller
         echo json_encode($response);
     }
 
+    function getOverDuePaymentDatesByDateRange(){
+        $data = array(
+            'end' => $this->input->post('end')
+        );
+
+        $response = array(
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash(),
+            'response' => $this->financiero_model->getOverDuePaymentDatesByDateRange($data)
+        );
+
+        echo json_encode($response);
+    }
+
     function deletePaymentDate(){
         $data = array(
             'status' => '0'

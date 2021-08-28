@@ -128,7 +128,8 @@ export default new Vuex.Store({
             referenceNumber: '',
             amountPaid: ''
         },
-        currentPaymentId: ''
+        currentPaymentId: '',
+        overDuePaymentDates: []
     },
     getters: {
         users: state => state.users,
@@ -165,7 +166,8 @@ export default new Vuex.Store({
         SUMPaymentDates: state => state.SUMPaymentDates,
         SUMPaymentDatesBy: state => financialContractID => state.SUMPaymentDates[financialContractID],
         invoiceForm: state => state.invoiceForm,
-        currentPaymentId: state => state.currentPaymentId
+        currentPaymentId: state => state.currentPaymentId,
+        overDuePaymentDates: state => state.overDuePaymentDates
     },
     mutations: {
         setJudicialStatusList(state, data){
@@ -308,6 +310,9 @@ export default new Vuex.Store({
         },
         setCurrentPaymentId(state, data){
             state.currentPaymentId = data;
+        },
+        setOverDuePaymentDates(state, data){
+            state.overDuePaymentDates = data;
         }
     },
     actions: {
@@ -585,6 +590,16 @@ export default new Vuex.Store({
                 const data = await repositories.getPaymentDatesByDateRange(startDate, endDate);
                 const response = data.response;
                 context.commit('setPaymentDatesEvents', response);
+            }catch (error) {
+                //context.commit('showError', error);
+                alert(error);
+            }
+        },
+        async getOverDuePaymentDatesByDateRange(context, {endDate}){
+            try {
+                const data = await repositories.getOverDuePaymentDatesByDateRange(endDate);
+                const response = data.response;
+                context.commit('setOverDuePaymentDates', response);
             }catch (error) {
                 //context.commit('showError', error);
                 alert(error);
